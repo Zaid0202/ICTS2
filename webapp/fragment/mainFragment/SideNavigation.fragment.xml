@@ -1,0 +1,18 @@
+<SideNavigation
+    xmlns="sap.tnt"
+    xmlns:core="sap.ui.core"
+    expanded="false"
+    selectedKey="{/selectedKey}"
+    itemSelect="onItemSelect"
+>
+    <NavigationList id="_IDGenNavigationList1"
+        items="{
+                path: 'navList>/navigation'
+            }"
+    >
+        <core:Fragment
+            fragmentName="internal.fragment.mainFragment.NavigationList"
+            type="XML"
+        />
+    </NavigationList>
+</SideNavigation>

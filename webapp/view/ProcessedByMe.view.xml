@@ -1,0 +1,8 @@
+<mvc:View controllerName="internal.controller.ProcessedByMe"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+    <Page id="page_id_ProcessedByMe" title="Processed By Me">
+        <content >
+        </content>
+    </Page>
+</mvc:View>

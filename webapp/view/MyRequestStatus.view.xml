@@ -1,0 +1,8 @@
+<mvc:View controllerName="internal.controller.MyRequestStatus"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+    <Page id="page_id_MyRequestStatus" title="My Request Status">
+        <content >
+        </content>
+    </Page>
+</mvc:View>

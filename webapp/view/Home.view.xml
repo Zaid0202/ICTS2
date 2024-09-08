@@ -1,0 +1,31 @@
+<mvc:View controllerName="internal.controller.Home"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    >
+    <Page id="page" title="{i18n>HomeTitle}">
+        <content>
+            <VBox class="sapUiTinyMargin">
+                <l:HorizontalLayout
+                    id="TileContainerExpanded"
+                    allowWrapping="true"
+                    content="{tiles>/}"
+                    class="sapUiTinyMarginTopBottom"
+                >
+                    <GenericTile
+                        header="{tiles>title}"
+                        press="press"
+                        class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout"
+                        sizeBehavior="{tiles>sizeBehavior}"
+                    >
+                        <TileContent  footer="Nav to">
+                            <ImageContent src="{tiles>icon}" />
+                        </TileContent>
+                    </GenericTile>
+
+                    
+                </l:HorizontalLayout>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

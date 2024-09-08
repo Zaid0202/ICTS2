@@ -1,0 +1,255 @@
+<mvc:View
+    controllerName="internal.controller.SettingsApprovals"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:c="sap.ui.core"
+    xmlns:table="sap.ui.table"
+>
+    <Page
+        id="page_id_SettingsApprovals"
+        title="Settings Approvals"
+        showHeader="true"
+    >
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <f:Form
+                    editable="true"
+                    id="mainFormIdSettingsApprovals"
+                >
+                    <f:toolbar>
+                        <Toolbar>
+                            <Title text="Settings Approvals" />
+                            <ToolbarSpacer />
+                            <Button
+                                text="Submite"
+                                type="Emphasized"
+                                visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
+                                press="onMainSubmit"
+                            />
+                            <Button
+                                text="Update"
+                                type="Emphasized"
+                                visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
+                                press="onMainSubmit"
+                            />
+                            <Button
+                                text="Reset"
+                                type="Emphasized"
+                                visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
+                                press="onCleare"
+                            />
+                        </Toolbar>
+                    </f:toolbar>
+                    <f:layout>
+                        <f:ResponsiveGridLayout
+                            labelSpanXL="3"
+                            labelSpanL="3"
+                            labelSpanM="3"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="4"
+                            emptySpanL="4"
+                            emptySpanM="4"
+                            emptySpanS="0"
+                            columnsXL="1"
+                            columnsL="1"
+                            columnsM="1"
+                            singleContainerFullSize="false"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Main Services">
+                                    <f:fields>
+                                        <Select
+                                            selectedKey="{mainFormModel>/MainServiceName}"
+                                            items="{localData>/MainServices}"
+                                            forceSelection='false'
+                                            valueState="{mainFormErrModel>/MainServiceName/valueState}"
+                                            valueStateText="{mainFormErrModel>/MainServiceName/valueStateText}"
+                                        >
+                                            <items>
+                                                <c:Item
+                                                    key="{localData>}"
+                                                    text="{localData>}"
+                                                />
+                                            </items>
+                                        </Select>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Approval Levels">
+                                    <f:fields>
+                                        <Select
+                                            selectedKey="{mainFormModel>/ApprovalLevels}"
+                                            items="{localData>/Aprrovals}"
+                                            forceSelection='false'
+                                            valueState="{mainFormErrModel>/ApprovalLevels/valueState}"
+                                            valueStateText="{mainFormErrModel>/ApprovalLevels/valueStateText}"
+                                        >
+                                            <items>
+                                                <c:Item
+                                                    key="{localData>key}"
+                                                    text="{localData>text}"
+                                                />
+                                            </items>
+                                        </Select>
+                                    </f:fields>
+                                </f:FormElement>
+                                
+                                <f:FormElement label="Employee Id">
+                                    <f:fields>
+                                        <Input
+                                            value="{mainFormModel>/EmployeeId}"
+                                            liveChange="onChangeInputUserId"
+                                            maxLength="5"
+                                            valueState="{mainFormErrModel>/EmployeeId/valueState}"
+                                            valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
+                                            placeholder="Employee Id"
+                                            type="Text"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL1 L1 M2 S12"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                        <Input
+                                            id="inputEmployeeNameId"
+                                            value="{mainFormModel>/EmployeeName}"
+                                            valueState="{mainFormErrModel>/EmployeeName/valueState}"
+                                            valueStateText="{mainFormErrModel>/EmployeeName/valueStateText}"
+                                            placeholder="Employee Name"
+                                            editable="false"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL4 L4 M3 S12"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                    </f:fields>
+                                </f:FormElement>
+
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+
+            <VBox class="sapUiSmallMargin">
+                <table:Table
+                    id='mainTableIdSettingsApprovals'
+                    rows="{mainTableModel>/}"
+                    selectionMode="MultiToggle"
+                    paste="onPaste"
+                    ariaLabelledBy="title"
+                >
+                    <table:extension>
+                        <OverflowToolbar style="Clear">
+                            <Title text="Report" />
+                            <ToolbarSpacer />
+                            <Button
+                                tooltip="Sort"
+                                icon="sap-icon://sort"
+                                press="handleSortButtonPressed"
+                            />
+                            <Button
+                                tooltip="Filter"
+                                icon="sap-icon://filter"
+                                press="handleFilterButtonPressed"
+                            />
+                            <Button
+                                tooltip="Group"
+                                icon="sap-icon://group-2"
+                                press="handleGroupButtonPressed"
+                            />
+
+                            <SearchField
+                                id="searchField"
+                                width="20%"
+                                placeholder="search"
+                                search=".onSearch"
+                            />
+                        </OverflowToolbar>
+                    </table:extension>
+                    <table:columns>
+                        <table:Column width="11rem">
+                            <Label text="Id" />
+                            <table:template>
+                                <Text
+                                    text="{mainTableModel>Id/}"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+                        <table:Column width="11rem">
+                            <Label text="Main Services" />
+                            <table:template>
+                                <Text
+                                    text="{mainTableModel>MainServiceName/}"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+                        <table:Column width="11rem">
+                            <Label text="Approval Levels" />
+                            <table:template>
+                                <Text
+                                    text="{mainTableModel>ApprovalLevels/}"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+                        <table:Column width="11rem">
+                            <Label text="Employee Id" />
+                            <table:template>
+                                <Text
+                                    text="{mainTableModel>EmployeeId/}"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column width="11rem">
+                            <Label text="Employee Name" />
+                            <table:template>
+                                <Text
+                                    text="{mainTableModel>EmployeeName/}"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column width="4rem">
+                            <Label text="" />
+                            <table:template>
+                                <Button
+                                    visible="true"
+                                    icon="sap-icon://edit"
+                                    tooltip="Edit"
+                                    press="onEdit"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column width="4rem">
+                            <Label text="" />
+                            <table:template>
+                                <Button
+                                    visible="true"
+                                    icon="sap-icon://delete"
+                                    tooltip="Edit"
+                                    press="onDelete"
+                                />
+                            </table:template>
+                        </table:Column>
+                    </table:columns>
+                </table:Table>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

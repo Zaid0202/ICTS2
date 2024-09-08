@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <ViewSettingsDialog confirm="handleSortDialogConfirm">
+        <sortItems>
+            <ViewSettingsItem
+                text="{dialogModel>/0/Text}"
+                key="{dialogModel>/0/Key}"
+                selected="true"
+            />
+        </sortItems>
+        <sortItems>
+            <ViewSettingsItem
+                text="{dialogModel>/1/Text}"
+                key="{dialogModel>/1/Key}"
+                selected="true"
+            />
+        </sortItems>
+    </ViewSettingsDialog>
+</core:FragmentDefinition>
+
+

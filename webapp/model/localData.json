@@ -1,0 +1,74 @@
+{
+    "MainServices": [
+        "Internal Announcement",
+        "Graphic Design",
+        "Nadec Home Post",
+        "Revision Request"
+    ],
+    "Aprrovals": [
+        {
+            "text": "LEVEL 2",
+            "key": "2"
+        },
+        {
+            "text": "LEVEL 3",
+            "key": "3"
+        },
+        {
+            "text": "LEVEL 4",
+            "key": "4"
+        },
+        {
+            "text": "LEVEL 5",
+            "key": "5"
+        },
+        {
+            "text": "LEVEL 6",
+            "key": "6"
+        },
+        {
+            "text": "LEVEL 7",
+            "key": "7"
+        },
+        {
+            "text": "LEVEL 8",
+            "key": "8"
+        },
+        {
+            "text": "LEVEL 9",
+            "key": "9"
+        },
+        {
+            "text": "LEVEL 10",
+            "key": "10"
+        }
+    ],
+    "Urgency": [
+        "High",
+        "Medium",
+        "Low"
+    ],
+    "Communicationtype": [
+        "Email Announcement",
+        "Invitation"
+    ],
+    "PublishingDate": [
+        "Critical: 24-48 Hours",
+        "Mid: 3-5 Business days",
+        "Normal: 1-2 Business weeks"
+    ],
+    "Reportingdepartment": [
+        "Sales & Distribution",
+        "Operations & Manufacturing",
+        "Agriculture",
+        "Digital & Technology",
+        "Corporate Communication & Marketing",
+        "Supply Chain & Procurement",
+        "Finance",
+        "GRC & Legal",
+        "Human Resources",
+        "Internal Audit",
+        "Protein",
+        "Strategy"
+    ]
+}

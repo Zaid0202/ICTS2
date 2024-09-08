@@ -1,0 +1,51 @@
+{
+  "navigation": [
+    {
+      "title": "Home",
+      "icon": "sap-icon://home",
+      "key": "RouteHome"
+    },
+    {
+      "title": "My Tasks",
+      "icon": "sap-icon://activity-assigned-to-goal",
+      "key": "RouteMyTasks"
+    },
+    {
+      "title": "New Request",
+      "icon": "sap-icon://add",
+      "key": "RouteNewRequest"
+    },
+    {
+      "title": "My Request Status",
+      "icon": "sap-icon://e-care",
+      "key": "RouteMyRequestStatus"
+    },
+    {
+      "title": "Processed By Me",
+      "icon": "sap-icon://e-care",
+      "key": "RouteProcessedByMe"
+    },
+    {
+      "title": "Dashboard",
+      "icon": "sap-icon://activity-assigned-to-goal",
+      "key": "RouteDashboard"
+    },
+    {
+      "title": "Settings",
+      "icon": "sap-icon://settings",
+      "key": "RouteSettings",
+      "items": [
+        {
+          "title": "SettingsAssignees",
+          "icon": "sap-icon://e-care",
+          "key": "RouteSettingsAssignees"
+        },
+        {
+          "title": "SettingsApprovals",
+          "icon": "sap-icon://e-care",
+          "key": "RouteSettingsApprovals"
+        }
+      ]
+    }
+  ]
+}

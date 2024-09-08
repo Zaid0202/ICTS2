@@ -1,0 +1,8 @@
+<mvc:View controllerName="internal.controller.Dashboard"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+    <Page id="page_id_Dashboard" title="Dashboard">
+        <content >
+        </content>
+    </Page>
+</mvc:View>
