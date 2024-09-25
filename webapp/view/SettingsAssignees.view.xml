@@ -4,46 +4,28 @@
     displayBlock="true"
     xmlns="sap.m"
     xmlns:l="sap.ui.layout"
-    xmlns:f="sap.ui.layout.form"
+    xmlns:form="sap.ui.layout.form"
     xmlns:c="sap.ui.core"
     xmlns:table="sap.ui.table"
 >
     <Page
         id="page_id_SettingsAssignees"
-        title="SettingsAssignees"
+        title="Settings Assignees"
     >
         <content>
             <VBox class="sapUiSmallMargin">
-                <f:Form
+                <form:Form
                     editable="true"
                     id="mainFormIdSettingsAssignees"
                 >
-                    <f:toolbar>
+                    <form:toolbar>
                         <Toolbar>
                             <Title text="Settings Assignees" />
                             <ToolbarSpacer />
-                            <Button
-                                text="Submite"
-                                type="Emphasized"
-                                visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
-                                press="onMainSubmit"
-                            />
-                            <Button
-                                text="Update"
-                                type="Emphasized"
-                                visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
-                                press="onMainSubmit"
-                            />
-                            <Button
-                                text="Reset"
-                                type="Emphasized"
-                                visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
-                                press="onCleare"
-                            />
                         </Toolbar>
-                    </f:toolbar>
-                    <f:layout>
-                        <f:ResponsiveGridLayout
+                    </form:toolbar>
+                    <form:layout>
+                        <form:ResponsiveGridLayout
                             labelSpanXL="3"
                             labelSpanL="3"
                             labelSpanM="3"
@@ -58,27 +40,31 @@
                             columnsM="1"
                             singleContainerFullSize="false"
                         />
-                    </f:layout>
-                    <f:formContainers>
-                        <f:FormContainer>
-                            <f:formElements>
-                                <f:FormElement label="Employee Id">
-                                    <f:fields>
-                                        <Input
-                                            value="{mainFormModel>/EmployeeId}"
-                                            liveChange="onChangeInputUserId"
-                                            maxLength="5"
-                                            valueState="{mainFormErrModel>/EmployeeId/valueState}"
-                                            valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
-                                            placeholder="Employee Id"
-                                            type="Text"
-                                        >
-                                            <layoutData>
-                                                <l:GridData
-                                                    span="XL1 L2 M2 S12"
-                                                />
-                                            </layoutData>
-                                        </Input>
+                    </form:layout>
+                    <form:formContainers>
+                        <form:FormContainer>
+                            <form:formElements>
+                                <form:FormElement label="Employee Id">
+                                    <form:fields>
+                                        <VBox>
+                                            <Input
+                                                value="{mainFormModel>/EmployeeId}"
+                                                liveChange="onChangeInputUserId"
+                                                submit="onSubmitInputUserId"
+                                                maxLength="5"
+                                                valueState="{mainFormErrModel>/EmployeeId/valueState}"
+                                                valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
+                                                placeholder="Employee Id"
+                                                type="Text"
+                                                tooltip="Press Enter after input"
+                                            >
+                                                <layoutData>
+                                                    <l:GridData
+                                                        span="XL1 L2 M2 S12"
+                                                    />
+                                                </layoutData>
+                                            </Input>
+                                        </VBox>
                                         <Input
                                             id="inputEmployeeNameId"
                                             value="{mainFormModel>/EmployeeName}"
@@ -93,12 +79,29 @@
                                                 />
                                             </layoutData>
                                         </Input>
-                                    </f:fields>
-                                </f:FormElement>
-                            </f:formElements>
-                        </f:FormContainer>
-                    </f:formContainers>
-                </f:Form>
+                                    </form:fields>
+                                </form:FormElement>
+
+                                <!-- Add a VBox for spacing -->
+                                <!-- Use an empty label to create spacing -->
+
+                                <form:FormElement label="">
+                                </form:FormElement>
+
+                                <form:FormElement label="">
+                                    <form:fields>
+                                        <Button
+                                            text="Submit"
+                                            type="Emphasized"
+                                            visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
+                                            press="onMainSubmit"
+                                        />
+                                    </form:fields>
+                                </form:FormElement>
+                            </form:formElements>
+                        </form:FormContainer>
+                    </form:formContainers>
+                </form:Form>
             </VBox>
 
             <VBox class="sapUiSmallMargin">
@@ -138,37 +141,37 @@
                         </OverflowToolbar>
                     </table:extension>
                     <table:columns>
-                        <table:Column width="11rem">
+                        <table:Column width="10rem">
                             <Label text="Id" />
                             <table:template>
                                 <Text
-                                    text="{mainTableModel>Id/}"
+                                    text="{ path: 'mainTableModel>Id', formatter: '.formatIdToCustomPattern' }"
                                     wrapping="false"
                                 />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="11rem">
+                        <table:Column width="30%">
                             <Label text="Employee Id" />
                             <table:template>
                                 <Text
-                                    text="{mainTableModel>EmployeeId/}"
+                                    text="{mainTableModel>EmployeeId}"
                                     wrapping="false"
                                 />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="11rem">
+                        <table:Column width="15rem">
                             <Label text="Employee Name" />
                             <table:template>
                                 <Text
-                                    text="{mainTableModel>EmployeeName/}"
+                                    text="{mainTableModel>EmployeeName}"
                                     wrapping="false"
                                 />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="4rem">
+                        <table:Column width="3rem" hAlign="Center">
                             <Label text="" />
                             <table:template>
                                 <Button

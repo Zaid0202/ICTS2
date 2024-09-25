@@ -1,1 +1,8 @@
 /* Enter your custom styles here */
+
+
+/* For Note Text  */
+.noteText {
+    opacity: 0.6;  /* Reduce opacity to make the text less prominent */
+    color: #888;   /* Light grey color */
+}

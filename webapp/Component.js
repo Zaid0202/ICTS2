@@ -80,24 +80,26 @@ sap.ui.define([
 
                 // Fetch user data
                 const userInfo = await this.userService.getUserInfo();
+                console.log("userInfo: in COmponmnnet: ", userInfo)
                 // const userInfoWithRequestTamp = await this.userService.getUserInfoWithRequestTamp();
 
                 // Create a global JSON model
-                const userModel = new sap.ui.model.json.JSONModel({
-                    userD: userInfo,
-                    // userInfoWithRequestTamp: userInfoWithRequestTamp
-                });
 
+                let x2 = {
+                    userD: await userInfo,
+                    role: 'Super User'
+                    // userInfoWithRequestTamp: userInfoWithRequestTamp
+                }
                 // Set the model globally
-                this.setModel(userModel, "globalUserModel");
+                this.setModel(new sap.ui.model.json.JSONModel(x2), "userModel");
 
 
             },
 
 
-            getUserD_f: function () { return this.getModel("globalUserModel").getProperty("/userD") },
+            getUserD_f: function () { return this.getModel("userModel").getProperty("/userD") },
 
-            // getUserInfoWithRequestTamp_f: function () { return this.getModel("globalUserModel").getProperty("/userInfoWithRequestTamp") },
+            // getUserInfoWithRequestTamp_f: function () { return this.getModel("userModel").getProperty("/userInfoWithRequestTamp") },
 
             // getHelper: function () {
             //     var oFCL = this.getOwnerComponent().byId("fcl"),
@@ -110,6 +112,20 @@ sap.ui.define([
 
             //     return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);
             // }
+
+            filterNavigationByRole: function (navigationItems, userRole) {
+                return navigationItems.filter(item => {
+                    // Check if the current role is allowed for this item
+                    if (item.roles && item.roles.includes(userRole)) {
+                        // If there are subitems (e.g., for Settings), filter them too
+                        if (item.items) {
+                            item.items = this.filterNavigationByRole(item.items, userRole);
+                        }
+                        return true;
+                    }
+                    return false;
+                });
+            },
         });
     }
 );

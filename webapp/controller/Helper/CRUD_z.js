@@ -7,11 +7,13 @@ sap.ui.define(
 
         return Controller.extend("internal.controller.Helper.CRUD_z", {
             // Constructor function to store the reference of the current controller
-            constructor: function (currentController) {
+            constructor: function (currentController, oModelName = "") {
                 Controller.apply(this, currentController);
 
                 this._currentController = currentController;
-                this.oModel = this._currentController.getOwnerComponent().getModel();
+
+
+                this.oModel = oModelName == "" ? this._currentController.getOwnerComponent().getModel() : this._currentController.getOwnerComponent().getModel(oModelName);
             },
             // =========Start OF CRUD.=========
             /**

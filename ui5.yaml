@@ -25,6 +25,11 @@ server:
             client: '100'
             destination: DS4_100
             authenticationType: BasicAuthentication
+          - path: /sap/opu/odata/SAP/ZEMAIL_NOTIFICATION_SRV/
+            url: http://vhnadds4ap01.hec.nadec.com.sa:44300/
+            client: '100'
+            destination: DS4_100
+            authenticationType: BasicAuthentication
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:

@@ -36,6 +36,7 @@
                             icon="sap-icon://learning-assistant"
                         />
                     </ff:additionalContent>
+
                     <ff:profile>
                         <Avatar
                             id='Avatar_id'

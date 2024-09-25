@@ -1,8 +1,238 @@
-<mvc:View controllerName="internal.controller.Dashboard"
-    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m">
-    <Page id="page_id_Dashboard" title="Dashboard">
-        <content >
-        </content>
-    </Page>
+<mvc:View
+    controllerName="internal.controller.Dashboard"
+    xmlns="sap.suite.ui.commons"
+    xmlns:m="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:layout="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:l="sap.ui.layout"
+>
+    <m:ScrollContainer
+        width="100%"
+        height="100%"
+        vertical="true"
+        horizontal="true"
+        class="sapUiContentPadding"
+    >
+        <m:VBox
+            fitContainer="true"
+            class="sapUiSmallMargin sapUiShadow sapUiContentPadding sapUiRoundedBorder sapUiPageBackground"
+        >
+            <ChartContainer
+                showFullScreen="true"
+                showPersonalization="false"
+                autoAdjustHeight="false"
+                title="Report"
+                            class="sapUiShadow  sapUiRoundedBorder sapUiPageBackground"
+
+            >
+                <content>
+                    <ChartContainerContent
+                        icon="sap-icon://line-chart"
+                        title="Line Chart"
+                    >
+                        <content>
+                            <viz:VizFrame
+                                id="idColumnChart"
+                                height="400px"
+                                width="100%"
+                                vizType="column"
+                            >
+                                <viz:dataset>
+                                    <viz.data:FlattenedDataset
+                                        data="{mainTableModel2>/ServicesData}"
+                                    >
+                                        <viz.data:dimensions>
+                                            <viz.data:DimensionDefinition
+                                                name="Month"
+                                                value="{Month}"
+                                            />
+                                        </viz.data:dimensions>
+                                        <viz.data:measures>
+                                            <viz.data:MeasureDefinition
+                                                name="InternalAnnouncement"
+                                                value="{InternalAnnouncement}"
+                                            />
+                                            <viz.data:MeasureDefinition
+                                                name="GraphicDesign"
+                                                value="{GraphicDesign}"
+                                            />
+                                            <viz.data:MeasureDefinition
+                                                name="NadecHomePost"
+                                                value="{NadecHomePost}"
+                                            />
+                                            <viz.data:MeasureDefinition
+                                                name="RevisionRequest"
+                                                value="{RevisionRequest}"
+                                            />
+                                        </viz.data:measures>
+                                    </viz.data:FlattenedDataset>
+                                </viz:dataset>
+                                <viz:feeds>
+                                    <viz.feeds:FeedItem
+                                        uid="categoryAxis"
+                                        type="Dimension"
+                                        values="Month"
+                                    />
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="InternalAnnouncement"
+                                    />
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="GraphicDesign"
+                                    />
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="NadecHomePost"
+                                    />
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="RevisionRequest"
+                                    />
+                                </viz:feeds>
+                            </viz:VizFrame>
+                        </content>
+                    </ChartContainerContent>
+
+                    <ChartContainerContent
+                        icon="sap-icon://table-view"
+                        title="Table"
+                    >
+                        <content>
+                            <m:Table id="idTable" />
+                        </content>
+                    </ChartContainerContent>
+                </content>
+
+                <dimensionSelectors>
+                    <m:Label text="Year" />
+
+                    <m:Select
+                        items="{yearsListModel>/}"
+                        change="onChangeDateServicesData"
+                        selectedKey="{yearsListModel>/currentYear}"
+                    >
+                        <core:Item
+                            key="{yearsListModel>}"
+                            text="{yearsListModel>}"
+                        />
+                    </m:Select>
+                </dimensionSelectors>
+            </ChartContainer>
+        </m:VBox>
+
+        <m:VBox
+            fitContainer="true"
+            class="sapUiSmallMargin"
+        >
+            <ChartContainer
+                showFullScreen="true"
+                showPersonalization="false"
+                autoAdjustHeight="false"
+                title="Report"
+            >
+                <content>
+                    <ChartContainerContent
+                        icon="sap-icon://line-chart"
+                        title="Line Chart"
+                        id="idColumnChart2"
+                    >
+                        <content>
+                            <viz:VizFrame
+                                id="idStackedColumnChart"
+                                height="400px"
+                                width="100%"
+                                vizType="stacked_column"
+                            >
+                                <!-- Dataset: Binding data to the chart -->
+                                <viz:dataset>
+                                    <viz.data:FlattenedDataset
+                                        data="{mainTableModel2>/StatusData}"
+                                    >
+                                        <viz.data:dimensions>
+                                            <viz.data:DimensionDefinition
+                                                name="Month"
+                                                value="{Month}"
+                                            />
+                                        </viz.data:dimensions>
+                                        <viz.data:measures>
+                                            <viz.data:MeasureDefinition
+                                                name="Pending"
+                                                value="{Pending}"
+                                            />
+                                            <viz.data:MeasureDefinition
+                                                name="Closed"
+                                                value="{Closed}"
+                                            />
+                                            <viz.data:MeasureDefinition
+                                                name="Rejected"
+                                                value="{Rejected}"
+                                            />
+                                        </viz.data:measures>
+                                    </viz.data:FlattenedDataset>
+                                </viz:dataset>
+
+                                <!-- Feeds: Linking dimensions and measures to the chart -->
+                                <viz:feeds>
+                                    <viz.feeds:FeedItem
+                                        uid="categoryAxis"
+                                        type="Dimension"
+                                        values="Month"
+                                    />
+
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="Pending"
+                                    />
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="Closed"
+                                    />
+                                    <viz.feeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="Rejected"
+                                    />
+                                </viz:feeds>
+                            </viz:VizFrame>
+                        </content>
+                    </ChartContainerContent>
+
+                    <ChartContainerContent
+                        icon="sap-icon://table-view"
+                        title="Table"
+                    >
+                        <content>
+                            <m:Table />
+                        </content>
+                    </ChartContainerContent>
+                </content>
+
+                <dimensionSelectors>
+                    <m:Label text="Year" />
+
+                    <m:Select
+                        items="{yearsListModel>/}"
+                        change="onChangeDateStatusData"
+                        selectedKey="{yearsListModel>/currentYear}"
+                    >
+                        <core:Item
+                            key="{yearsListModel>}"
+                            text="{yearsListModel>}"
+                        />
+                    </m:Select>
+                </dimensionSelectors>
+            </ChartContainer>
+        </m:VBox>
+    </m:ScrollContainer>
 </mvc:View>

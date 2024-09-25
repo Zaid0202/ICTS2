@@ -9,15 +9,16 @@ sap.ui.define(
       onInit: async function () {
         BaseController.prototype.onInit.apply(this, []);
 
-        this.mainEndPoint = "SettingsAssigneesSet"
+        this.mainEndPoint = this.endsPoints['SettingsAssignees']
         this.pageName = 'SettingsAssignees'
 
         this.mainFormId = 'mainFormId' + this.pageName
         this.mainFromModel = 'mainFormModel'
         this.mainFormErrModel = "mainFormErrModel"
 
-        this.mainTableId = 'mainTableId' + this.pageName
         this.mainTableModel = "mainTableModel"
+        this.mainTableId = 'mainTableId' + this.pageName
+        this.UiTableFSG2.setTableId(this.mainTableId)
 
 
         this.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFromModel)
@@ -65,36 +66,16 @@ sap.ui.define(
 
       },
 
-      onChangeInputUserId: async function (ev) {
-        const input = ev.getSource();
-        const userId = input.getValue();
-        console.log(this.getView().getModel(this.mainFormErrModel))
-        if (userId.length == 5) {
-          this.getView().byId('inputEmployeeNameId').setBusy(true);
-          let userDetail = await this.getManagerId(userId);
-          this.getView().getModel(this.mainFormErrModel).setProperty('/EmployeeId', { 'valueStateText': '', 'valueState': "None" });
-
-          if (!userDetail) {
-            this.getView().getModel(this.mainFormErrModel).setProperty('/EmployeeId', { 'valueStateText': 'Not Found User Id!', 'valueState': "Error" });
-            this.getView().getModel(this.mainFromModel).setProperty('/EmployeeName', '');
-            console.log(this.getView().getModel(this.mainFormErrModel).getData())
-            this.getView().byId('inputEmployeeNameId').setBusy(false);
-            return 0;
-          }
-
-          // Set the user detail in the model
-          const division = userDetail?.division.split('(')[0].trim();
-
-          // this.getView().getModel(this.mainFromModel).setProperty('/EmployeeId', `${userDetail?.displayName}(${division})`);
-          this.getView().getModel(this.mainFromModel).setProperty('/EmployeeName', `${userDetail?.displayName}`);
-          this.getView().byId('inputEmployeeNameId').setBusy(false);
-        } else {
-          this.getView().getModel(this.mainFormErrModel).setProperty('/EmployeeId', { 'valueStateText': '', 'valueState': "None" });
-          this.getView().getModel(this.mainFromModel).setProperty('/EmployeeName', '');
-        }
-
-        // this.getView().byId('inputEmployeeNameId').setBusy(false);
+      onSubmitInputUserId: async function (ev) {
+        console.log("hh----------")
+        this.getUserByIdOnInputUser(ev, true)
       },
+
+      onChangeInputUserId: async function (ev) {
+        this.getUserByIdOnInputUser(ev)
+
+      },
+
 
       onDelete: async function (oEvent) {
         var oButton = oEvent.getSource();
@@ -136,17 +117,7 @@ sap.ui.define(
 
       },
 
-      getManagerId: async function (userId) {
-        const mModel = this.getOwnerComponent()?.getModel("SF");
-        try {
-          const userDetailurl = `${mModel.sServiceUrl}/User?$filter=userId eq '${userId}'&$format=json`;
-          const response = await fetch(userDetailurl);
-          const jobData = await response.json();
-          return jobData.d.results[0];
-        } catch (error) {
-          console.error("Failed to fetch roles Details", error);
-        }
-      },
+
       // ================================== # Helper Functions # ==================================
 
       startValidation: function (oPayload) {
@@ -170,6 +141,31 @@ sap.ui.define(
 
       setBusy: function (id, status) {
         this.getView().byId(id).setBusy(status);
+      },
+
+      // ================================== # Table FSG Functions # ==================================
+      getDataXkeysAItems: function (ev) {
+        let changeTextAItems = [{ oldtext: "Comment Z", newtext: "Comment" }]
+        return this.UiTableFSG2.getDataXkeysAItems(ev, this.mainTableId, changeTextAItems)
+      },
+      // ======
+
+      handleSortButtonPressed: function (ev) {
+        this.UiTableFSG2.handleSortButtonPressed(ev)
+      },
+
+      handleFilterButtonPressed: function (ev) {
+        this.UiTableFSG2.handleFilterButtonPressed(ev)
+      },
+
+      handleGroupButtonPressed: function (ev) {
+        this.UiTableFSG2.handleGroupButtonPressed(ev)
+
+      },
+
+      // ======
+      onSearch: function (oEvent) {
+        this.UiTableFSG2.onSearch(oEvent)
       },
 
     });

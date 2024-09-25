@@ -405,11 +405,42 @@
                                             </form:fields>
                                         </form:FormElement>
 
+                                        <form:FormElement
+                                            label="Assignees"
+                                            visible="{= ${helperModel>/isAssigneesWorkFlow} }"
+                                        >
+                                            <form:fields>
+                                                <Select
+                                                    selectedKey="{SettingsAssigneesFormModel>/SendTo}"
+                                                    items="{SettingsAssigneesTableModel>/}"
+                                                    forceSelection='false'
+                                                    valueState="{SettingsAssigneesFormErrModel>/SendTo/valueState}"
+                                                    valueStateText="{SettingsAssigneesFormErrModel>/SendTo/valueStateText}"
+                                                    editable="true"
+                                                >
+                                                    <items>
+                                                        <core:Item
+                                                            key="{SettingsAssigneesTableModel>EmployeeId}"
+                                                            text="{= ${SettingsAssigneesTableModel>EmployeeName} + ' (' + ${SettingsAssigneesTableModel>EmployeeId} + ')'}"
+                                                        />
+                                                    </items>
+                                                </Select>
+                                            </form:fields>
+                                        </form:FormElement>
+
                                         <!-- x=================x=================x -->
+                                        <!-- visible="{= ${helperModel>/isEditModeWorkFlow} ? false : (!${helperModel>/isAssigneesWorkFlow}) }" -->
 
                                         <form:FormElement
                                             label=""
-                                            visible="{= !${helperModel>/isEditModeWorkFlow} }"
+                                            visible="{
+                                                        parts: [
+                                                            {path: 'helperModel>/isEditModeWorkFlow'},
+                                                            {path: 'helperModel>/isAssigneesWorkFlow'},
+                                                            {path: 'helperModel>/isClosedWorkFlow'}
+                                                        ],
+                                                        formatter: '.formatVisibilityReturnRejectAbrov'
+                                                    }"
                                         >
                                             <form:fields>
                                                 <Button
@@ -459,6 +490,32 @@
                                                     text="Sumbit"
                                                     type="Emphasized"
                                                     press="onReSumbit"
+                                                />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label=""
+                                            visible="{= ${helperModel>/isAssigneesWorkFlow} }"
+                                        >
+                                            <form:fields>
+                                                <Button
+                                                    text="Assignees"
+                                                    type="Accept"
+                                                    press="onAssignees"
+                                                />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label=""
+                                            visible="{= ${helperModel>/isClosedWorkFlow} }"
+                                        >
+                                            <form:fields>
+                                                <Button
+                                                    text="Closed"
+                                                    type="Accept"
+                                                    press="onClosed"
                                                 />
                                             </form:fields>
                                         </form:FormElement>

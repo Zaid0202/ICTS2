@@ -23,8 +23,6 @@ sap.ui.define(
         this.mainFormErrModel = "mainFormErrModel"
         this.mainTableId = 'mainTableId'
         this.mainFormId = 'mainFormId'
-        // this.mainTableId = 'mainTableId' + this.pageName
-        // this.mainFormId = 'mainFormId' + this.pageName
 
         this.mainTableModel = 'mainTableModel'
 
@@ -60,7 +58,10 @@ sap.ui.define(
 
         this.historyData = await this.getHistoryData()
 
-        console.log("this.historyData,", this.historyData)
+        await this.setSettingsAssigneesData()
+        this.helperModelInstance.setProperty("/isAssigneesWorkFlow", false)
+        this.helperModelInstance.setProperty("/isClosedWorkFlow", false)
+
 
       },
 
@@ -83,6 +84,18 @@ sap.ui.define(
       //   }
       // },
       // ================================== # On Functions # ==================================
+
+      onClosed: async function (ev) {
+        let obj = { status: "Closed" }
+        this.onConvirme(obj)
+
+      },
+
+      onAssignees: async function (ev) {
+        let obj = { status: "Assigned" }
+        this.onConvirme(obj)
+
+      },
 
       onReSumbit: async function (ev) {
         let obj = { status: "Pending" }
@@ -172,7 +185,6 @@ sap.ui.define(
         }
 
 
-        this.setBusy(this.mainFormId, true)
 
         // ----------------
         data.MainService = MainService
@@ -182,51 +194,67 @@ sap.ui.define(
         let employeeNames = {}
 
         if (obj.status === 'Approved') {
-          let filterMainServiceName = { "name": 'MainServiceName', "value": data.MainService }
-          let dataMainServiceName = await this.crud_z.get_record(this.endsPoints['SettingsApprovals'], '', filterMainServiceName)
-          // console.log("dataMainServiceName: ", dataMainServiceName)
+          approvalNextLvlData = await this.getSelectedMainServiceLvl(data)
 
-          approvalNextLvlData = dataMainServiceName.results.filter(function (item) {
-            return item.ApprovalLevels === (data.Steps + 1);
-          });
-
-          if (approvalNextLvlData.length == 0) {
+          if ((approvalNextLvlData.length == 0) && ((data.Steps + 1) <= 2)) { // Sheck if lvl 2 is not Exist! return false
             this.setBusy(this.mainFormId, false);
             sap.m.MessageToast.show("This Main Service Dose not Have Approvel Level! (" + (data.Steps + 1) + ")");
             return false;
           }
 
-          approvalNextLvlData = approvalNextLvlData
-          console.log({ approvalNextLvlData })
-
           // Extract EmployeeIds as a comma-separated string
-          employeeIds = approvalNextLvlData.map(function (emp) {
+          employeeIds = approvalNextLvlData?.map(function (emp) {
             return emp.EmployeeId;
           }).join(", ");
 
           // Extract EmployeeNames as a comma-separated string
-          employeeNames = approvalNextLvlData.map(function (emp) {
+          employeeNames = approvalNextLvlData?.map(function (emp) {
             return emp.EmployeeName;
           }).join(", ");
 
         }
 
+        if (obj.status === 'Assigned') {
+          approvalNextLvlData = await this.getSelectedMainServiceLvl(data)
+
+          if ((approvalNextLvlData.length == 0) && ((data.Steps + 1) > 2)) { // Assigne Part
+            let AssigneesData = this.getView().getModel("SettingsAssigneesFormModel").getData();
+
+            let isErrAssingees = this.startValidationAssingees(AssigneesData)
+            if (isErrAssingees) {
+              return false
+            }
+
+            let assigneesTableModel = this.getView().getModel("SettingsAssigneesTableModel").getData()
+
+            employeeIds = AssigneesData.SendTo
+            employeeNames = assigneesTableModel.filter(elm => elm.EmployeeId == AssigneesData.SendTo)[0].EmployeeName
+          }
+        }
+
+        this.setBusy(this.mainFormId, true)
+
         // -------New Request Part---------
         const requestDataWORKFLOW = {
           status: obj.status, // This will be one of: Pending, Approved, Rejecteded, Returned, Closed
-          sendToName: obj.status === "Returned" ? data.RequesterName : obj.status === "Approved" ? employeeNames : "",
-          sendTo: obj.status === "Returned" ? data.RequesterId : obj.status === "Approved" ? employeeIds : "",
-          step: obj.status === "Approved" ? data.Steps : ''
-        };
 
+          sendToName: obj.status === "Returned" ? data.RequesterName :
+            (obj.status === "Approved" || obj.status === "Assigned") ? employeeNames : "",
+
+          sendTo: obj.status === "Returned" ? data.RequesterId :
+            (obj.status === "Approved" || obj.status === "Assigned") ? employeeIds : "",
+
+          step: data.Steps
+          // step: obj.status === "Approved" ? data.Steps : ''
+        };
 
         console.log("requestDataWORKFLOW", this.getOwnerComponent().userService.getRequesteData(requestDataWORKFLOW))
         let finallData = this.oPayload_modify({ ...data, ...this.getOwnerComponent().userService.getRequesteData(requestDataWORKFLOW) })
         console.log("finallData", finallData)
-
+        // return 1
         if (IsIIsRevisionRequestGN) { finallData = await this.uploadeFile.callUploadFiles(finallData) } //------- callUploadFiles Part--------- Call Uploade Files Function and add File Id on finallData
 
-        let res = await this.crud_z.update_record(this.mainEndPoint, finallData, finallData.Id)
+        let res = await this.crud_z.update_record(this.mainEndPoint, finallData, finallData.Id) // Call------------
         console.log("finallData -> res ", res)
 
         // -------History Part---------
@@ -238,7 +266,8 @@ sap.ui.define(
 
         this.setMode("Create") // Set Mode --> Create.
         let SendtoName = obj.status === "Returned" ? data.RequesterName : obj.status === "Approved" ? employeeNames : obj.status !== "Rejected" ? this.extractNameFromStatusDisplay(finallData.StatusDisplay) : ''
-        let CommentZ = `#${this.userInfo.displayName}(${this.userId})#\n${commentData.CommentZ}\n${commentData.PreviseComment}`
+        // let CommentZ = `#${this.userInfo.displayName}(${this.userId})#\n${commentData.CommentZ}\n${commentData.PreviseComment}`
+        let CommentZ = commentData.CommentZ
 
         let processedByMeObj = {
           "RequestId": finallData.Id,
@@ -253,7 +282,7 @@ sap.ui.define(
           historyObj.CommentZ = historyObj.CommentZ.slice(0, 200);
         }
 
-        let resProcessedByMe = await this.crud_z.post_record(this.endsPoints['ProcessedByMe'], this.oPayload_modify_parent(historyObj))
+        let resProcessedByMe = await this.crud_z.post_record(this.endsPoints['ProcessedByMe'], this.oPayload_modify_parent(historyObj))  // Call------------
 
         // -------End Part---------
 
@@ -290,6 +319,12 @@ sap.ui.define(
         this.setBusy('listContinerId', false)
       },
 
+      setSettingsAssigneesData: async function () {
+        let data = await this.crud_z.get_record(this.endsPoints['SettingsAssignees'])
+        this.getView().setModel(new sap.ui.model.json.JSONModel(data.results), 'SettingsAssigneesTableModel');
+        this.getView().setModel(new sap.ui.model.json.JSONModel({ "SendTo": '' }), 'SettingsAssigneesFormModel');
+      },
+
       // ================================== # Get Functions # ==================================
       getNextLvlApproval: async function (filter) {
         let data = await this.crud_z.get_record(this.mainEndPoint, '', filter)
@@ -313,10 +348,10 @@ sap.ui.define(
         // let filter = { "name": "Sendto", "value": this.userInfo.empId }
         // let data = await this.crud_z.get_record(this.endsPoints['NewRequest'], '', filter)
         let data = await this.crud_z.get_record(this.endsPoints['NewRequest'])
-        var filteredRecords = data.results.filter(function(record) {
+        var filteredRecords = data?.results?.filter(function (record) {
           return record.Sendto.split(', ').includes(this.userInfo.empId);
-      }.bind(this));
-      
+        }.bind(this));
+
         console.log(data.results)
         console.log(filteredRecords)
         return filteredRecords
@@ -389,6 +424,15 @@ sap.ui.define(
         }
       },
 
+      getSelectedMainServiceLvl: async function (data) {
+        let filterMainServiceName = { "name": 'MainServiceName', "value": data.MainService }
+        let dataMainServiceName = await this.crud_z.get_record(this.endsPoints['SettingsApprovals'], '', filterMainServiceName)
+
+        return dataMainServiceName.results.filter(function (item) {
+          return item.ApprovalLevels === (data.Steps + 1);
+        });
+      },
+
       // ================================== # Helper Functions # ==================================
       startValidation: function (oPayload) {
         let fieldsName = Object.keys(this.getMainObj());
@@ -455,6 +499,20 @@ sap.ui.define(
         return isErr
       },
 
+      startValidationAssingees: function (oPayload) {
+        let fieldsName = Object.keys({ SendTo: '' });
+        let requiredList = fieldsName.filter(field => field);
+
+        const rulesArrName = [
+          { arr: requiredList, name: 'required' },
+        ];
+
+        let { isErr, setvalueStateValues } = this.validation_z.startValidation(fieldsName, rulesArrName, oPayload)
+        console.log(setvalueStateValues)
+        this.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), "SettingsAssigneesFormErrModel");
+        return isErr
+      },
+
       startValidationRevisionRequest: function (oPayload) {
         let fieldsName = Object.keys(this.getObjRevisionRequest());
         let requiredList = ['MainService', "Description"];
@@ -494,16 +552,13 @@ sap.ui.define(
       },
 
       // ================================== # XXXX Functions # ==================================
-      onListItemPress: function (oEvent) {
+      onListItemPress: async function (oEvent) {
         // Ensure you get the selected list item properly
         var oListItem = oEvent.getSource(); // This retrieves the ObjectListItem that triggered the event
 
         // Safeguard in case there's no custom data or it's undefined
         if (oListItem && oListItem.getCustomData().length > 0) {
           var sToPageId = oListItem.getCustomData()[0].getValue();
-
-          console.log("Id from CustomData:", sToPageId);
-          // Additional logic with sToPageId here
         } else {
           console.warn("No CustomData found or list item is undefined.");
         }
@@ -513,35 +568,61 @@ sap.ui.define(
 
         let selectedTaskz = aTasks.find(task => task.Id === sToPageId); // The Selected -> Data!
 
+        // Set Data TO Models
         var oSelectedTask = new JSONModel(selectedTaskz);
         this.getView().setModel(oSelectedTask, this.IGNModel);
         this.getView().setModel(oSelectedTask, this.RevisionRequestModel);
 
+        // Set MainServices To Models
         this.helperModelInstance.setProperty('/MainServices', selectedTaskz.MainService)
         this.setVisbileForForm(selectedTaskz.MainService)
 
+        // Set Buttons is Visble and Title of Page
         this.helperModelInstance.setProperty('/isEditModeWorkFlow', selectedTaskz.Status === "Returned" ? true : false)
         this.helperModelInstance.setProperty('/pageTitle', "Requset Id: #" + this.removeLeadingZeros(selectedTaskz.Id))
 
+        // Set CommentZ 
         let historyDataSelected = this.historyData?.results.filter(function (item) {
           return item.RequestId === selectedTaskz.Id;
         });
-        console.log(historyDataSelected)
-        if (historyDataSelected?.length > 0) {
-          historyDataSelected = historyDataSelected[historyDataSelected.length - 1];
 
-          console.log({ historyDataSelected })
-          console.log("historyDataSelected.CommentZ.length: ", historyDataSelected.CommentZ.length)
+        let showMessageComment = "" // Foor loop to all Request history and set all Comments.
+        for (let i = historyDataSelected.length - 1; i >= 0; i--) {
+          const element = historyDataSelected[i];
+          const separator = "\n---------\n";
+          const centeredSeparator = `\n             ---------             \n`; // Add spaces to center manually
 
+          showMessageComment = showMessageComment + `${element.ProcessedBy}(${element.ProcessedId}): ${element.CommentZ}\nRequest: ${this.formatDateToCustomPattern(element.CreatedDate)}${separator}`;
         }
 
-        this.getView().getModel(this.CommentModel).setProperty('/PreviseComment', `${historyDataSelected.CommentZ}`)
+        console.log("1historyDataSelected: ", historyDataSelected)
+        console.log("showMessageComment: ", showMessageComment)
+        // if (historyDataSelected?.length > 0) {
+        //   historyDataSelected = historyDataSelected[historyDataSelected.length - 1];
+        //   console.log("historyDataSelected.CommentZ.length: ", historyDataSelected.CommentZ.length)
+
+        // }
+
+        this.getView().getModel(this.CommentModel).setProperty('/PreviseComment', `${showMessageComment}`)
         // this.getView().getModel(this.CommentModel).setProperty('/CommentZ', `\n\n${historyDataSelected.CommentZ}`)
         console.log(this.getView().getModel(this.CommentModel).getData())
 
         const oDateTimePicker = this.byId("PublishingDateID");
         if (oDateTimePicker) {
           oDateTimePicker.setValue(selectedTaskz.PublishingDate); // Example value
+        }
+
+        //Assginees Part...
+        let approvalNextLvlData = await this.getSelectedMainServiceLvl(selectedTaskz)
+        if ((approvalNextLvlData.length == 0) && ((selectedTaskz.Steps + 1) > 2) && (selectedTaskz.Status != "Assigned")) {
+          let data = this.getView().getModel("SettingsAssigneesTableModel").getData()
+          // Assginee 
+          this.helperModelInstance.setProperty("/isAssigneesWorkFlow", true)
+        }
+
+        if ((selectedTaskz.Status == "Assigned")) {
+          this.helperModelInstance.setProperty("/isClosedWorkFlow", true)
+
         }
 
         this.getSplitContObj().toDetail(this.createId("detailPage"));
@@ -718,6 +799,10 @@ sap.ui.define(
         } else {
           console.error("No Attachment ID found");
         }
+      },
+
+      formatVisibilityReturnRejectAbrov: function (isEditModeWorkFlow, isAssigneesWorkFlow, isClosedWorkFlow) {
+        return !(isEditModeWorkFlow || isAssigneesWorkFlow || isClosedWorkFlow)
       },
 
     });

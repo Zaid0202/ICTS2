@@ -1,0 +1,418 @@
+<mvc:View
+    controllerName="internal.controller.RequestStatusForm"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified"
+    xmlns:table="sap.ui.table"
+>
+    <Page
+        id="page_id_RequestStatusForm"
+        title="Request History Status"
+    >
+        <content>
+            <IconTabBar class="sapUiResponsiveContentPadding">
+                <items>
+                    <IconTabFilter
+                        key="tab1"
+                        text="Request"
+                        icon="sap-icon://form"
+                    >
+                        <form:Form
+                            id="mainFormIdRequestStatusForm"
+                            editable="true"
+                        >
+                            <form:toolbar>
+                                <Toolbar>
+                                    <Title text="The Request" />
+                                    <ToolbarSpacer />
+                                </Toolbar>
+                            </form:toolbar>
+
+                            <form:layout>
+                                <form:ResponsiveGridLayout
+                                    labelSpanXL="3"
+                                    labelSpanL="3"
+                                    labelSpanM="3"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="4"
+                                    emptySpanL="4"
+                                    emptySpanM="4"
+                                    emptySpanS="0"
+                                    columnsXL="1"
+                                    columnsL="1"
+                                    columnsM="1"
+                                    singleContainerFullSize="false"
+                                />
+                            </form:layout>
+
+                            <form:formContainers>
+                                <form:FormContainer>
+                                    <form:formElements>
+                                        <form:FormElement label="Main Services">
+                                            <form:fields>
+                                                <Select
+                                                    selectedKey="{helperModel>/MainServices}"
+                                                    items="{localData>/MainServices}"
+                                                    forceSelection='false'
+                                                    valueState="{IGNErrModel>/MainServices/valueState}"
+                                                    valueStateText="{IGNErrModel>/MainServices/valueStateText}"
+                                                    change=".onTaskNameChange"
+                                                    editable="false"
+                                                >
+                                                    <items>
+                                                        <core:Item
+                                                            key="{localData>}"
+                                                            text="{localData>}"
+                                                        />
+                                                    </items>
+                                                </Select>
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <!-- Add a VBox for spacing -->
+                                        <!-- Use an empty label to create spacing -->
+                                        <form:FormElement>
+                                            <form:fields>
+                                                <Label text="" />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Urgency"
+                                            visible="{helperModel>/IsIGN}"
+                                        >
+                                            <form:fields>
+                                                <Select
+                                                    selectedKey="{IGNModel>/Urgency}"
+                                                    items="{localData>/Urgency}"
+                                                    forceSelection='false'
+                                                    valueState="{IGNErrModel>/Urgency/valueState}"
+                                                    valueStateText="{IGNErrModel>/Urgency/valueStateText}"
+                                                    editable="false"
+                                                >
+                                                    <items>
+                                                        <core:Item
+                                                            key="{localData>}"
+                                                            text="{localData>}"
+                                                        />
+                                                    </items>
+                                                </Select>
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Communication Type"
+                                            visible="{helperModel>/IsIGN}"
+                                        >
+                                            <form:fields>
+                                                <Select
+                                                    selectedKey="{IGNModel>/CommunicationType}"
+                                                    items="{localData>/Communicationtype}"
+                                                    forceSelection='false'
+                                                    valueState="{IGNErrModel>/CommunicationType/valueState}"
+                                                    valueStateText="{IGNErrModel>/CommunicationType/valueStateText}"
+                                                    editable="false"
+                                                >
+                                                    <items>
+                                                        <core:Item
+                                                            key="{localData>}"
+                                                            text="{localData>}"
+                                                        />
+                                                    </items>
+                                                </Select>
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Publishing Date"
+                                            visible="{helperModel>/IsIGN}"
+                                        >
+                                            <form:fields>
+                                                <DatePicker
+                                                    id="PublishingDateID"
+                                                    value="{IGModel>/PublishingDate}"
+                                                    valueFormat="yyyy-MM-dd"
+                                                    valueState="{IGNErrModel>/PublishingDate/valueState}"
+                                                    valueStateText="{IGNErrModel>/PublishingDate/valueStateText}"
+                                                    editable="false"
+                                                    change="onDateTimeChange"
+                                                />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Reporting Department"
+                                            visible="{helperModel>/IsIGN}"
+                                        >
+                                            <form:fields>
+                                                <Select
+                                                    selectedKey="{IGNModel>/ReportingDepartment}"
+                                                    items="{localData>/Reportingdepartment}"
+                                                    forceSelection='false'
+                                                    valueState="{IGNErrModel>/ReportingDepartment/valueState}"
+                                                    valueStateText="{IGNErrModel>/ReportingDepartment/valueStateText}"
+                                                    editable="false"
+                                                >
+                                                    <items>
+                                                        <core:Item
+                                                            key="{localData>}"
+                                                            text="{localData>}"
+                                                        />
+                                                    </items>
+                                                </Select>
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <!-- <form:FormElement
+                                    label="Subject"
+                                    visible="{helperModel>/IsIGN}"
+                                >
+                                    <form:fields>
+                                        <Input
+                                            value="{IGNModel>/Subject}"
+                                            valueState="{IGNErrModel>/Subject/valueState}"
+                                            valueStateText="{IGNErrModel>/Subject/valueStateText}"
+                                            type="Text"
+                                        />
+                                    </form:fields>
+                                </form:FormElement> -->
+
+                                        <form:FormElement
+                                            label="Subject"
+                                            visible="{helperModel>/IsIGN}"
+                                        >
+                                            <form:fields>
+                                                <TextArea
+                                                    value="{IGNModel>/Subject}"
+                                                    rows="1"
+                                                    width="100%"
+                                                    placeholder="Enter The Subject..."
+                                                    valueState="{IGNErrModel>/Subject/valueState}"
+                                                    valueStateText="{IGNErrModel>/Subject/valueStateText}"
+                                                    editable="false"
+                                                />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Brief"
+                                            visible="{helperModel>/IsIGN}"
+                                        >
+                                            <form:fields>
+                                                <TextArea
+                                                    value="{IGNModel>/Brief}"
+                                                    rows="4"
+                                                    width="100%"
+                                                    placeholder="Enter brief description..."
+                                                    valueState="{IGNErrModel>/Brief/valueState}"
+                                                    valueStateText="{IGNErrModel>/Brief/valueStateText}"
+                                                    editable="false"
+                                                />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Design Brief and Description"
+                                            visible="{helperModel>/IsIGN}"
+                                        >
+                                            <form:fields>
+                                                <TextArea
+                                                    value="{IGNModel>/DesignBriefAndDescription}"
+                                                    rows="4"
+                                                    width="100%"
+                                                    placeholder="Enter Design Brief and Description..."
+                                                    valueState="{IGNErrModel>/DesignBriefAndDescription/valueState}"
+                                                    valueStateText="{IGNErrModel>/DesignBriefAndDescription/valueStateText}"
+                                                    editable="false"
+                                                />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <!-- x=================x=================x -->
+
+                                        <form:FormElement
+                                            label="Description"
+                                            visible="{helperModel>/IsRevisionRequest}"
+                                        >
+                                            <form:fields>
+                                                <TextArea
+                                                    value="{RevisionRequestModel>/Description}"
+                                                    rows="4"
+                                                    width="100%"
+                                                    placeholder="Enter brief description..."
+                                                    valueState="{RevisionRequestErrModel>/Description/valueState}"
+                                                    valueStateText="{RevisionRequestErrModel>/Description/valueStateText}"
+                                                    editable="false"
+                                                />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Additional Link"
+                                            visible="{helperModel>/IsRevisionRequest}"
+                                        >
+                                            <form:fields>
+                                                <TextArea
+                                                    rows="2"
+                                                    width="100%"
+                                                    placeholder="Enter additional links, separated by commas or new lines..."
+                                                    value="{RevisionRequestModel>/AdditionalLink}"
+                                                    editable="false"
+                                                />
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Attachment"
+                                            visible="{helperModel>/IsRevisionRequest}"
+                                        >
+                                            <form:fields>
+                                                <Button
+                                                    id="AttachmentButtonId"
+                                                    text="{ path: 'RevisionRequestModel>/Attachment', formatter: '.formatAttachmentText' }"
+                                                    icon="sap-icon://download"
+                                                    press=".onDownloadPress"
+                                                    type="Ghost"
+                                                >
+                                                    <customData>
+                                                        <core:CustomData
+                                                            key="Attachment"
+                                                            value="{RevisionRequestModel>/Attachment}"
+                                                            writeToDom="true"
+                                                        />
+                                                    </customData>
+                                                </Button>
+                                            </form:fields>
+                                        </form:FormElement>
+
+                                        <form:FormElement
+                                            label="Additional Attachment"
+                                            visible="{helperModel>/IsRevisionRequest}"
+                                        >
+                                            <form:fields>
+                                                <Button
+                                                    id="AttachmentButtonId2"
+                                                    text="{ path: 'RevisionRequestModel>/AdditionalAttachment', formatter: '.formatAttachmentText2' }"
+                                                    icon="sap-icon://download"
+                                                    press=".onDownloadPress"
+                                                    type="Ghost"
+                                                >
+                                                    <customData>
+                                                        <core:CustomData
+                                                            key="Attachment"
+                                                            value="{RevisionRequestModel>/AdditionalAttachment}"
+                                                            writeToDom="true"
+                                                        />
+                                                    </customData>
+                                                </Button>
+                                            </form:fields>
+                                        </form:FormElement>
+                                    </form:formElements>
+                                </form:FormContainer>
+                            </form:formContainers>
+                        </form:Form>
+                    </IconTabFilter>
+
+                    <IconTabFilter
+                        key="tab2"
+                        text="History"
+                        icon="sap-icon://customer-history"
+                    >
+                        <table:Table
+                            rows="{mainTableModel>/}"
+                            selectionMode="MultiToggle"
+                            paste="onPaste"
+                            ariaLabelledBy="title"
+                            id="mainTableIdRequestStatusForm"
+                        >
+                            <table:extension>
+                                <OverflowToolbar style="Clear">
+                                    <Title text="History" />
+                                    <ToolbarSpacer />
+                                    <Button
+                                        tooltip="Sort"
+                                        icon="sap-icon://sort"
+                                        press="handleSortButtonPressed"
+                                    />
+                                    <Button
+                                        tooltip="Filter"
+                                        icon="sap-icon://filter"
+                                        press="handleFilterButtonPressed"
+                                    />
+                                    <Button
+                                        tooltip="Group"
+                                        icon="sap-icon://group-2"
+                                        press="handleGroupButtonPressed"
+                                    />
+
+                                    <SearchField
+                                        id="searchField"
+                                        width="20%"
+                                        placeholder="search"
+                                        search="onSearch"
+                                    />
+                                </OverflowToolbar>
+                            </table:extension>
+                            <table:columns>
+                                <table:Column width="15rem">
+                                    <Label text="CreatedDate" />
+                                    <table:template>
+                                        <Text
+                                            text="{ path: 'mainTableModel>CreatedDate', formatter: '.formatDateToCustomPattern' }"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column width="15rem">
+                                    <Label text="ProcessedBy" />
+                                    <table:template>
+                                        <Text
+                                            text="{mainTableModel>ProcessedBy}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column width="15rem">
+                                    <Label text="SendtoName" />
+                                    <table:template>
+                                        <Text
+                                            text="{mainTableModel>SendtoName}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column width="15rem">
+                                    <Label text="CommentZ" />
+                                    <table:template>
+                                        <Text
+                                            text="{mainTableModel>CommentZ}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
+                                <table:Column width="10rem">
+                                    <Label text="Status" />
+                                    <table:template>
+                                        <Text
+                                            text="{mainTableModel>Status}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+                            </table:columns>
+                        </table:Table>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+    </Page>
+</mvc:View>

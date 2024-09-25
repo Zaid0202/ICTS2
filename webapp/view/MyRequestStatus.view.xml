@@ -1,8 +1,124 @@
-<mvc:View controllerName="internal.controller.MyRequestStatus"
-    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m">
-    <Page id="page_id_MyRequestStatus" title="My Request Status">
-        <content >
+<mvc:View
+    controllerName="internal.controller.MyRequestStatus"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:table="sap.ui.table"
+>
+    <Page
+        id="page_id_MyRequestStatus"
+        title="My Request Status"
+    >
+        <content>
+            <MessageStrip
+                text="Click on the request in the table to see the more details of your request!"
+                showIcon="true"
+                class="sapUiTinyMargin"
+                showCloseButton="true"
+            />
+            <table:Table
+                rows="{mainTableModel>/}"
+                selectionMode="Single"
+                selectionBehavior="RowOnly"
+                ariaLabelledBy="title"
+                id="mainTableIdMyRequestStatus"
+                rowSelectionChange="onRowSelectionChange"
+            >
+                <table:rowActionTemplate>
+                    <table:RowAction>
+                        <table:items>
+                            <table:RowActionItem
+                                type="Delete"
+                                press="onRowNavigate"
+                            />
+                        </table:items>
+                    </table:RowAction>
+                </table:rowActionTemplate>
+
+                <table:extension>
+                    <OverflowToolbar
+                        style="Clear"
+                        visible="true"
+                    >
+                        <Title text="Report" />
+                        <ToolbarSpacer />
+                        <Button
+                            tooltip="Sort"
+                            icon="sap-icon://sort"
+                            press="handleSortButtonPressed"
+                        />
+                        <Button
+                            tooltip="Filter"
+                            icon="sap-icon://filter"
+                            press="handleFilterButtonPressed"
+                        />
+                        <Button
+                            tooltip="Group"
+                            icon="sap-icon://group-2"
+                            press="handleGroupButtonPressed"
+                        />
+
+                        <SearchField
+                            id="searchFielde"
+                            width="20%"
+                            placeholder="search"
+                            search="onSearch"
+                        />
+                    </OverflowToolbar>
+                </table:extension>
+
+                <table:columns>
+                    <table:Column width="12rem">
+                        <Label text="Request id" />
+                        <table:template>
+                            <Text
+                                text="{ path: 'mainTableModel>Id', formatter: '.formatIdToCustomPattern' }"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="12rem">
+                        <Label text="Request Date" />
+                        <table:template>
+                            <Text
+                                text="{ path: 'mainTableModel>CreatedDate', formatter: '.formatDateToCustomPattern' }"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="12rem">
+                        <Label text="Service" />
+                        <table:template>
+                            <Text
+                                text="{mainTableModel>MainService}"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="12rem">
+                        <Label text="Priority" />
+                        <table:template>
+                            <Text
+                                text="{mainTableModel>Urgency}"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="12rem">
+                        <Label text="Status" />
+                        <table:template>
+                            <Text
+                                text="{mainTableModel>Status}"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+                </table:columns>
+            </table:Table>
         </content>
     </Page>
 </mvc:View>

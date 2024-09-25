@@ -4,7 +4,7 @@
     displayBlock="true"
     xmlns="sap.m"
     xmlns:l="sap.ui.layout"
-    xmlns:f="sap.ui.layout.form"
+    xmlns:form="sap.ui.layout.form"
     xmlns:c="sap.ui.core"
     xmlns:table="sap.ui.table"
 >
@@ -15,36 +15,18 @@
     >
         <content>
             <VBox class="sapUiSmallMargin">
-                <f:Form
+                <form:Form
                     editable="true"
                     id="mainFormIdSettingsApprovals"
                 >
-                    <f:toolbar>
+                    <form:toolbar>
                         <Toolbar>
                             <Title text="Settings Approvals" />
                             <ToolbarSpacer />
-                            <Button
-                                text="Submite"
-                                type="Emphasized"
-                                visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
-                                press="onMainSubmit"
-                            />
-                            <Button
-                                text="Update"
-                                type="Emphasized"
-                                visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
-                                press="onMainSubmit"
-                            />
-                            <Button
-                                text="Reset"
-                                type="Emphasized"
-                                visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
-                                press="onCleare"
-                            />
                         </Toolbar>
-                    </f:toolbar>
-                    <f:layout>
-                        <f:ResponsiveGridLayout
+                    </form:toolbar>
+                    <form:layout>
+                        <form:ResponsiveGridLayout
                             labelSpanXL="3"
                             labelSpanL="3"
                             labelSpanM="3"
@@ -59,12 +41,12 @@
                             columnsM="1"
                             singleContainerFullSize="false"
                         />
-                    </f:layout>
-                    <f:formContainers>
-                        <f:FormContainer>
-                            <f:formElements>
-                                <f:FormElement label="Main Services">
-                                    <f:fields>
+                    </form:layout>
+                    <form:formContainers>
+                        <form:FormContainer>
+                            <form:formElements>
+                                <form:FormElement label="Main Services">
+                                    <form:fields>
                                         <Select
                                             selectedKey="{mainFormModel>/MainServiceName}"
                                             items="{localData>/MainServices}"
@@ -79,10 +61,10 @@
                                                 />
                                             </items>
                                         </Select>
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="Approval Levels">
-                                    <f:fields>
+                                    </form:fields>
+                                </form:FormElement>
+                                <form:FormElement label="Approval Levels">
+                                    <form:fields>
                                         <Select
                                             selectedKey="{mainFormModel>/ApprovalLevels}"
                                             items="{localData>/Aprrovals}"
@@ -97,26 +79,31 @@
                                                 />
                                             </items>
                                         </Select>
-                                    </f:fields>
-                                </f:FormElement>
-                                
-                                <f:FormElement label="Employee Id">
-                                    <f:fields>
-                                        <Input
-                                            value="{mainFormModel>/EmployeeId}"
-                                            liveChange="onChangeInputUserId"
-                                            maxLength="5"
-                                            valueState="{mainFormErrModel>/EmployeeId/valueState}"
-                                            valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
-                                            placeholder="Employee Id"
-                                            type="Text"
-                                        >
-                                            <layoutData>
-                                                <l:GridData
-                                                    span="XL1 L1 M2 S12"
-                                                />
-                                            </layoutData>
-                                        </Input>
+                                    </form:fields>
+                                </form:FormElement>
+
+                                <form:FormElement label="Employee Id">
+                                    <form:fields>
+                                        <VBox>
+                                            <Input
+                                                value="{mainFormModel>/EmployeeId}"
+                                                liveChange="onChangeInputUserId"
+                                                submit="onSubmitInputUserId"
+                                                maxLength="5"
+                                                valueState="{mainFormErrModel>/EmployeeId/valueState}"
+                                                valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
+                                                placeholder="Employee Id"
+                                                type="Text"
+                                                tooltip="Press Enter after input"
+                                            >
+                                                <layoutData>
+                                                    <l:GridData
+                                                        span="XL1 L2 M2 S12"
+                                                    />
+                                                </layoutData>
+                                            </Input>
+                                        </VBox>
+
                                         <Input
                                             id="inputEmployeeNameId"
                                             value="{mainFormModel>/EmployeeName}"
@@ -127,17 +114,70 @@
                                         >
                                             <layoutData>
                                                 <l:GridData
-                                                    span="XL4 L4 M3 S12"
+                                                    span="XL4 L3 M3 S12"
                                                 />
                                             </layoutData>
                                         </Input>
-                                    </f:fields>
-                                </f:FormElement>
+                                    </form:fields>
+                                </form:FormElement>
 
-                            </f:formElements>
-                        </f:FormContainer>
-                    </f:formContainers>
-                </f:Form>
+                                <form:FormElement label="" />
+
+                                <form:FormElement
+                                    label=""
+                                    visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
+                                >
+                                    <form:fields>
+                                        <Button
+                                            text="Submite"
+                                            type="Emphasized"
+                                            visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
+                                            press="onMainSubmit"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL5 L5 M5 S5"
+                                                />
+                                            </layoutData>
+                                        </Button>
+                                    </form:fields>
+                                </form:FormElement>
+
+                                <form:FormElement
+                                    label=""
+                                    visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
+                                >
+                                    <form:fields>
+                                        <Button
+                                            text="Update"
+                                            type="Emphasized"
+                                            visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
+                                            press="onMainSubmit"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL3 L3 M3 S5"
+                                                />
+                                            </layoutData>
+                                        </Button>
+                                        <Button
+                                            text="Reset"
+                                            type="Ghost"
+                                            visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
+                                            press="onCleare"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL2 L2 M2 S5"
+                                                />
+                                            </layoutData>
+                                        </Button>
+                                    </form:fields>
+                                </form:FormElement>
+                            </form:formElements>
+                        </form:FormContainer>
+                    </form:formContainers>
+                </form:Form>
             </VBox>
 
             <VBox class="sapUiSmallMargin">
@@ -181,7 +221,7 @@
                             <Label text="Id" />
                             <table:template>
                                 <Text
-                                    text="{mainTableModel>Id/}"
+                                    text="{ path: 'mainTableModel>Id', formatter: '.formatIdToCustomPattern' }"
                                     wrapping="false"
                                 />
                             </table:template>
@@ -190,7 +230,7 @@
                             <Label text="Main Services" />
                             <table:template>
                                 <Text
-                                    text="{mainTableModel>MainServiceName/}"
+                                    text="{mainTableModel>MainServiceName}"
                                     wrapping="false"
                                 />
                             </table:template>
@@ -199,7 +239,7 @@
                             <Label text="Approval Levels" />
                             <table:template>
                                 <Text
-                                    text="{mainTableModel>ApprovalLevels/}"
+                                    text="{= 'Level ' + ${mainTableModel>ApprovalLevels}  }"
                                     wrapping="false"
                                 />
                             </table:template>
@@ -208,23 +248,26 @@
                             <Label text="Employee Id" />
                             <table:template>
                                 <Text
-                                    text="{mainTableModel>EmployeeId/}"
+                                    text="{mainTableModel>EmployeeId}"
                                     wrapping="false"
                                 />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="11rem">
+                        <table:Column width="30%">
                             <Label text="Employee Name" />
                             <table:template>
                                 <Text
-                                    text="{mainTableModel>EmployeeName/}"
+                                    text="{mainTableModel>EmployeeName}"
                                     wrapping="false"
                                 />
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="4rem">
+                        <table:Column
+                            width="3rem"
+                            hAlign="Center"
+                        >
                             <Label text="" />
                             <table:template>
                                 <Button
@@ -236,7 +279,10 @@
                             </table:template>
                         </table:Column>
 
-                        <table:Column width="4rem">
+                        <table:Column
+                            width="3rem"
+                            hAlign="Center"
+                        >
                             <Label text="" />
                             <table:template>
                                 <Button

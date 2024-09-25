@@ -22,30 +22,6 @@ sap.ui.define(
         this.isDarkMode = true;
         this.onToggleTheme();
 
-        // this.userService = new UserService(this);
-
-        // // Fetch user data
-        // // const userId = '10125'; // Example user ID
-        // const userId = '28141'; // Example user ID
-        // const userD = await this.userService.getUserD(userId);
-        // const userInfoWithRequestTamp = await this.userService.getUserInfoWithRequestTamp(userId);
-
-        // // Create a global JSON model
-        // const userModel = new sap.ui.model.json.JSONModel({
-        //   userD: userD,
-        //   userInfoWithRequestTamp: userInfoWithRequestTamp
-        // });
-
-        // // Set the model globally
-        // sap.ui.getCore().setModel(userModel, "globalUserModel");
-
-        // // Get the model globally
-        // this.userModel = sap.ui.getCore().getModel("globalUserModel");
-        // this.userInfo = this.userModel.getProperty("/userD");
-        // this.userInfoWithRequestTamp = this.userModel.getProperty("/userInfoWithRequestTamp");
-
-        // console.log("userD", this.userInfo)
-        // console.log("userInfoWithRequestTamp", this.userInfoWithRequestTamp)
         this.oView = this.getView();
         this.oMyAvatar = this.oView.byId("Avatar_id");
         this._oPopover = Fragment.load({
@@ -56,9 +32,66 @@ sap.ui.define(
           this.oView.addDependent(oPopover);
           this._oPopover = oPopover;
         }.bind(this));
+
+
+        //--------------------
+        var oUserModel = await this.getOwnerComponent().getModel("userModel");
+        if (!oUserModel) {
+          await this.getOwnerComponent().setUserModel()
+          oUserModel = await this.getOwnerComponent().getModel("userModel");
+        }
+        this.sUserRole = await oUserModel.getProperty("/role");
+
+        var oModelNavList = await this.getOwnerComponent().getModel("navList");
+
+
+        // If the data is already loaded in the model
+        if (oModelNavList.getData()) {
+          let navData = oModelNavList.getData();
+          let filteredNavData = this.getOwnerComponent().filterNavigationByRole(navData.navigation, this.sUserRole);
+          oModelNavList.navigation = filteredNavData
+          // oModelNavList.setData({ navigation: filteredNavData });
+          this.getView().setModel(oModelNavList, "navList");
+        }
+
+        // RouteRequestStatusForm
+        var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+        oRouter.attachRouteMatched(this._onRouteMatched, this);
+
         //--------------------
 
+      },
 
+      _onRouteMatched: async function (oEvent) { // Implamints the Rules For Routes.
+        var oModelNavList = await this.getOwnerComponent().getModel("navList");
+        let navData = oModelNavList.getData();
+
+        var oRouteName = oEvent.getParameter("name");
+
+        let navD = navData.navigation
+        console.log(navData.navigation)
+        console.log({navD})
+        console.log("navData ", navData)
+        console.log("navData.navigationAddtion ", navData)
+        navD.push(...navData.navigationAddtion);
+        console.log(navData.navigationAddtion)
+
+        // Find the object with the matching key
+        let foundItem = navD.find(item => item.key === oRouteName);
+
+        if (foundItem) {
+          // Check if the roles array contains the role to check
+          if (foundItem.roles.includes(this.sUserRole)) {
+            // console.log("Role found:", this.sUserRole, "in", foundItem);
+          } else {
+            this.getOwnerComponent().getRouter().navTo("RouteHome"); // Redirect to the home view or another default view
+            // console.log("Role not found in roles:", foundItem.roles);
+          }
+        } else {
+          sap.m.MessageToast.show("Access Denied! You don't have permission to access this view.");
+          this.getOwnerComponent().getRouter().navTo("RouteHome"); // Redirect to the home view or another default view
+          // console.log("Key not found:", oRouteName);
+        }
       },
 
       onAfterRendering: function () {
@@ -122,6 +155,7 @@ sap.ui.define(
         }
 
       },
+
       onNewItemSubmit: function (oEvent) {
         // Get the value from the Input field
         var oInput = this.byId("ChangingUserId");
@@ -133,7 +167,6 @@ sap.ui.define(
         // Optional: Log the value to confirm it was saved
         console.log("User ID saved:", sValue);
       }
-
 
     });
   }

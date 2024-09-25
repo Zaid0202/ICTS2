@@ -3,15 +3,17 @@ sap.ui.define(
   [
     "internal/controller/Helper/BaseController",
     "internal/controller/Helper/UploadeFile",
-
+    "internal/controller/Helper/EmailService",
 
   ],
-  function (BaseController, UploadeFile) {
+  function (BaseController, UploadeFile, EmailService) {
     "use strict";
 
     return BaseController.extend("internal.controller.NewRequest", {
       onInit: async function () {
         await BaseController.prototype.onInit.apply(this, []);
+
+        this.emailService = new EmailService(this)
 
         this.uploadeFile = new UploadeFile(this)
 
@@ -158,24 +160,6 @@ sap.ui.define(
         data.MainService = MainService
         data.RequestDate = new Date()
 
-        // let filterMainServiceName = { "name": 'MainServiceName', "value": data.MainService }
-        // let isMainServiceName = await this.crud_z.get_record(this.endsPoints['SettingsApprovals'], '', filterMainServiceName)
-        // // console.log("isMainServiceName: ", isMainServiceName)
-
-        // let filteredData = isMainServiceName.results.filter(function (item) {
-        //   return item.ApprovalLevels === 2;
-        // });
-
-        // if (filteredData.length == 0) {
-        //   this.setBusy(this.mainFormId, false);
-        //   sap.m.MessageToast.show("This Service Dose not Have Approvel Level!");
-        //   return false;
-        // }
-
-        // sendTo: filteredData[0]?.EmployeeId,
-
-        // console.log("filteredData: ", filteredData)
-
         // -------New Request Part---------
         const requestDataWORKFLOW = {
           RequesteData: {
@@ -186,8 +170,13 @@ sap.ui.define(
           }
         };
 
-        let finallData = this.oPayload_modify({ ...data, ...this.getOwnerComponent().userService.getUserInfoWithRequestTamp(requestDataWORKFLOW) })
+        let userInfoWithRequestTamp = await this.getOwnerComponent().userService.getUserInfoWithRequestTamp(requestDataWORKFLOW)
+        let finallData = this.oPayload_modify({ ...data, ...userInfoWithRequestTamp })
+        // console.log({ userInfoWithRequestTamp })
+        // console.log({ finallData })
+        // this.setBusy(this.mainFormId, false)
 
+        // return 1
         if (IsIIsRevisionRequestGN) { finallData = await this.uploadeFile.callUploadFiles(finallData) } //------- callUploadFiles Part--------- Call Uploade Files Function and add File Id on finallData
         let res = await this.crud_z.post_record(this.mainEndPoint, finallData)
 
@@ -207,9 +196,17 @@ sap.ui.define(
         let resProcessedByMe = await this.crud_z.post_record(this.endsPoints['ProcessedByMe'], historyObj)
         // console.log({ resProcessedByMe })
 
+        console.log({ finallData })
+        console.log({ historyObj })
+
+        // -------Mail Part---------
+        this.emailService.start(finallData, historyObj)
+
+
+
         // -------End Part---------
         this.reSetValues()
-        sap.m.MessageBox.success("Your Request Has Been Successfully Submitted", {
+        sap.m.MessageBox.success("Thank you! Your request has been successfully submitted.", {
           title: "Success",                                    // default
           onClose: null,                                       // default
           styleClass: "",                                      // default
@@ -218,8 +215,8 @@ sap.ui.define(
           initialFocus: null,                                  // default
           textDirection: sap.ui.core.TextDirection.Inherit,    // default
           dependentOn: null                                    // default
-      });
-      
+        });
+
         this.setBusy(this.mainFormId, false)
       },
 
@@ -234,7 +231,6 @@ sap.ui.define(
         this.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues2), this.RevisionRequestErrModel);
 
         this.dateTime?.setValue('')
-
       },
 
       onTaskNameChange: function (oEvent) {

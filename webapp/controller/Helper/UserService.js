@@ -96,6 +96,11 @@ sap.ui.define([
                     sendto: sendTo,
                     steps: 0
                 },
+                "Assigned": {
+                    statusDisplay: `Assigned by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    steps: 99
+                },
                 "Closed": {
                     statusDisplay: `Closed by: ${userInfo?.displayName}(${userInfo?.empId})`,
                     sendto: '',
@@ -148,7 +153,7 @@ sap.ui.define([
 
             let RequestId = Obj?.RequestId || '0000000000';
             let SendtoName = Obj?.SendtoName;
-            let CommentZ = Obj?.CommentZ || `#${ProcessedBy}(${ProcessedId})#\nNew Request.`;
+            let CommentZ = Obj?.CommentZ || `New Request.`;
             let Status = Obj?.Status;
 
 

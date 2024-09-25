@@ -1,8 +1,103 @@
-<mvc:View controllerName="internal.controller.ProcessedByMe"
-    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
-    xmlns="sap.m">
-    <Page id="page_id_ProcessedByMe" title="Processed By Me">
-        <content >
+<mvc:View
+    controllerName="internal.controller.ProcessedByMe"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified"
+    xmlns:table="sap.ui.table"
+>
+    <Page title="Processed By Me">
+        <content>
+            <table:Table
+                rows="{mainTableModel>/}"
+                selectionMode="MultiToggle"
+                paste="onPaste"
+                ariaLabelledBy="title"
+                id="mainTableIdProcessedByMe"
+            >
+                <table:extension>
+                    <OverflowToolbar style="Clear">
+                        <Title text="History" />
+                        <ToolbarSpacer />
+                        <Button
+                            tooltip="Sort"
+                            icon="sap-icon://sort"
+                            press="handleSortButtonPressed"
+                        />
+                        <Button
+                            tooltip="Filter"
+                            icon="sap-icon://filter"
+                            press="handleFilterButtonPressed"
+                        />
+                        <Button
+                            tooltip="Group"
+                            icon="sap-icon://group-2"
+                            press="handleGroupButtonPressed"
+                        />
+
+                        <SearchField
+                            id="searchField"
+                            width="20%"
+                            placeholder="search"
+                            search="onSearch"
+                        />
+                    </OverflowToolbar>
+                </table:extension>
+                <table:columns>
+                    <table:Column width="15rem">
+                        <Label text="Created Date" />
+                        <table:template>
+                            <Text
+                                text="{ path: 'mainTableModel>CreatedDate', formatter: '.formatDateToCustomPattern' }"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="15rem">
+                        <Label text="Processed By" />
+                        <table:template>
+                            <Text
+                                text="{mainTableModel>ProcessedBy}"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="15rem">
+                        <Label text="Sendto Name" />
+                        <table:template>
+                            <Text
+                                text="{mainTableModel>SendtoName}"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="15rem">
+                        <Label text="CommentZ" />
+                        <table:template>
+                            <Text
+                                text="{mainTableModel>CommentZ}"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="10rem">
+                        <Label text="Status" />
+                        <table:template>
+                            <Text
+                                text="{mainTableModel>Status}"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+                </table:columns>
+            </table:Table>
         </content>
     </Page>
 </mvc:View>

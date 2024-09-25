@@ -7,12 +7,16 @@ sap.ui.define([
         "use strict";
 
         return BaseController.extend("internal.controller.Home", {
-            onInit: function () {
-                BaseController.prototype.onInit.apply(this,[]);
+            onInit: async function () {
+                BaseController.prototype.onInit.apply(this, []);
 
-                const navList = this.getOwnerComponent().getModel("navList").getData().navigation
+                var oUserModel = await this.getOwnerComponent().getModel("userModel");
+                this.sUserRole = await oUserModel.getProperty("/role");
 
-                let data = navList
+                const navList = await this.getOwnerComponent().getModel("navList").getData().navigation
+                let filteredNavData = this.getOwnerComponent().filterNavigationByRole(navList, this.sUserRole);
+
+                let data = filteredNavData
                     .filter(el => el.title !== "Home") // Filter out elements with title "Home"
                     .map(el => {
                         return {

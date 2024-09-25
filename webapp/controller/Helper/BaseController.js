@@ -5,9 +5,10 @@ sap.ui.define(
     "internal/controller/Helper/CRUD_z",
     "internal/controller/Helper/UiTableFSG",
     "internal/controller/Helper/Validation_z",
+    "internal/controller/Helper/UiTableFSG2",
 
   ],
-  function (BaseController, JSONModel, CRUD_z, UiTableFSG, Validation_z, UserService) {
+  function (BaseController, JSONModel, CRUD_z, UiTableFSG, Validation_z, UiTableFSG2) {
     "use strict";
 
     return BaseController.extend("internal.controller.Helper.BaseController", {
@@ -17,6 +18,7 @@ sap.ui.define(
         this.endsPoints = this.getOwnerComponent().getModel("endsPoints").getData()
 
         this.uiTableFSG = new UiTableFSG(this)
+        this.UiTableFSG2 = new UiTableFSG2(this)
 
         this.crud_z = new CRUD_z(this)
         this.mainOModel = this.crud_z.oModel;
@@ -44,7 +46,7 @@ sap.ui.define(
       setMode: function (mode) {
         this.helperModelInstance.setProperty('/Mode', mode)
       },
-      
+
       getMode: function () {
         return this.helperModelInstance.getData().Mode
       },
@@ -89,10 +91,96 @@ sap.ui.define(
         // Regular expression to extract the name
         // let nameMatch = statusDisplay.match(/Forwarded to\s(.*?)\s*\(/); // Approved Rejected Returned Closed
         let nameMatch = statusDisplay.match(/(?:Forwarded to|Approved by|Rejected by|Returned by|Closed by)\s*(.*?)\s*\(/);
-        console.log({nameMatch})
+        console.log({ nameMatch })
         // Return the extracted name or null if not found
         return nameMatch ? nameMatch[1] : "Employee Name not found!";
       },
+
+      getYearsList: function (startYear) {
+        const currentYear = new Date().getFullYear();
+        let years = [];
+
+        for (let year = startYear; year <= currentYear; year++) {
+          years.push(year);
+        }
+
+        return years;
+      },
+
+
+      // Get user Info
+      getManagerId: async function (userId) {
+        userId = Number(userId)
+        const mModel = this.getOwnerComponent()?.getModel("SF");
+        try {
+          const userDetailurl = `${mModel.sServiceUrl}/User?$filter=userId eq '${userId}'&$format=json`;
+          const response = await fetch(userDetailurl);
+          const jobData = await response.json();
+          return jobData.d.results[0];
+        } catch (error) {
+          console.error("Failed to fetch roles Details", error);
+        }
+      },
+
+      getUserByIdOnInputUser: async function (ev, isSumbit = false) {
+        const input = ev.getSource();
+        const userId = input.getValue();
+
+
+        if (userId.length == 5 || isSumbit) {
+          this.getView().byId('inputEmployeeNameId').setBusy(true);
+          let userDetail = await this.getManagerId(userId);
+          this.getView().getModel(this.mainFormErrModel).setProperty('/EmployeeId', { 'valueStateText': '', 'valueState': "None" });
+
+          if (!userDetail) {
+            this.getView().getModel(this.mainFormErrModel).setProperty('/EmployeeId', { 'valueStateText': 'Not Found User Id!', 'valueState': "Error" });
+            this.getView().getModel(this.mainFromModel).setProperty('/EmployeeName', '');
+            console.log(this.getView().getModel(this.mainFormErrModel).getData())
+            this.getView().byId('inputEmployeeNameId').setBusy(false);
+            return 0;
+          }
+
+          // Set the user detail in the model
+          // const division = userDetail?.division.split('(')[0].trim();
+          // this.getView().getModel(this.mainFromModel).setProperty('/EmployeeId', `${userDetail?.displayName}(${division})`);
+
+          this.getView().getModel(this.mainFromModel).setProperty('/EmployeeName', `${userDetail?.displayName}`);
+          this.getView().byId('inputEmployeeNameId').setBusy(false);
+        } else {
+          this.getView().getModel(this.mainFormErrModel).setProperty('/EmployeeId', { 'valueStateText': '', 'valueState': "None" });
+          this.getView().getModel(this.mainFromModel).setProperty('/EmployeeName', '');
+        }
+
+        // this.getView().byId('inputEmployeeNameId').setBusy(false);
+      },
+
+
+      // FormatS 
+      formatDateToCustomPattern: function (oDate, pattern = "M-d-yyyy") {
+        if (!oDate) {
+          return ""; // Return an empty string if no date is provided
+        }
+
+        // Create a DateFormat instance with the desired pattern
+        var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+          pattern: "M-d-yyyy" // Custom pattern: month-day-year
+        });
+
+        // Format the passed date object to the specified pattern
+        return oDateFormat.format(oDate);
+      },
+
+      formatIdToCustomPattern: function (Id) {
+        if (!Id) {
+          return ""; // Return an empty string if no date is provided
+        }
+        return "#" + Number(Id)
+      },
+
+      /// 
+      camelCaseToNormal: function (camelCaseStr) {
+        return camelCaseStr.replace(/([a-z])([A-Z])/g, '$1 $2');
+      }
 
 
     });
