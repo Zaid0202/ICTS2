@@ -31,7 +31,7 @@ sap.ui.define(
         }.bind(this));
 
         if (filteredRecords[0].ProcessedId == this.userInfo.empId) {
-          console.log({ filteredRecords })
+          // console.log("ProcessedByMe -> filteredRecords: ",filteredRecords)
           return filteredRecords
         }
       },

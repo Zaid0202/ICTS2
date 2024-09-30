@@ -24,7 +24,12 @@ sap.ui.define([
             // ];
 
             // Loop through each element in listObj
+            if (this.listObjFiles.length === 0) {
+                return finallData;
+            }
+
             console.log("this.listObjFiles", this.listObjFiles)
+            
             for (let element of this.listObjFiles) {
                 console.log("element", element)
                 // Await the promise returned by onFileChangeX
@@ -126,10 +131,10 @@ sap.ui.define([
             // Construct the download URL
             const sServiceUrl = "/sap/opu/odata/SAP/ZBTP_ICTS_SRV_SRV";
             const sDownloadUrl = `${sServiceUrl}/UploadFileSet('${sFileId}')/$value`;
-    
+
             // Trigger the download
             sap.m.URLHelper.redirect(sDownloadUrl, true);
-          },
+        },
 
     });
 });

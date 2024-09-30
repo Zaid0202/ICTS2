@@ -296,7 +296,7 @@
                                         >
                                             <form:fields>
                                                 <Button
-                                                    id="AttachmentButtonId2"
+                                                    id="AttachmentButtonId23"
                                                     text="{ path: 'RevisionRequestModel>/AdditionalAttachment', formatter: '.formatAttachmentText2' }"
                                                     icon="sap-icon://download"
                                                     press=".onDownloadPress"

@@ -34,64 +34,82 @@ sap.ui.define(
         }.bind(this));
 
 
-        //--------------------
-        var oUserModel = await this.getOwnerComponent().getModel("userModel");
+        //-----------User Part---------
+        var oUserModel = this.getOwnerComponent().getModel("userModel");
         if (!oUserModel) {
           await this.getOwnerComponent().setUserModel()
-          oUserModel = await this.getOwnerComponent().getModel("userModel");
+          oUserModel = this.getOwnerComponent().getModel("userModel");
         }
-        this.sUserRole = await oUserModel.getProperty("/role");
+        this.sUserRole = oUserModel.getProperty("/role");
 
-        var oModelNavList = await this.getOwnerComponent().getModel("navList");
-
+        //-----------Nav Part---------
+        var oModelNavList = this.getOwnerComponent().getModel("navList");
+        var oModelNavListData = oModelNavList.getData();
 
         // If the data is already loaded in the model
-        if (oModelNavList.getData()) {
-          let navData = oModelNavList.getData();
-          let filteredNavData = this.getOwnerComponent().filterNavigationByRole(navData.navigation, this.sUserRole);
-          oModelNavList.navigation = filteredNavData
-          // oModelNavList.setData({ navigation: filteredNavData });
+        if (oModelNavListData) {
+          let filteredNavData = this.getOwnerComponent().filterNavigationByRole(oModelNavListData.navigation, this.sUserRole);
+          let filteredNavDataAddtion = this.getOwnerComponent().filterNavigationByRole(oModelNavListData.navigationAddtion, this.sUserRole);
+
+          oModelNavListData.navigation = filteredNavData
+          oModelNavListData.navigationAddtion = filteredNavDataAddtion
+
+          oModelNavList.setData(oModelNavListData);
           this.getView().setModel(oModelNavList, "navList");
+
         }
 
-        // RouteRequestStatusForm
+
+        //-----------Route Part---------
         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
         oRouter.attachRouteMatched(this._onRouteMatched, this);
-
         //--------------------
 
       },
 
       _onRouteMatched: async function (oEvent) { // Implamints the Rules For Routes.
-        var oModelNavList = await this.getOwnerComponent().getModel("navList");
-        let navData = oModelNavList.getData();
-
         var oRouteName = oEvent.getParameter("name");
 
-        let navD = navData.navigation
-        console.log(navData.navigation)
-        console.log({navD})
-        console.log("navData ", navData)
-        console.log("navData.navigationAddtion ", navData)
-        navD.push(...navData.navigationAddtion);
-        console.log(navData.navigationAddtion)
+        var oModelNavList = await this.getOwnerComponent().getModel("navList");
+        let oModelNavListData = oModelNavList.getData();
+
+        var allRouteNew = [...oModelNavListData.navigation, ...oModelNavListData.navigationAddtion]
+
 
         // Find the object with the matching key
-        let foundItem = navD.find(item => item.key === oRouteName);
+        let foundItem = this.findItem(allRouteNew, oRouteName)
+        console.log("foundItem", foundItem);
 
+        // Check if the roles array contains the role to check
         if (foundItem) {
-          // Check if the roles array contains the role to check
           if (foundItem.roles.includes(this.sUserRole)) {
-            // console.log("Role found:", this.sUserRole, "in", foundItem);
           } else {
             this.getOwnerComponent().getRouter().navTo("RouteHome"); // Redirect to the home view or another default view
-            // console.log("Role not found in roles:", foundItem.roles);
+            sap.m.MessageToast.show("Access Denied! You don't have permission to access this view.");
           }
         } else {
           sap.m.MessageToast.show("Access Denied! You don't have permission to access this view.");
           this.getOwnerComponent().getRouter().navTo("RouteHome"); // Redirect to the home view or another default view
-          // console.log("Key not found:", oRouteName);
         }
+      },
+
+      findItem: function (navD, oRouteName) {
+        // First, check if the key exists in the top-level array
+        let foundItem = navD.find(item => item.key === oRouteName);
+
+        // If not found at the top level, check inside the "items" array of each object, if it exists
+        if (!foundItem) {
+          navD.forEach(item => {
+            if (item.items && Array.isArray(item.items)) {
+              const subItem = item.items.find(sub => sub.key === oRouteName);
+              if (subItem) {
+                foundItem = subItem;
+              }
+            }
+          });
+        }
+
+        return foundItem;
       },
 
       onAfterRendering: function () {
@@ -147,11 +165,13 @@ sap.ui.define(
         this._oPopover.close();
       },
 
+      // -----------------For Fast Test Set Uset Id And Role-----------------------
       NewItempress: function (oEvent) {
         var oNewItem = this.byId("NewItemId");
         var sStoredUserId = localStorage.getItem("UserId");
+        var sStoredUserRole = localStorage.getItem("UserRole");
         if (oNewItem) {
-          oNewItem.setTitle(sStoredUserId); // Set your desired title
+          oNewItem.setTitle(sStoredUserId + " - " + sStoredUserRole); // Set your desired title
         }
 
       },
@@ -166,6 +186,18 @@ sap.ui.define(
 
         // Optional: Log the value to confirm it was saved
         console.log("User ID saved:", sValue);
+      },
+
+      onNewItemSubmitRole: function (oEvent) {
+        // Get the value from the Input field
+        var oInput = this.byId("ChangingUserRole");
+        var sValue = oInput.getValue();
+
+        // Store the value in local storage
+        localStorage.setItem("UserRole", sValue);
+
+        // Optional: Log the value to confirm it was saved
+        console.log("User Role saved:", sValue);
       }
 
     });

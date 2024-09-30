@@ -13,7 +13,7 @@ sap.ui.define(
                 this._currentController = currentController;
 
 
-                this.oModel = oModelName == "" ? this._currentController.getOwnerComponent().getModel() : this._currentController.getOwnerComponent().getModel(oModelName);
+                this.oModel = oModelName == "" ? this._currentController.getOwnerComponent()?.getModel() : this._currentController.getOwnerComponent()?.getModel(oModelName);
             },
             // =========Start OF CRUD.=========
             /**

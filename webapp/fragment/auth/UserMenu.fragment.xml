@@ -71,9 +71,20 @@
                 <HBox>
                     <Input
                         id="ChangingUserId"
-                        placeholder="Enter Value"
+                        placeholder="Enter User Id"
                         valueLiveUpdate="true"
                         submit="onNewItemSubmit"
+                    />
+                </HBox>
+            </CustomListItem>
+
+            <CustomListItem>
+                <HBox>
+                    <Input
+                        id="ChangingUserRole"
+                        placeholder="Enter User Role"
+                        valueLiveUpdate="true"
+                        submit="onNewItemSubmitRole"
                     />
                 </HBox>
             </CustomListItem>

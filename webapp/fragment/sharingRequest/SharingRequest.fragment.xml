@@ -1,0 +1,545 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:u="sap.ui.unified"
+>
+    <VBox class="sapUiSmallMargin">
+        <form:Form
+            id="mainFormId"
+            editable="true"
+        >
+            <form:toolbar>
+                <Toolbar>
+                    <Title text="Create New Request" />
+                    <ToolbarSpacer />
+                </Toolbar>
+            </form:toolbar>
+
+            <form:layout>
+                <form:ResponsiveGridLayout
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false"
+                />
+            </form:layout>
+
+            <form:formContainers>
+                <form:FormContainer>
+                    <form:formElements>
+                        <form:FormElement
+                            label="Main Services"
+                            visible="{helperModel>/view/MainService/visible}"
+                        >
+                            <form:fields>
+                                <Select
+                                    selectedKey="{mainFormModel>/MainService}"
+                                    items="{localData>/MainServices}"
+                                    valueState="{mainFormErrModel>/MainService/valueState}"
+                                    valueStateText="{mainFormErrModel>/MainService/valueStateText}"
+                                    change=".onTaskNameChange"
+                                    forceSelection='false'
+                                    editable="{helperModel>/view/MainService/editable}"
+                                    required="{helperModel>/view/MainService/required}"
+                                >
+                                    <items>
+                                        <core:Item
+                                            key="{localData>}"
+                                            text="{localData>}"
+                                        />
+                                    </items>
+                                </Select>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- Add a VBox for spacing -->
+                        <!-- Use an empty label to create spacing -->
+                        <form:FormElement>
+                            <form:fields>
+                                <Label text="" />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Urgency"
+                            visible="{helperModel>/view/Urgency/visible}"
+                        >
+                            <form:fields>
+                                <Select
+                                    selectedKey="{mainFormModel>/Urgency}"
+                                    items="{localData>/Urgency}"
+                                    valueState="{mainFormErrModel>/Urgency/valueState}"
+                                    valueStateText="{mainFormErrModel>/Urgency/valueStateText}"
+                                    forceSelection='false'
+                                    editable="{helperModel>/view/Urgency/editable}"
+                                    required="{helperModel>/view/Urgency/required}"
+                                >
+                                    <items>
+                                        <core:Item
+                                            key="{localData>}"
+                                            text="{localData>}"
+                                        />
+                                    </items>
+                                </Select>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Communication Type"
+                            visible="{helperModel>/view/CommunicationType/visible}"
+                        >
+                            <form:fields>
+                                <Select
+                                    selectedKey="{mainFormModel>/CommunicationType}"
+                                    items="{localData>/CommunicationType}"
+                                    valueState="{mainFormErrModel>/CommunicationType/valueState}"
+                                    valueStateText="{mainFormErrModel>/CommunicationType/valueStateText}"
+                                    forceSelection='false'
+                                    editable="{helperModel>/view/CommunicationType/editable}"
+                                    required="{helperModel>/view/CommunicationType/required}"
+                                >
+                                    <items>
+                                        <core:Item
+                                            key="{localData>}"
+                                            text="{localData>}"
+                                        />
+                                    </items>
+                                </Select>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Publishing Date"
+                            visible="{helperModel>/view/PublishingDate/visible}"
+                        >
+                            <form:fields>
+                                <DateTimePicker
+                                    id="PublishingDateID"
+                                    value="{mainFormModel>/PublishingDate}"
+                                    valueFormat="yyyy-MM-ddTHH:mm:ss"
+                                    displayFormat="yyyy-MM-dd"
+                                    valueState="{mainFormErrModel>/PublishingDate/valueState}"
+                                    valueStateText="{mainFormErrModel>/PublishingDate/valueStateText}"
+                                    editable="{helperModel>/view/PublishingDate/editable}"
+                                    required="{helperModel>/view/PublishingDate/required}"
+                                    showCurrentTimeButton="true"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- items="{localData>/ReportingDepartment}" -->
+                        <form:FormElement
+                            label="Reporting Department"
+                            visible="{helperModel>/view/ReportingDepartment/visible}"
+                        >
+                            <form:fields>
+                                <Select
+                                    items="{localData>/ReportingDepartment}"
+                                    selectedKey="{mainFormModel>/ReportingDepartment}"
+                                    forceSelection='false'
+                                    valueState="{mainFormErrModel>/ReportingDepartment/valueState}"
+                                    valueStateText="{mainFormErrModel>/ReportingDepartment/valueStateText}"
+                                    editable="{helperModel>/view/ReportingDepartment/editable}"
+                                    required="{helperModel>/view/ReportingDepartment/required}"
+                                >
+                                    <items>
+                                        <core:Item
+                                            key="{localData>}"
+                                            text="{localData>}"
+                                        />
+                                    </items>
+                                </Select>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Subject"
+                            visible="{helperModel>/view/Subject/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    value="{mainFormModel>/Subject}"
+                                    rows="1"
+                                    width="100%"
+                                    placeholder="Enter The Subject..."
+                                    valueState="{mainFormErrModel>/Subject/valueState}"
+                                    valueStateText="{mainFormErrModel>/Subject/valueStateText}"
+                                    required="{helperModel>/view/Subject/required}"
+                                    editable="{helperModel>/view/Subject/editable}"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Brief"
+                            visible="{helperModel>/view/Brief/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    value="{mainFormModel>/Brief}"
+                                    rows="4"
+                                    width="100%"
+                                    placeholder="Enter brief description..."
+                                    valueState="{mainFormErrModel>/Brief/valueState}"
+                                    valueStateText="{mainFormErrModel>/Brief/valueStateText}"
+                                    editable="{helperModel>/view/Brief/editable}"
+                                    required="{helperModel>/view/Brief/required}"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Design Brief and Description"
+                            visible="{helperModel>/view/DesignBriefAndDescription/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    value="{mainFormModel>/DesignBriefAndDescription}"
+                                    rows="4"
+                                    width="100%"
+                                    placeholder="Enter Design Brief and Description..."
+                                    valueState="{mainFormErrModel>/DesignBriefAndDescription/valueState}"
+                                    valueStateText="{mainFormErrModel>/DesignBriefAndDescription/valueStateText}"
+                                    editable="{helperModel>/view/DesignBriefAndDescription/editable}"
+                                    required="{helperModel>/view/DesignBriefAndDescription/required}"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- x=================x=================x -->
+                        <form:FormElement
+                            label="Description"
+                            visible="{helperModel>/view/Description/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    value="{mainFormModel>/Description}"
+                                    rows="4"
+                                    width="100%"
+                                    placeholder="Enter brief description..."
+                                    valueState="{mainFormErrModel>/Description/valueState}"
+                                    valueStateText="{mainFormErrModel>/Description/valueStateText}"
+                                    editable="{helperModel>/view/Description/editable}"
+                                    required="{helperModel>/view/Description/required}"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Additional Link"
+                            visible="{helperModel>/view/AdditionalLink/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    rows="2"
+                                    width="100%"
+                                    placeholder="Enter additional links, separated by commas or new lines..."
+                                    value="{mainFormModel>/AdditionalLink}"
+                                    editable="{helperModel>/view/AdditionalLink/editable}"
+                                    required="{helperModel>/view/AdditionalLink/required}"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Attachment"
+                            visible="{helperModel>/view/Attachment/visible}"
+                        >
+                            <form:fields>
+                                <u:FileUploader
+                                    uploadUrl="/sap/opu/odata/SAP/ZBTP_ICTS_SRV_SRV/UploadFileSet"
+                                    name="myFile"
+                                    sendXHR="true"
+                                    useMultipart="false"
+                                    valueState="{mainFormErrModel>/Attachment/valueState}"
+                                    valueStateText="{mainFormErrModel>/Attachment/valueStateText}"
+                                    visible="{helperModel>/view/Attachment/editable}"
+                                    value="{ path: 'mainFormModel>/Attachment', formatter: '.formatAttachmentText' }"
+                                    change="onFileChange"
+                                />
+
+                                <Button
+                                    id="AttachmentButton"
+                                    text="{ path: 'mainFormModel>/Attachment', formatter: '.formatAttachmentText' }"
+                                    icon="sap-icon://download"
+                                    press=".onDownloadPress"
+                                    type="Ghost"
+                                >
+                                    <customData>
+                                        <core:CustomData
+                                            key="Attachment"
+                                            value="{mainFormModel>/Attachment}"
+                                            writeToDom="true"
+                                        />
+                                    </customData>
+
+                                    <layoutData>
+                                        <l:GridData
+                                            span="{= ${helperModel>/view/Attachment/editable} ? 'L2 M2 S5' : 'L5 M5 S5' }"
+                                        />
+                                    </layoutData>
+                                </Button>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label="Additional Attachment"
+                            visible="{helperModel>/view/AdditionalAttachment/visible}"
+                        >
+                            <form:fields>
+                                <u:FileUploader
+                                    uploadUrl="/sap/opu/odata/SAP/ZBTP_ICTS_SRV_SRV/UploadFileSet"
+                                    name="myFile"
+                                    sendXHR="true"
+                                    useMultipart="false"
+                                    visible="{helperModel>/view/AdditionalAttachment/editable}"
+                                    value="{ path: 'mainFormModel>/AdditionalAttachment', formatter: 'formatAttachmentText2' }"
+                                    change="onFileChange2"
+                                />
+                                <Button
+                                    id="AttachmentButtonId2"
+                                    text="{ path: 'mainFormModel>/AdditionalAttachment', formatter: 'formatAttachmentText2' }"
+                                    icon="sap-icon://download"
+                                    press=".onDownloadPress"
+                                    type="Ghost"
+                                >
+                                    <customData>
+                                        <core:CustomData
+                                            key="Attachment"
+                                            value="{mainFormModel>/AdditionalAttachment}"
+                                            writeToDom="true"
+                                        />
+                                    </customData>
+                                    <layoutData>
+                                        <l:GridData
+                                            span="{= ${helperModel>/view/AdditionalAttachment/editable} ? 'L2 M2 S5' : 'L5 M5 S5' }"
+                                        />
+                                    </layoutData>
+                                </Button>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- Add a VBox for spacing -->
+                        <!-- Use an empty label to create spacing -->
+                        <form:FormElement>
+                            <form:fields>
+                                <Label text="" />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- x=================x=================x -->
+
+                        <!-- visible="{= ${helperModel>/IsIGN} || ${helperModel>/IsRevisionRequest} }" -->
+                        <form:FormElement
+                            label="Previse Comment"
+                            visible="{helperModel>/view/PreviseComment/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    value="{CommentModel>/PreviseComment}"
+                                    rows="4"
+                                    width="100%"
+                                    placeholder="Enter Description..."
+                                    valueState="{CommentErrModel>/PreviseComment/valueState}"
+                                    valueStateText="{CommentErrModel>/PreviseComment/valueStateText}"
+                                    editable="{helperModel>/view/PreviseComment/editable}"
+                                    required="{helperModel>/view/PreviseComment/required}"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{= ${helperModel>/IsIGN} || ${helperModel>/IsRevisionRequest} }" -->
+                        <form:FormElement
+                            label="Comment"
+                            visible="{helperModel>/view/CommentZ/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    value="{CommentModel>/CommentZ}"
+                                    rows="4"
+                                    width="100%"
+                                    placeholder="Enter Description..."
+                                    valueState="{CommentErrModel>/CommentZ/valueState}"
+                                    valueStateText="{CommentErrModel>/CommentZ/valueStateText}"
+                                    editable="{helperModel>/view/CommentZ/editable}"
+                                    required="{helperModel>/view/CommentZ/required}"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{= ${helperModel>/isAssigneesWorkFlow} }" -->
+                        <form:FormElement
+                            label="Assignees"
+                            visible="{helperModel>/view/Assignees/visible}"
+                        >
+                            <form:fields>
+                                <Select
+                                    selectedKey="{SettingsAssigneesFormModel>/SendTo}"
+                                    items="{SettingsAssigneesTableModel>/}"
+                                    forceSelection='false'
+                                    valueState="{SettingsAssigneesFormErrModel>/SendTo/valueState}"
+                                    valueStateText="{SettingsAssigneesFormErrModel>/SendTo/valueStateText}"
+                                    editable="{helperModel>/view/Assignees/editable}"
+                                >
+                                    <items>
+                                        <core:Item
+                                            key="{SettingsAssigneesTableModel>EmployeeId}"
+                                            text="{= ${SettingsAssigneesTableModel>EmployeeName} + ' (' + ${SettingsAssigneesTableModel>EmployeeId} + ')'}"
+                                        />
+                                    </items>
+                                </Select>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- x=================x=================x -->
+                        <!-- visible="{= ${helperModel>/isEditModeWorkFlow} ? false : (!${helperModel>/isAssigneesWorkFlow}) }" -->
+                        <!-- visible="{
+                                                        parts: [
+                                                            {path: 'helperModel>/isEditModeWorkFlow'},
+                                                            {path: 'helperModel>/isAssigneesWorkFlow'},
+                                                            {path: 'helperModel>/isClosedWorkFlow'}
+                                                        ],
+                                                        formatter: '.formatVisibilityReturnRejectAbrov'
+                                                    }" -->
+                        <form:FormElement
+                            label=""
+                            visible="{helperModel>/view/ButtonWorkFlow/visible}"
+                        >
+                            <form:fields>
+                                <Button
+                                    text="Retrun"
+                                    type="Ghost"
+                                    press="onRetrun"
+                                >
+                                    <layoutData>
+                                        <l:GridData span="L1 M1 S5" />
+                                    </layoutData>
+                                </Button>
+
+                                <Button
+                                    text="Reject"
+                                    type="Reject"
+                                    press="onRejected"
+                                >
+                                    <layoutData>
+                                        <l:GridData span="L1 M1 S5" />
+                                    </layoutData>
+                                </Button>
+
+                                <Button
+                                    text="Approval"
+                                    type="Emphasized"
+                                    press="onApproval"
+                                >
+                                    <layoutData>
+                                        <l:GridData span="L3 M3 S5" />
+                                    </layoutData>
+                                </Button>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <form:FormElement
+                            label=""
+                            visible="{helperModel>/view/ButtonSumbit/visible}"
+                        >
+                            <form:fields>
+                                <Button
+                                    text="Submit"
+                                    type="Emphasized"
+                                    press="onMainSubmit"
+                                >
+                                    <layoutData>
+                                        <l:GridData span="L5 M5 S5" />
+                                    </layoutData>
+                                </Button>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{helperModel>/isEditModeWorkFlow}" -->
+                        <form:FormElement
+                            label=""
+                            visible="{helperModel>/view/ButtonReSumbit/visible}"
+                        >
+                            <form:fields>
+                                <Button
+                                    text="Sumbit"
+                                    type="Emphasized"
+                                    press="onReSumbit"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{= ${helperModel>/isAssigneesWorkFlow} }" -->
+                        <form:FormElement
+                            label=""
+                            visible="{helperModel>/view/ButtonAssignees/visible}"
+                        >
+                            <form:fields>
+                                <Button
+                                    text="Assignees"
+                                    type="Accept"
+                                    press="onAssignees"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{= ${helperModel>/isClosedWorkFlow} }" -->
+                        <form:FormElement
+                            label=""
+                            visible="{helperModel>/view/ButtonWorkInProgress/visible}"
+                        >
+                            <form:fields>
+                                <Button
+                                    text="Work In Progress"
+                                    type="Accept"
+                                    press="onWorkInProgress"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{= ${helperModel>/isClosedWorkFlow} }" -->
+                        <form:FormElement
+                            label=""
+                            visible="{helperModel>/view/ButtonCompleted/visible}"
+                        >
+                            <form:fields>
+                                <Button
+                                    text="Completed"
+                                    type="Accept"
+                                    press="onCompleted"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{= ${helperModel>/isClosedWorkFlow} }" -->
+                        <form:FormElement
+                            label=""
+                            visible="{helperModel>/view/ButtonClosed/visible}"
+                        >
+                            <form:fields>
+                                <Button
+                                    text="Closed"
+                                    type="Accept"
+                                    press="onClosedStatus"
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                    </form:formElements>
+                </form:FormContainer>
+            </form:formContainers>
+        </form:Form>
+    </VBox>
+</core:FragmentDefinition>

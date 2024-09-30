@@ -45,11 +45,49 @@ sap.ui.define(
           return record.RequesterId == this.userInfo.empId;
         }.bind(this));
 
-        console.log(filteredRecords)
+        // console.log("MyRequestStatus-> filteredRecords: ", filteredRecords)
+        // console.log("MyRequestStatus-> this.userInfo.empId: ", this.userInfo.empId)
 
         return filteredRecords
       },
+      
+      formatAttachmentText: async function (sAttachment) {
+        if (sAttachment) {
+          this.setBusy('AttachmentButtonId', true)
+          try {
+            // Retrieve the file details based on the Attachment ID
+            let fileDetails = await this.crud_z.get_record(this.endsPoints['UploadFile'], sAttachment, {});
 
+            // Return the desired text (e.g., file name or description)
+            this.setBusy('AttachmentButtonId', false)
+            return fileDetails.FileName || "Download";
+          } catch (error) {
+            console.error("Failed to retrieve file details:", error);
+            this.setBusy('AttachmentButtonId', false)
+            return "Error";
+          }
+        }
+        return "No Attachment";
+      },
+
+      formatAttachmentText2: async function (sAttachment) {
+        if (sAttachment) {
+          this.setBusy('AttachmentButtonId2', true)
+          try {
+            // Retrieve the file details based on the Attachment ID
+            let fileDetails = await this.crud_z.get_record(this.endsPoints['UploadFile'], sAttachment, {});
+
+            // Return the desired text (e.g., file name or description)
+            this.setBusy('AttachmentButtonId2', false)
+            return fileDetails.FileName || "Download";
+          } catch (error) {
+            console.error("Failed to retrieve file details:", error);
+            this.setBusy('AttachmentButtonId', false)
+            return "Error";
+          }
+        }
+        return "No Attachment";
+      },
 
       onRowSelectionChange: function (ev) {
         // Get the selected index

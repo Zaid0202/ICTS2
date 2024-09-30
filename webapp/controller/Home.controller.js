@@ -34,7 +34,7 @@ sap.ui.define([
                     });
 
                 this.getView().setModel(new sap.ui.model.json.JSONModel(data), 'tiles')
-                console.log(data)
+                // console.log(data)
             },
 
             press: function (evt) {

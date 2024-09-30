@@ -48,7 +48,7 @@
         "Medium",
         "Low"
     ],
-    "Communicationtype": [
+    "CommunicationType": [
         "Email Announcement",
         "Invitation"
     ],
@@ -57,7 +57,7 @@
         "Mid: 3-5 Business days",
         "Normal: 1-2 Business weeks"
     ],
-    "Reportingdepartment": [
+    "ReportingDepartment": [
         "Sales & Distribution",
         "Operations & Manufacturing",
         "Agriculture",

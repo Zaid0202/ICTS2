@@ -11,14 +11,34 @@ sap.ui.define([
         },
 
         onInit: async function () {
-            this.userinfoFullObj = await this.getUserinfoFullObj()
+            await this.fetchUserInfo.call(this);
             this.userInfo = this.getUserInfo()
-            console.log("this.userinfoFullObj: ", this.userinfoFullObj)
-            console.log("this.userInfo: ", this.userInfo)
-
-
-
         },
+
+        fetchUserInfo: async function () {
+            let attempts = 0;
+            const maxAttempts = 1; // Set a maximum number of attempts to avoid infinite loops
+
+            while (attempts < maxAttempts) {
+                this.userinfoFullObj = await this.getUserinfoFullObj();
+
+                if (this.userinfoFullObj) {
+                    // console.log("this.userinfoFullObj: ", this.userinfoFullObj)
+                    // If the userinfoFullObj is found, return it
+                    return true;
+                }
+
+                attempts++;
+                console.log(`Attempt ${attempts}: User info not found, retrying...`);
+
+                // Optionally, you can wait for some time before retrying
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Wait for 1.5 second
+            }
+
+            // If the loop ends without finding the user info, handle accordingly
+            return 'User info does not exist after maximum attempts';
+        },
+
 
         getUserinfoFullObj: async function () {
             const mModel = this._currentController.getModel("SF");
@@ -39,21 +59,20 @@ sap.ui.define([
         },
 
         getUserInfo: function () {
-            let userInfoFullObj = this.userinfoFullObj
             return {
-                empId: userInfoFullObj?.userId,
-                userEmail: userInfoFullObj?.username,
-                userLocation: userInfoFullObj?.city,
-                displayName: `${userInfoFullObj?.displayName}`,
-                // displayName: `${userInfoFullObj?.displayName}(${userInfoFullObj?.userId})`,
-                position: userInfoFullObj?.title,
-                grade: userInfoFullObj?.payGrade,
-                division: userInfoFullObj?.division,
-                department: userInfoFullObj?.department,
-                city: userInfoFullObj?.city,
-                managerName: userInfoFullObj?.manager?.displayName,
-                managerId: userInfoFullObj?.manager?.userId,
-                managerEmail: userInfoFullObj?.manager?.username,
+                empId: this.userinfoFullObj?.userId || '',
+                userEmail: this.userinfoFullObj?.username || '',
+                userLocation: this.userinfoFullObj?.city || '',
+                displayName: `${this.userinfoFullObj?.displayName}` || '',
+                // displayName: `${this.userinfoFullObj?.displayName}(${this.userinfoFullObj?.userId})` || '',
+                position: this.userinfoFullObj?.title || '',
+                grade: this.userinfoFullObj?.payGrade || '',
+                division: this.userinfoFullObj?.division || '',
+                department: this.userinfoFullObj?.department || '',
+                city: this.userinfoFullObj?.city || '',
+                managerName: this.userinfoFullObj?.manager?.displayName || '',
+                managerId: this.userinfoFullObj?.manager?.userId || '',
+                managerEmail: this.userinfoFullObj?.manager?.username || '',
             }
         },
 
@@ -69,7 +88,7 @@ sap.ui.define([
             }
         },
 
-        getTaskDetails: function (status, userInfo, step, sendTo , sendToName ) {
+        getTaskDetails: function (userInfo, status, step, sendTo, sendToName) {
             let isMangeerExist = userInfo?.managerName && userInfo?.managerId ? true : false
             status = (!isMangeerExist && status === "Pending") ? "Approved" : status  // To Go next Lvl if no Line manager is Exist. 
 
@@ -81,7 +100,7 @@ sap.ui.define([
                     sendto: isMangeerExist ? userInfo.managerId : sendTo,
                     steps: 1
                 },
-                "Approved": { 
+                "Approved": {
                     statusDisplay: `Approved by: ${userInfo?.displayName}(${userInfo?.empId})`,
                     sendto: sendTo,
                     steps: step + 1
@@ -98,6 +117,16 @@ sap.ui.define([
                 },
                 "Assigned": {
                     statusDisplay: `Assigned by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    steps: step + 1
+                },
+                "WorkInProgress": {
+                    statusDisplay: `Work In Progress by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    steps: step
+                },
+                "Completed": {
+                    statusDisplay: `Completed by: ${userInfo?.displayName}(${userInfo?.empId})`,
                     sendto: sendTo,
                     steps: 99
                 },
@@ -120,8 +149,7 @@ sap.ui.define([
             const userInfo = this.userInfo || {};
 
             // Assuming getTaskDetails returns an object with "StatusDisplay", "Sendto", and "Steps"
-            const workFlow = this.getTaskDetails(status, userInfo, step, sendTo, sendToName);
-
+            const workFlow = this.getTaskDetails(userInfo, status, step, sendTo, sendToName);
             return {
                 Status: status, // This will be one of: Pending, Approved, Rejected, Returned, Closed
                 StatusDisplay: workFlow?.statusDisplay || "",
@@ -147,6 +175,8 @@ sap.ui.define([
 
         getRequestHistoryObj: function (Obj) {
             const userInfo = this.userInfo || {};
+
+            if (!userInfo) { return false }
 
             const ProcessedId = userInfo.empId || 'Unknown';
             const ProcessedBy = userInfo.displayName || 'Unknown User';
