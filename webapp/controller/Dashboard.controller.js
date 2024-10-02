@@ -219,7 +219,7 @@ sap.ui.define([
         });
       });
 
-      return oDatax
+      return oData                                                                       
     },
 
     // Function to filter data by year

@@ -2,90 +2,100 @@ sap.ui.define(
   [
     "internal/controller/Helper/BaseController",
     "sap/ui/core/UIComponent",
-    "internal/controller/Helper/UploadeFile",
+    "internal/controller/Helper/SharingRequestFunctions",
 
   ],
-  function (BaseController, UIComponent, UploadeFile) {
+  function (BaseController, UIComponent, SharingRequestFunctions) {
     "use strict";
 
     return BaseController.extend("internal.controller.RequestStatusForm", {
       onInit: async function () {
-        BaseController.prototype.onInit.apply(this, []);
-        this.uploadeFile = new UploadeFile(this)
+        await BaseController.prototype.onInit.apply(this, []);
 
+        // ------------------------------------ Call Classs ------------------------------------
+        this.sharingRequestFunctions = new SharingRequestFunctions(this)
+        let thisOfScharing = await this.sharingRequestFunctions.onInit()
+        thisOfScharing = await this.mergeWithSharing(thisOfScharing)
+        Object.assign(this, thisOfScharing);
+        Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(thisOfScharing));
 
-        this.mainEndPoint = this.endsPoints['NewRequest']
-
-        this.pageName = 'RequestStatusForm'
-        this.mainFormModel = 'mainFormModel'
-        this.mainFormErrModel = "mainFormErrModel"
-
-        this.mainFormId = 'mainFormId' + this.pageName
-
-        this.mainTableId = 'mainTableId' + this.pageName
-        this.UiTableFSG2.setTableId(this.mainTableId)
-
-
-        this.mainTableModel = 'mainTableModel'
-
-
-        this.IGNModel = 'IGNModel'
-        this.IGNErrModel = 'IGNErrModel'
-
-        this.RevisionRequestModel = 'RevisionRequestModel'
-        this.RevisionRequestErrModel = 'RevisionRequestErrModel'
-
-        this.helperModelInstance.setProperty('/IsIGN', false)
-        this.helperModelInstance.setProperty('/IsRevisionRequest', false)
         this.reSetValues()
+        this.setVisbileForFormInit()
+
+        this.mainTableId = 'mainTableIdRequestStatusForm'
 
         const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
         if (oRouter.getRoute("RouteRequestStatusForm")) {
-          oRouter.getRoute("RouteRequestStatusForm").attachPatternMatched(this._onRouteMatched, this);
+          console.log("if (oRouter.getRoute(RouteRequestStatusForm))")
+          oRouter.getRoute("RouteRequestStatusForm").attachPatternMatched(this._onRouteMatcheds2s, this);
+        } else {
+          console.log("RequestStatusForm -> else (oRouter)", oRouter)
+
         }
 
       },
 
-      _onRouteMatched: async function (ev) {
+      _onRouteMatcheds2s: async function (ev) {
         this.reSetValues()
         const oArgs = ev.getParameter("arguments");
         const sId = oArgs.Id;
 
+        this.setBusy(this.mainFormId, true)
+        this.setBusy(this.mainTableId, true)
+
         try {
-          this.setBusy(this.mainFormId, true)
-          this.setBusy(this.mainTableId, true)
-
           // mainFormData Part ------------
-          let mainFormData = await this.getMainFormData(sId)
+          let selectedTaskz = await this.getMainFormData(sId)
+          let mainTableData = await this.getMainTableData2(sId)
 
-          this.getView().setModel(new sap.ui.model.json.JSONModel(mainFormData), this.IGNModel);
-          this.getView().setModel(new sap.ui.model.json.JSONModel(mainFormData), this.RevisionRequestModel);
+          this.getView().setModel(new sap.ui.model.json.JSONModel(selectedTaskz), this.mainFormModel);
+          this.getView().setModel(new sap.ui.model.json.JSONModel(mainTableData), this.mainTableModel);
 
-          this.helperModelInstance.setProperty('/MainServices', mainFormData.MainService)
 
-          const oDatePicker = this.byId("PublishingDateID"); // Get the DatePicker by its ID
-          if (oDatePicker) {
-            // Set the date value
-            oDatePicker.setDateValue(mainFormData?.PublishingDate); // Sets the date in the DatePicker
-            this.getView().getModel(this.IGNModel).setProperty('/PublishingDate', mainFormData?.PublishingDate)
+          // const oDatePicker = this.byId("PublishingDateID"); // Get the DatePicker by its ID
+          // if (oDatePicker) {
+          //   // Set the date value
+          //   oDatePicker.setDateValue(mainFormData?.PublishingDate); // Sets the date in the DatePicker
+          //   this.getView().getModel(this.IGNModel).setProperty('/PublishingDate', mainFormData?.PublishingDate)
 
-            // mainTable Data Part ------------
-            let mainTableData = await this.getMainTableData(sId)
-            this.getView().setModel(new sap.ui.model.json.JSONModel(mainTableData), this.mainTableModel);
+          //   // mainTable Data Part ------------
 
-          } else {
-            console.error("DatePicker with ID 'PublishingDateID' not found.");
-          }
+          // } else {
+          //   console.error("DatePicker with ID 'PublishingDateID' not found.");
+          // }
 
-          this.setBusy(this.mainFormId, false)
-          this.setBusy(this.mainTableId, false)
-          this.setVisbileForForm(mainFormData.MainService)
+          this.setVisbileOnSelected(selectedTaskz.MainService)
+          console.log("Finsheing _onRouteMatched -----------------------try-----------------")
 
 
         } catch {
-
+          console.error("RequestStatusForm -> Error")
         }
+
+        this.setBusy(this.mainFormId, false)
+        this.setBusy(this.mainTableId, false)
+
         // You can now use sId in your logic
+      },
+
+      mergeWithSharing: async function (thisOfScharing) {
+        // Helper function to introduce a 2-second delay
+        const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+        // Loop until thisOfScharing is available
+        while (!thisOfScharing) {
+          thisOfScharing = await this.sharingRequestFunctions.onInit()
+
+          // Wait for 2 seconds before each iteration
+          await delay(2000);
+
+          // After delay, do the assignments (only if thisOfScharing is still undefined/null)
+          if (thisOfScharing) {
+            return thisOfScharing
+          }
+        }
+        return thisOfScharing
       },
 
       // ================================== # On Functions # ==================================
@@ -173,7 +183,7 @@ sap.ui.define(
         }
       },
 
-      getMainTableData: async function (RequestId) {
+      getMainTableData2: async function (RequestId) {
         // let filter = { "name": "Id", "value": RequestId }
         // let data = await this.crud_z.get_record(this.mainEndPoint, '', filter)
 
@@ -215,12 +225,12 @@ sap.ui.define(
         this.getView().byId(id).setBusy(status);
       },
 
-      reSetValues: function () {
-        this.getView().setModel(new sap.ui.model.json.JSONModel(this.getObjRevisionRequest()), this.RevisionRequestModel);
-        this.getView().setModel(new sap.ui.model.json.JSONModel(this.getObjIGN()), this.IGNModel);
+      // reSetValues: function () {
+      //   this.getView().setModel(new sap.ui.model.json.JSONModel(this.getObjRevisionRequest()), this.RevisionRequestModel);
+      //   this.getView().setModel(new sap.ui.model.json.JSONModel(this.getObjIGN()), this.IGNModel);
 
-        this.dateTime?.setValue('')
-      },
+      //   this.dateTime?.setValue('')
+      // },
 
       setVisbileForForm: function (sSelectedKey) {
         if (["Internal Announcement", "Graphic Design", "Nadec Home Post"].includes(sSelectedKey)) {
@@ -285,7 +295,7 @@ sap.ui.define(
           console.error("No Attachment ID found");
         }
       },
-      
+
 
       // ================================== # Table FSG Functions # ==================================
       getDataXkeysAItems: function (ev) {
@@ -312,7 +322,7 @@ sap.ui.define(
         this.UiTableFSG2.onSearch(oEvent)
       },
 
-      
+
     });
   }
 );

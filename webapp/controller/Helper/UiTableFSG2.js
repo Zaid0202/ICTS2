@@ -13,6 +13,7 @@ sap.ui.define([
             this.isDefaultGroup = false
             // this.tableId = this._currentController.mainTableId
             // Define your grouping functions
+            this._currentController._mViewSettingsDialogs ={ }
         },
 
         onInit: function () {

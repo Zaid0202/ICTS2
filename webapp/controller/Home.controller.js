@@ -8,10 +8,10 @@ sap.ui.define([
 
         return BaseController.extend("internal.controller.Home", {
             onInit: async function () {
-                BaseController.prototype.onInit.apply(this, []);
+                await BaseController.prototype.onInit.apply(this, []);
 
-                var oUserModel = await this.getOwnerComponent().getModel("userModel");
-                this.sUserRole = await oUserModel.getProperty("/role");
+                // var oUserModel = await this.getOwnerComponent().getModel("userModel");
+                // this.sUserRole = await oUserModel.getProperty("/role");
 
                 const navList = await this.getOwnerComponent().getModel("navList").getData().navigation
                 let filteredNavData = this.getOwnerComponent().filterNavigationByRole(navList, this.sUserRole);

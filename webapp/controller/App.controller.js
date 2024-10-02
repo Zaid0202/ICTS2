@@ -35,12 +35,14 @@ sap.ui.define(
 
 
         //-----------User Part---------
-        var oUserModel = this.getOwnerComponent().getModel("userModel");
-        if (!oUserModel) {
-          await this.getOwnerComponent().setUserModel()
-          oUserModel = this.getOwnerComponent().getModel("userModel");
+        var userData = await this.getOwnerComponent().getUserData();
+        if (!userData) {
+          console.log("NO Uset Data!")
         }
-        this.sUserRole = oUserModel.getProperty("/role");
+        this.userInfo = userData.userInfo
+        this.sUserRole = userData.role
+        console.log("App -> this.userInfo", this.userInfo)
+        console.log("App -> this.sUserRole", this.sUserRole)
 
         //-----------Nav Part---------
         var oModelNavList = this.getOwnerComponent().getModel("navList");

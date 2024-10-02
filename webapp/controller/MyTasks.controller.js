@@ -15,6 +15,7 @@ sap.ui.define(
 
       onInit: async function () {
         await BaseController.prototype.onInit.apply(this, []);
+
         this.isMyTask = true
         // ------------------------------------ Call Classs ------------------------------------
         this.sharingRequestFunctions = new SharingRequestFunctions(this)
@@ -27,6 +28,17 @@ sap.ui.define(
         // await this.deleteAllIn() 
 
         // ------------------------------------ Constents ------------------------------------
+        this.mainEndPoint = this.endsPoints['NewRequest']
+        this.mainFormId = 'mainFormId'
+        this.mainFormModel = 'mainFormModel'
+        this.mainFormErrModel = "mainFormErrModel"
+
+        this.mainTableId = 'mainTableId'
+        this.mainTableModel = 'mainTableModel'
+
+        this.CommentModel = 'CommentModel'
+        this.CommentErrModel = 'CommentErrModel'
+        
         this.pageName = 'MyTasks'
 
         // ------------------------------------ Initials Values ------------------------------------
@@ -188,6 +200,7 @@ sap.ui.define(
         data = await this.getRequesteData(data, requesteData) // Here Get Values Bese in Status
         console.log("data -> getRequesteData -> requesteData: ", data)
 
+        if (!data) { return false }
         // return 1
         // ---------Uploade File!-------
         if (this.objStatus.status == "Returned") { data = await this.uploadeFile.callUploadFiles(data) } //------- callUploadFiles Part--------- Call Uploade Files Function and add File Id on data
@@ -195,6 +208,7 @@ sap.ui.define(
         // ---------Post!-------
         let resData = await this.crud_z.update_record(this.mainEndPoint, data, data.Id) // Call------------
         console.log("data -> resData ", resData)
+
 
         // Set Mode --> Create.
         this.setMode("Create")

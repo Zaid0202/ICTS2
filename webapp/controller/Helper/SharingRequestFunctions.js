@@ -25,20 +25,20 @@ sap.ui.define([
             // console.log("Current controller: ", this._currentController);
         
             // Merge instance methods from `this._currentController` (MyTask instance)
-            Object.assign(this, this._currentController);
+            // Object.assign(this, this._currentController);
 
             // Merge prototype methods from _currentController into SharingRequestFunctions' prototype
-            Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(this._currentController));
-            Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(Object.getPrototypeOf(this._currentController)));
+            // Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(this._currentController));
+            // Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(Object.getPrototypeOf(this._currentController)));
 
             console.log("After merging: ", this);
 
             // ------------------------------------ Call Classs ------------------------------------
-            this.uploadeFile = new UploadeFile(this)
-            this.emailService = new EmailService(this)
+            this.uploadeFile = new UploadeFile(this._currentController)
+            this.emailService = new EmailService(this._currentController)
 
             // ------------------------------------ Constents ------------------------------------
-            this.mainEndPoint = this.endsPoints['NewRequest']
+            this.mainEndPoint = this._currentController.endsPoints['NewRequest']
             this.mainFormId = 'mainFormId'
             this.mainFormModel = 'mainFormModel'
             this.mainFormErrModel = "mainFormErrModel"
@@ -58,25 +58,26 @@ sap.ui.define([
         // ================================== # Init Functiolns XX # ==================================
         setInVlus: async function () {
             // By Default
-            this.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
 
-            this.getView().setModel(new sap.ui.model.json.JSONModel(await this.getMainTableData()), this.mainTableModel)// Set
+            let mainTableData =  await this.getMainTableData()
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(mainTableData), this.mainTableModel)// Set
 
             // XXXX
             this.historyData = await this.getHistoryData()
             await this.setSettingsAssigneesData()
 
 
-            this.getView().setModel(new sap.ui.model.json.JSONModel({ CommentZ: '', PreviseComment: '' }), this.CommentModel);
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel({ CommentZ: '', PreviseComment: '' }), this.CommentModel);
         },
 
         reSetValues: function () {
-            this.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
 
-            let setvalueStateValues = this.validation_z.reSetValuesState(Object.keys(this.getMainObj()), {})
-            this.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), this.mainFormErrModel);
+            let setvalueStateValues = this._currentController.validation_z.reSetValuesState(Object.keys(this.getMainObj()), {})
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), this.mainFormErrModel);
 
-            this.dateTime?.setValue('')
+            this._currentController.dateTime?.setValue('')
         },
 
         getMainObj: function (selec = "") {
@@ -112,16 +113,20 @@ sap.ui.define([
 
         getMainTableData: async function () {
             // let filter = { "name": "Sendto", "value": this.userInfo.empId }
-            // let data = await this.crud_z.get_record(this.endsPoints['NewRequest'], '', filter)
+            // let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['NewRequest'], '', filter)
 
-            let data = await this.crud_z.get_record(this.endsPoints['NewRequest'])
+            let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['NewRequest'])
+            console.log("SharingRequestFunctions -> getMainTableData -> data ", data)
+            console.log("SharingRequestFunctions -> getMainTableData -> this._currentController.userInfo?.empId ", this._currentController.userInfo?.empId)
             return data?.results?.filter(function (record) {
-                return record.Sendto.split(', ').includes(this.userInfo.empId);
+                console.log("SharingRequestFunctions -> getMainTableData -> record.Sendto.split(', ').map(Number)", record.Sendto.split(', ').map(Number))
+                return record.Sendto.split(', ').map(Number).includes(Number(this._currentController.userInfo?.empId));
+
             }.bind(this));
         },
 
         onMainSubmitSharing: function () {
-            let data = this.getView().getModel(this.mainFormModel).getData();
+            let data = this._currentController.getView().getModel(this.mainFormModel).getData();
 
             let formN = ["Internal Announcement", "Graphic Design", "Nadec Home Post"].includes(data.MainService) ? "f1" : ["Revision Request"].includes(data.MainService) ? "f2" : ""
 
@@ -130,7 +135,7 @@ sap.ui.define([
             if (this.startValidation(data, formN)) { return false }
 
             console.log("onMainSubmitSharing: ", { data })
-
+            data.RequestDate = new Date()
             return data
         },
 
@@ -143,14 +148,15 @@ sap.ui.define([
                 "CommentZ" : CommentZ
             }
 
-            let historyObj = this.oPayload_modify_parent(this.getOwnerComponent().userService.getRequestHistoryObj(processedByMeObj))
+            let historyObj = this._currentController.oPayload_modify_parent(this.getOwnerComponent().userService.getRequestHistoryObj(processedByMeObj))
             if (!historyObj) {return false}
+            historyObj.ProcessedId = String(historyObj.ProcessedId)
 
             // if (historyObj?.CommentZ.length > 200) {
             //     historyObj?.CommentZ = historyObj.CommentZ.slice(0, 200);
             //   }
 
-            return await this.crud_z.post_record(this.endsPoints['ProcessedByMe'], historyObj)
+            return await this._currentController.crud_z.post_record(this._currentController.endsPoints['ProcessedByMe'], historyObj)
         },
 
         getRequesteData: async function (data, requesteData = {}) {
@@ -162,30 +168,15 @@ sap.ui.define([
                     step: requesteData?.step
                 }
             };
-            let userInfoWithRequestTamp = await this.getOwnerComponent().userService.getUserInfoWithRequestTamp(requestDataWORKFLOW)
-            return this.oPayload_modify({ ...data, ...userInfoWithRequestTamp })
+            let userInfoWithRequestTamp = await this._currentController.getOwnerComponent().userService.getUserInfoWithRequestTamp(requestDataWORKFLOW)
+            return this._currentController.oPayload_modify({ ...data, ...userInfoWithRequestTamp })
         },
 
         // ================================== # Payload_modify Functiolns XX # ==================================
-        oPayload_modify_IGN: function (oPayload) {
-            oPayload = this.oPayload_modify_parent(oPayload)
-            return oPayload
-        },
-
-        oPayload_modify_RevisionRequest: function (oPayload) {
-            oPayload = this.oPayload_modify_parent(oPayload)
-            return oPayload
-        },
-
         oPayload_modify: function (oPayload) {
-            oPayload = this.oPayload_modify_parent(oPayload)
-            return oPayload
-        },
-
-        oPayload_modify: function (oPayload) {
-            oPayload = this.convertDateStringsToDateObjects(oPayload)
+            oPayload = this._currentController.oPayload_modify_parent(oPayload)
             oPayload.Steps = Number(oPayload.Steps)
-            oPayload.LastActionBy = oPayload.LastActionBy
+            oPayload.RequesterId = String(oPayload.RequesterId)
             return oPayload
         },
 
@@ -202,10 +193,10 @@ sap.ui.define([
                 viewHelper[element] = { visible: visible, editable: editable, required: required }
             });
 
-            let viewOld = this.helperModelInstance.getProperty('/view')
-            viewOld = this.deepMerge(viewOld, viewHelper)
+            let viewOld = this._currentController.helperModelInstance.getProperty('/view')
+            viewOld = this._currentController.deepMerge(viewOld, viewHelper)
 
-            this.helperModelInstance.setProperty('/view', viewOld)
+            this._currentController.helperModelInstance.setProperty('/view', viewOld)
         },
 
         setVisbileForFormInit: function () {
@@ -220,7 +211,7 @@ sap.ui.define([
             this.setVisbileForForm2(this.getAdditionObj(), false, false, false);
             this.setVisbileForForm2(Object.keys(this.getMainObj()), false, false, false);
 
-            var viewName = this.getView().getViewName();
+            var viewName = this._currentController.getView().getViewName();
             let editable = viewName == 'internal.view.NewRequest' ? true : viewName == 'internal.view.MyTasks' ? false : false
 
             if (["Internal Announcement", "Graphic Design", "Nadec Home Post"].includes(sSelectedKey)) {
@@ -235,13 +226,13 @@ sap.ui.define([
         // ================================== # Get Functions # ==================================
         getHistoryData: async function (requestId) {
             let filter = { "name": "ProcessedId", "value": requestId }
-            let data = await this.crud_z.get_record(this.endsPoints['ProcessedByMe'], '', {})
+            let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['ProcessedByMe'], '', {})
             return data
         },
 
         getSelectedMainServiceNextLvl: async function (data, isBack=false) {
             let filterMainServiceName = { "name": 'MainServiceName', "value": data.MainService }
-            let dataMainServiceName = await this.crud_z.get_record(this.endsPoints['SettingsApprovals'], '', filterMainServiceName)
+            let dataMainServiceName = await this._currentController.crud_z.get_record(this._currentController.endsPoints['SettingsApprovals'], '', filterMainServiceName)
 
             return dataMainServiceName.results.filter(function (item) {
                 let stepToCompare = isBack ? (data.Steps - 1) : (data.Steps + 1);
@@ -250,9 +241,9 @@ sap.ui.define([
         },
 
         setSettingsAssigneesData: async function () {
-            let data = await this.crud_z.get_record(this.endsPoints['SettingsAssignees'])
-            this.getView().setModel(new sap.ui.model.json.JSONModel(data?.results), 'SettingsAssigneesTableModel');
-            this.getView().setModel(new sap.ui.model.json.JSONModel({ "SendTo": '' }), 'SettingsAssigneesFormModel');
+            let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['SettingsAssignees'])
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(data?.results), 'SettingsAssigneesTableModel');
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel({ "SendTo": '' }), 'SettingsAssigneesFormModel');
         },
 
         // ================================== # Validations # ==================================
@@ -269,9 +260,9 @@ sap.ui.define([
                 { arr: requiredList, name: 'required' },
             ];
 
-            let { isErr, setvalueStateValues } = this.validation_z.startValidation(fieldsName, rulesArrName, oPayload)
+            let { isErr, setvalueStateValues } = this._currentController.validation_z.startValidation(fieldsName, rulesArrName, oPayload)
             console.log(setvalueStateValues)
-            this.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), this.mainFormErrModel);
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), this.mainFormErrModel);
             return isErr
         },
 
@@ -283,9 +274,9 @@ sap.ui.define([
                 { arr: requiredList, name: 'required' },
             ];
 
-            let { isErr, setvalueStateValues } = this.validation_z.startValidation(fieldsName, rulesArrName, oPayload)
+            let { isErr, setvalueStateValues } = this._currentController.validation_z.startValidation(fieldsName, rulesArrName, oPayload)
             console.log(setvalueStateValues)
-            this.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), this.CommentErrModel);
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), this.CommentErrModel);
             return isErr
         },
 
@@ -297,9 +288,9 @@ sap.ui.define([
                 { arr: requiredList, name: 'required' },
             ];
 
-            let { isErr, setvalueStateValues } = this.validation_z.startValidation(fieldsName, rulesArrName, oPayload)
+            let { isErr, setvalueStateValues } = this._currentController.validation_z.startValidation(fieldsName, rulesArrName, oPayload)
             console.log(setvalueStateValues)
-            this.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), "SettingsAssigneesFormErrModel");
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), "SettingsAssigneesFormErrModel");
             return isErr
         },
 

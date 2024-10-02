@@ -7,7 +7,7 @@ sap.ui.define(
 
     return BaseController.extend("internal.controller.ProcessedByMe", {
       onInit: async function () {
-        BaseController.prototype.onInit.apply(this, []);
+        await BaseController.prototype.onInit.apply(this, []);
 
         this.mainEndPoint = this.endsPoints['ProcessedByMe']
 
@@ -24,7 +24,7 @@ sap.ui.define(
       getMainTableData: async function () {
         // let filter = { "name": "Id", "value": RequestId }
         // let data = await this.crud_z.get_record(this.mainEndPoint, '', filter)
-
+        console.log("ProcessedByMe -> this.userInfo", this.userInfo)
         let data = await this.crud_z.get_record(this.mainEndPoint)
         var filteredRecords = data.results.filter(function (record) {
           return record.ProcessedId == this.userInfo.empId;

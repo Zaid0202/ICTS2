@@ -51,7 +51,7 @@ sap.ui.define(
         let data = this.onMainSubmitSharing()
         if (!data) { return false }
 
-        data.RequestDate = new Date()
+       
 
         data = { ...this.getMainObj(), ...data }
         // ------------------------------------------------------------------------------------------------
@@ -59,6 +59,7 @@ sap.ui.define(
         // -------New Request Part---------
         let requesteData = { status: "Pending" }
         data = await this.getRequesteData(data, requesteData)
+        data = this.oPayload_modify(data)
         console.log("New Request Part: ", data)
 
         this.setBusy(this.mainFormId, true)
@@ -69,6 +70,7 @@ sap.ui.define(
         // ---------Post!-------
         let resData = await this.crud_z.post_record(this.mainEndPoint, data)
         console.log("res Data Part: ", data)
+        if(!resData){return false}
 
         // -------History Part---------
         let history = await this.getHistoryDataWorkFlow(resData)
@@ -106,11 +108,6 @@ sap.ui.define(
         this.getView().getModel(this.mainFormModel).setProperty('/MainService', sSelectedKey)
       },
 
-      oPayload_modify: function (oPayload) {
-        oPayload.Steps = Number(oPayload.Steps)
-        oPayload = this.oPayload_modify_parent(oPayload)
-        return oPayload
-      },
 
       onDateTimeChange: function (ev) {
         var oDateTimePicker = ev.getSource();

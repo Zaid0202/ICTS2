@@ -9,6 +9,8 @@ sap.ui.define(
 
     return BaseController.extend("internal.controller.MyRequestStatus", {
       onInit: async function () {
+        console.log("Initializing MyRequestStatus")
+
         await BaseController.prototype.onInit.apply(this, []);
 
         this.mainEndPoint = this.endsPoints['NewRequest']
@@ -28,6 +30,7 @@ sap.ui.define(
         let tableData = await this.getMainTableData()
         this.getView().setModel(new sap.ui.model.json.JSONModel(tableData), this.mainTableModel)// Set
         this.setBusy(this.mainTableId, false)
+        console.log("Fishing MyRequestStatus")
 
       },
 
@@ -42,7 +45,7 @@ sap.ui.define(
 
         let data = await this.crud_z.get_record(this.mainEndPoint)
         var filteredRecords = data.results.filter(function (record) {
-          return record.RequesterId == this.userInfo.empId;
+          return record.RequesterId == this.userInfo?.empId;
         }.bind(this));
 
         // console.log("MyRequestStatus-> filteredRecords: ", filteredRecords)

@@ -9,8 +9,8 @@ sap.ui.define(
     var sResponsivePaddingClasses = "sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer";
 
     return BaseController.extend("internal.controller.Settings", {
-      onInit: function () {
-        BaseController.prototype.onInit.apply(this, []);
+      onInit:async function () {
+        await BaseController.prototype.onInit.apply(this, []);
 
         const navList = this.getOwnerComponent().getModel("navList").getData().navigation
 

@@ -7,7 +7,7 @@ sap.ui.define(
 
     return BaseController.extend("internal.controller.SettingsAssignees", {
       onInit: async function () {
-        BaseController.prototype.onInit.apply(this, []);
+        await BaseController.prototype.onInit.apply(this, []);
 
         this.mainEndPoint = this.endsPoints['SettingsAssignees']
         this.pageName = 'SettingsAssignees'

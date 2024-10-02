@@ -19,6 +19,7 @@ sap.ui.define(
         let ownerComponent = this.getOwnerComponent();
         
         console.log("View: ", this.getView());
+        console.log("ownerComponent: ", ownerComponent);
         if (!ownerComponent) {
           throw new Error("Owner Component not initialized");
         }
@@ -33,13 +34,16 @@ sap.ui.define(
         this.crud_z = new CRUD_z(this)
         this.mainOModel = this.crud_z.oModel;
 
-        //--------------------------------
-        // Get the model globally
-        var userModel  = this.getOwnerComponent().getModel("userModel");
-        this.userInfo = userModel.getData().userInfo;
-        this.userId = this.userInfo?.empId;
-        // console.log("this.userInfo", this.userInfo)
-        // console.log("this.userInfo.empId", this.userInfo.empId)
+        //-----------User Part---------
+        var userData = await this.getOwnerComponent().getUserData();
+        if (!userData) {
+          console.log("NO Uset Data!")
+        }
+        this.userInfo = userData.userInfo
+        this.userId = userData.empId
+        this.sUserRole = userData.role
+        console.log("BaseController -> this.userInfo", this.userInfo)
+        console.log("BaseController -> this.sUserRole", this.sUserRole)
 
         //--------------------------------
 
@@ -48,6 +52,8 @@ sap.ui.define(
         this.getView()?.setModel(new sap.ui.model.json.JSONModel({}), this.helperModel)
         this.helperModelInstance = this.getView()?.getModel(this.helperModel)
         this.setMode('Create')
+        console.log("Finsh THe Base Controller: ");
+
       },
 
       setMode: function (mode) {

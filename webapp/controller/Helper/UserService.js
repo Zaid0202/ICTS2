@@ -10,10 +10,11 @@ sap.ui.define([
             this._currentController = currentController;
         },
 
-        onInit: async function () {
-            await this.fetchUserInfo.call(this);
-            this.userInfo = this.getUserInfo()
+        onInitX: async function () {
+            // await this.fetchUserInfo.call(this);
+            return await this.getUserinfoFullObj();
         },
+
 
         fetchUserInfo: async function () {
             let attempts = 0;
@@ -39,7 +40,6 @@ sap.ui.define([
             return 'User info does not exist after maximum attempts';
         },
 
-
         getUserinfoFullObj: async function () {
             const mModel = this._currentController.getModel("SF");
             let userId = this.userId
@@ -58,22 +58,27 @@ sap.ui.define([
 
         },
 
-        getUserInfo: function () {
-            return {
-                empId: this.userinfoFullObj?.userId || '',
-                userEmail: this.userinfoFullObj?.username || '',
-                userLocation: this.userinfoFullObj?.city || '',
-                displayName: `${this.userinfoFullObj?.displayName}` || '',
-                // displayName: `${this.userinfoFullObj?.displayName}(${this.userinfoFullObj?.userId})` || '',
-                position: this.userinfoFullObj?.title || '',
-                grade: this.userinfoFullObj?.payGrade || '',
-                division: this.userinfoFullObj?.division || '',
-                department: this.userinfoFullObj?.department || '',
-                city: this.userinfoFullObj?.city || '',
-                managerName: this.userinfoFullObj?.manager?.displayName || '',
-                managerId: this.userinfoFullObj?.manager?.userId || '',
-                managerEmail: this.userinfoFullObj?.manager?.username || '',
+        getUserInfo:async function () {
+            // this.userInfo = this.getUserInfo(this.userinfoFullObj)
+            let userinfoFullObj = await this.onInitX()
+            let userInfo = {
+                empId: userinfoFullObj?.userId || Number(this.userId),
+                userEmail: userinfoFullObj?.username || "Damy Data",
+                userLocation: userinfoFullObj?.city || "Damy Data",
+                displayName: `${userinfoFullObj?.displayName}` || "Damy Data",
+                // displayName: `${userinfoFullObj?.displayName}(${userinfoFullObj?.userId})` || "Damy Data",
+                position: userinfoFullObj?.title || "Damy Data",
+                grade: userinfoFullObj?.payGrade || "Damy Data",
+                division: userinfoFullObj?.division || "Damy Data",
+                department: userinfoFullObj?.department || "Damy Data",
+                city: userinfoFullObj?.city || "Damy Data",
+                managerName: userinfoFullObj?.manager?.displayName || "Damy Data",
+                managerId: userinfoFullObj?.manager?.userId || "Damy Data",
+                managerEmail: userinfoFullObj?.manager?.username || "Damy Data",
             }
+            this.userInfo = userInfo
+            console.log("UserService -> userInfo: ", userInfo)
+            return userInfo
         },
 
         getRequesterData: function () {

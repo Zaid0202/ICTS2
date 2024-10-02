@@ -26,11 +26,11 @@ sap.ui.define([
              * @public
              * @override
              */
-            init: async function () {
+            init:async  function () {
+                
                 // call the base component's init function
-                UIComponent.prototype.init.apply(this, arguments);
+                 UIComponent.prototype.init.apply(this, arguments);
 
-                await this.setUserModel()
                 // enable routing
                 this.getRouter().initialize();
 
@@ -39,7 +39,7 @@ sap.ui.define([
 
             },
 
-            setUserModel: async function () {
+            getUserIdAndRule: function () {
                 // Check if UserId and UserRole exist in local storage
                 var sStoredUserId = localStorage.getItem("UserId");
                 var sStoredUserRole = localStorage.getItem("UserRole");
@@ -58,9 +58,22 @@ sap.ui.define([
                 // Use the values
                 let userId = sStoredUserId; // Now this is either from localStorage or the default value
                 let userRule = sStoredUserRole; // Same as above
+                return [userId, userRule]
+            },
 
+            getUserData: async function () {
+                let [userId, userRule] = this.getUserIdAndRule()
                 this.userService = new UserService(this, userId);
-                await this.userService.onInit()
+                
+                if (!this.userInfo){
+                    this.userInfo = await this.userService.getUserInfo()
+                    console.log("Component -> this.userInfo: ", this.userInfo)
+                }
+
+                return {
+                    userInfo: this.userInfo,
+                    role: userRule
+                }
 
                 this.setModel(new sap.ui.model.json.JSONModel({
                     userInfo: this.userService.userInfo,
