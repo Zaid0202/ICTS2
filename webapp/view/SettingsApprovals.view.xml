@@ -217,7 +217,7 @@
                         </OverflowToolbar>
                     </table:extension>
                     <table:columns>
-                        <table:Column width="11rem">
+                        <table:Column width="16.6%">
                             <Label text="Id" />
                             <table:template>
                                 <Text
@@ -226,7 +226,7 @@
                                 />
                             </table:template>
                         </table:Column>
-                        <table:Column width="11rem">
+                        <table:Column width="16.6%">
                             <Label text="Main Services" />
                             <table:template>
                                 <Text
@@ -235,7 +235,7 @@
                                 />
                             </table:template>
                         </table:Column>
-                        <table:Column width="11rem">
+                        <table:Column width="16.6%">
                             <Label text="Approval Levels" />
                             <table:template>
                                 <Text
@@ -244,7 +244,7 @@
                                 />
                             </table:template>
                         </table:Column>
-                        <table:Column width="11rem">
+                        <table:Column width="16.6%">
                             <Label text="Employee Id" />
                             <table:template>
                                 <Text
@@ -265,7 +265,7 @@
                         </table:Column>
 
                         <table:Column
-                            width="3rem"
+                            width="8.3%"
                             hAlign="Center"
                         >
                             <Label text="" />
@@ -280,7 +280,7 @@
                         </table:Column>
 
                         <table:Column
-                            width="3rem"
+                            width="8.3%"
                             hAlign="Center"
                         >
                             <Label text="" />

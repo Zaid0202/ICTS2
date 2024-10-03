@@ -15,9 +15,9 @@ sap.ui.define(
         // endsPoints  CRUD_z     User Info Here The Isusues..
 
         // Check if endsPoints model is available
-        
+
         let ownerComponent = this.getOwnerComponent();
-        
+
         console.log("View: ", this.getView());
         console.log("ownerComponent: ", ownerComponent);
         if (!ownerComponent) {
@@ -55,7 +55,18 @@ sap.ui.define(
         console.log("Finsh THe Base Controller: ");
 
       },
-
+      onBeforeRendering: function () {
+        console.log("onBeforeRendering-----------------------")
+        // Manipulate the view elements before rendering
+      },
+      onAfterRendering: function () {
+        console.log("onAfterRendering----------------------")
+        // Access the DOM and manipulate UI elements after rendering
+      },
+      onExit: function () {
+        console.log("onExit-------------------")
+        // Cleanup code, like detaching events or clearing resources
+      },
       setMode: function (mode) {
         this.helperModelInstance?.setProperty('/Mode', mode)
       },
@@ -192,6 +203,133 @@ sap.ui.define(
         // this.getView()?.byId('inputEmployeeNameId').setBusy(false);
       },
 
+      // ================================== # Formaters Files Functions # ==================================
+      formatVisibilityReturnRejectAbrov: function (isEditModeWorkFlow, isAssigneesWorkFlow, isClosedWorkFlow) {
+        return !(isEditModeWorkFlow || isAssigneesWorkFlow || isClosedWorkFlow)
+      },
+
+      // Inside your controller
+      removeLeadingZeros: function (sId) {
+        if (sId) {
+          // Convert the string to a number to remove leading zeros
+          return Number(sId) || 0; // Return 0 if conversion fails
+        }
+        return 0; // Default return value if sId is falsy
+      },
+
+      // Inside your controller
+      formatRequesterName: function (sRequesterName, sRequesterId) {
+        // If RequesterId is undefined, assign it an empty string
+        sRequesterId = sRequesterId || '';
+
+        if (sRequesterName) {
+          // Split the full name into parts
+          const nameParts = sRequesterName.split(" ");
+          let formattedName = "";
+
+          // Get the first name
+          formattedName += nameParts[0];
+
+          // Check if there's a last name
+          if (nameParts.length > 1) {
+            // Get the last name
+            formattedName += " " + nameParts[nameParts.length - 1];
+          }
+
+          // Add the ID in parentheses
+          return `${formattedName} (${sRequesterId})`;
+        }
+
+        return `(${sRequesterId})`; // If no name is provided, just return the ID
+      },
+
+      // formatRequestDate: function (oDate) {
+      //   if (!oDate) return '';
+
+      //   // Create a date object from the input
+      //   const date = new Date(oDate);
+
+      //   // Options for formatting
+      //   const options = { month: 'short', day: '2-digit', year: 'numeric' };
+
+      //   // Get the formatted date as a string
+      //   const formattedDate = date.toLocaleDateString('en-US', options);
+
+      //   // Convert the formatted date to the desired format (MMM/DD/YYYY)
+      //   const [month, day, year] = formattedDate.split(' ');
+      //   return `${month}/${day.replace(',', '')}/${year}`; // Remove comma from day if exists
+      // },
+
+      formatRequestDate: function (oDate) {
+        if (!oDate) return '';
+
+        // Create a date object from the input
+        const date = new Date(oDate);
+
+        // Get month, day, and year
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-based, pad with zero
+        const day = String(date.getDate()).padStart(2, '0'); // Pad day with zero
+        const year = date.getFullYear();
+
+        // Return formatted date
+        return `${month}/${day}/${year}`;
+      },
+
+      formatAttachmentText1: async function (sAttachment) {
+        console.log("BaseController -> sAttachment", sAttachment)
+
+        let isAllDigits = /^[0-9]{10}$/.test(sAttachment); // Checks if it's exactly 10 digits
+
+        if (sAttachment && isAllDigits) {
+          this.setBusy('AttachmentButtonId', true)
+          try {
+            // Retrieve the file details based on the Attachment ID
+            let fileDetails = await this.crud_z.get_record(this.endsPoints['UploadFile'], sAttachment, {});
+
+            // Return the desired text (e.g., file name or description)
+            this.setBusy('AttachmentButtonId', false)
+            return fileDetails.FileName || "Download";
+          } catch (error) {
+            console.error("Failed to retrieve file details:", error);
+            this.setBusy('AttachmentButtonId', false)
+            return "Error";
+          }
+        }
+        return sAttachment || "No Attachment";
+      },
+
+      formatAttachmentText2: async function (sAttachment) {
+        if (sAttachment) {
+          this.setBusy('AttachmentButtonId2', true)
+          try {
+            // Retrieve the file details based on the Attachment ID
+            let fileDetails = await this.crud_z.get_record(this.endsPoints['UploadFile'], sAttachment, {});
+
+            // Return the desired text (e.g., file name or description)
+            this.setBusy('AttachmentButtonId2', false)
+            return fileDetails.FileName || "Download";
+          } catch (error) {
+            console.error("Failed to retrieve file details:", error);
+            this.setBusy('AttachmentButtonId', false)
+            return "Error";
+          }
+        }
+        return "No Attachment";
+      },
+
+      statusState: function (sStatus) {
+        // You can set the state of the ObjectStatus based on the status value
+        switch (sStatus) {
+          case "Pending":
+            return 'Information';
+          case "Rejecteded":
+            return 'Error';
+          case "Approved":
+            return 'Success';
+          default:
+            return 'None';
+        }
+      },
 
       // FormatS 
       formatDateToCustomPattern: function (oDate, pattern = "M-d-yyyy") {
@@ -212,7 +350,7 @@ sap.ui.define(
         if (!Id) {
           return ""; // Return an empty string if no date is provided
         }
-        return "#" + Number(Id)
+        return Number(Id)
       },
 
       /// 
@@ -220,6 +358,7 @@ sap.ui.define(
         return camelCaseStr.replace(/([a-z])([A-Z])/g, '$1 $2');
       },
 
+      // ================================== # Formaters Files Functions # ==================================
       deepMerge: function (target, source) {
         // Ensure both target and source are objects
         if (typeof target !== 'object' || target === null) {
@@ -242,8 +381,73 @@ sap.ui.define(
         }
 
         return target; // Return the merged object
-      }
+      },
+      getaFieldNames: function (formId) {
 
+        // Get the form by its ID
+        let oForm = this.getView().byId(formId);
+
+        // Get all form containers
+        let aFormContainers = oForm.getFormContainers();
+
+        // Array to store field names
+        let aFieldNames = [];
+
+        // Iterate over each form container
+        aFormContainers.forEach(function (oFormContainer) {
+
+          // Get the form elements within the container
+          let aFormElements = oFormContainer.getFormElements();
+
+          // Iterate over the form elements
+          aFormElements.forEach(function (oFormElement) {
+
+            // Check if the "visible" property has a binding path
+            let oVisibleBindingInfo = oFormElement.getBindingInfo("visible");
+
+            if (oVisibleBindingInfo && oVisibleBindingInfo.binding) {
+              let sPath = oVisibleBindingInfo.binding.getPath(); // e.g., "/view/MainService/visible"
+
+              // Extract the field name from the path (assuming the path follows this structure)
+              let sFieldName = sPath.split("/")[2]; // Get "MainService" from "/view/MainService/visible"
+
+              // Add the field name to the array if it's not already present
+              if (sFieldName && !aFieldNames.includes(sFieldName)) {
+                aFieldNames.push(sFieldName);
+              }
+            }
+          });
+        });
+        return aFieldNames
+        // Get the form by its ID
+        // let oForm = this.getView().byId("mainFormId");
+
+        // // Get all form containers
+        // let aFormContainers = oForm.getFormContainers();
+
+        // // Iterate over each form container
+        // aFormContainers.forEach(function (oFormContainer) {
+
+        //   // Get the form elements within the container
+        //   let aFormElements = oFormContainer.getFormElements();
+
+        //   // Iterate over the form elements
+        //   aFormElements.forEach(function (oFormElement) {
+
+        //     // Get the fields (controls) within the form element
+        //     let aFields = oFormElement.getFields();
+        //     console.log({aFields})
+
+        //     // Loop through the fields and set properties dynamically
+        //     // aFields.forEach(function (oField) {
+        //     //   // For example, you can make the field invisible or non-editable
+        //     //   oField.setVisible(false);  // Set visible to false
+        //     //   oField.setEditable(false); // Set editable to false
+        //     // });
+        //   });
+        // });
+
+      },
 
 
     });

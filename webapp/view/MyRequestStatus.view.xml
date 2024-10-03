@@ -68,7 +68,7 @@
                 </table:extension>
 
                 <table:columns>
-                    <table:Column width="12rem">
+                    <table:Column width="20%">
                         <Label text="Request id" />
                         <table:template>
                             <Text
@@ -78,7 +78,7 @@
                         </table:template>
                     </table:Column>
 
-                    <table:Column width="12rem">
+                    <table:Column width="20%">
                         <Label text="Request Date" />
                         <table:template>
                             <Text
@@ -88,7 +88,7 @@
                         </table:template>
                     </table:Column>
 
-                    <table:Column width="12rem">
+                    <table:Column width="20%">
                         <Label text="Service" />
                         <table:template>
                             <Text
@@ -98,7 +98,7 @@
                         </table:template>
                     </table:Column>
 
-                    <table:Column width="12rem">
+                    <table:Column width="20%">
                         <Label text="Priority" />
                         <table:template>
                             <Text
@@ -108,7 +108,7 @@
                         </table:template>
                     </table:Column>
 
-                    <table:Column width="12rem">
+                    <table:Column width="20%">
                         <Label text="Status" />
                         <table:template>
                             <Text

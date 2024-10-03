@@ -15,15 +15,16 @@ sap.ui.define([
     return Controller.extend("internal.controller.Helper.SharingRequestFunctions", {
         constructor: function (currentController) {
             this._currentController = currentController
-
+            this.viewName = this._currentController.getView().getViewName();
+            this.getViewIsName()
         },
 
         onInit: function () {
             console.log('Initializing SharingRequestFunctions...');
 
-            console.log("Before merging: ", this);
+            // console.log("Before merging: ", this);
             // console.log("Current controller: ", this._currentController);
-        
+
             // Merge instance methods from `this._currentController` (MyTask instance)
             // Object.assign(this, this._currentController);
 
@@ -31,7 +32,7 @@ sap.ui.define([
             // Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(this._currentController));
             // Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(Object.getPrototypeOf(this._currentController)));
 
-            console.log("After merging: ", this);
+            // console.log("After merging: ", this);
 
             // ------------------------------------ Call Classs ------------------------------------
             this.uploadeFile = new UploadeFile(this._currentController)
@@ -48,10 +49,10 @@ sap.ui.define([
 
             this.CommentModel = 'CommentModel'
             this.CommentErrModel = 'CommentErrModel'
-
-
+            this._currentController.getView()
             return this
         },
+
 
 
 
@@ -60,16 +61,21 @@ sap.ui.define([
             // By Default
             this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
 
-            let mainTableData =  await this.getMainTableData()
+            let mainTableData = await this.getMainTableData()
             this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(mainTableData), this.mainTableModel)// Set
 
             // XXXX
             this.historyData = await this.getHistoryData()
             await this.setSettingsAssigneesData()
-
-
             this._currentController.getView().setModel(new sap.ui.model.json.JSONModel({ CommentZ: '', PreviseComment: '' }), this.CommentModel);
         },
+
+        getViewIsName: function () {
+            this.isMyTasks = this.viewName == "internal.view.MyTasks"
+            this.isNewRequest = this.viewName == "internal.view.NewRequest"
+            this.isRequestStatusForm = this.viewName == "internal.view.RequestStatusForm"
+        },
+
 
         reSetValues: function () {
             this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
@@ -107,7 +113,7 @@ sap.ui.define([
         getAdditionObj: function (selec = "") {
             let comment = ['PreviseComment', 'CommentZ']
             let assigne = ['Assignees']
-            let buttons = ['ButtonSumbit', 'ButtonReSumbit', 'ButtonWorkFlow', 'ButtonAssignees', "ButtonWorkInProgress", "ButtonCompleted", "ButtonClosed"]
+            let buttons = ['ButtonSumbit', 'ButtonReSumbit', 'ButtonWorkFlow', 'ButtonAssignees', "ButtonWorkInProgress", "ButtonCompleted", "ButtonClosed", 'AttachmentButton', "AdditionalAttachmentButton"]
             return selec == "c" ? comment : selec == "a" ? assigne : selec == "b" ? buttons : [...comment, ...assigne, ...buttons]
         },
 
@@ -132,9 +138,9 @@ sap.ui.define([
 
             if (!formN) { console.log("no Form Number!"); return false }
 
-            if (this.startValidation(data, formN)) { return false }
+            if (this.startValidation(data, formN)) {console.log("onMainSubmitSharing: ", { data }); return false }
 
-            console.log("onMainSubmitSharing: ", { data })
+            
             data.RequestDate = new Date()
             return data
         },
@@ -145,11 +151,11 @@ sap.ui.define([
                 "RequestId": resData.Id,
                 "SendtoName": this.extractNameFromStatusDisplay(resData.StatusDisplay),
                 "Status": resData.Status,
-                "CommentZ" : CommentZ
+                "CommentZ": CommentZ
             }
 
             let historyObj = this._currentController.oPayload_modify_parent(this.getOwnerComponent().userService.getRequestHistoryObj(processedByMeObj))
-            if (!historyObj) {return false}
+            if (!historyObj) { return false }
             historyObj.ProcessedId = String(historyObj.ProcessedId)
 
             // if (historyObj?.CommentZ.length > 200) {
@@ -207,12 +213,11 @@ sap.ui.define([
             this.setVisbileForForm2(fieldsName, false, false, false)
         },
 
-        setVisbileOnSelected: function (sSelectedKey) {
+        setVisbileOnSelected: function (sSelectedKey, status = '') {
             this.setVisbileForForm2(this.getAdditionObj(), false, false, false);
             this.setVisbileForForm2(Object.keys(this.getMainObj()), false, false, false);
 
-            var viewName = this._currentController.getView().getViewName();
-            let editable = viewName == 'internal.view.NewRequest' ? true : viewName == 'internal.view.MyTasks' ? false : false
+            let editable = this.isNewRequest ? true : this.isMyTasks ? status == "Returned" ? true : false : false
 
             if (["Internal Announcement", "Graphic Design", "Nadec Home Post"].includes(sSelectedKey)) {
                 this.setVisbileForForm2(Object.keys(this.getMainObj("f1")), true, editable, true);
@@ -230,7 +235,7 @@ sap.ui.define([
             return data
         },
 
-        getSelectedMainServiceNextLvl: async function (data, isBack=false) {
+        getSelectedMainServiceNextLvl: async function (data, isBack = false) {
             let filterMainServiceName = { "name": 'MainServiceName', "value": data.MainService }
             let dataMainServiceName = await this._currentController.crud_z.get_record(this._currentController.endsPoints['SettingsApprovals'], '', filterMainServiceName)
 

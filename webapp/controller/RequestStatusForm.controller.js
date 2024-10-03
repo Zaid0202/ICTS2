@@ -23,6 +23,7 @@ sap.ui.define(
         this.setVisbileForFormInit()
 
         this.mainTableId = 'mainTableIdRequestStatusForm'
+        this.helperModelInstance.setProperty("/mainFormTitle", "Request Details")
 
         const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
@@ -244,43 +245,6 @@ sap.ui.define(
         }
       },
 
-      formatAttachmentText: async function (sAttachment) {
-        if (sAttachment) {
-          this.setBusy('AttachmentButtonId', true)
-          try {
-            // Retrieve the file details based on the Attachment ID
-            let fileDetails = await this.crud_z.get_record(this.endsPoints['UploadFile'], sAttachment, {});
-
-            // Return the desired text (e.g., file name or description)
-            this.setBusy('AttachmentButtonId', false)
-            return fileDetails.FileName || "Download";
-          } catch (error) {
-            console.error("Failed to retrieve file details:", error);
-            this.setBusy('AttachmentButtonId', false)
-            return "Error";
-          }
-        }
-        return "No Attachment";
-      },
-
-      formatAttachmentText2: async function (sAttachment) {
-        if (sAttachment) {
-          this.setBusy('AttachmentButtonId2', true)
-          try {
-            // Retrieve the file details based on the Attachment ID
-            let fileDetails = await this.crud_z.get_record(this.endsPoints['UploadFile'], sAttachment, {});
-
-            // Return the desired text (e.g., file name or description)
-            this.setBusy('AttachmentButtonId2', false)
-            return fileDetails.FileName || "Download";
-          } catch (error) {
-            console.error("Failed to retrieve file details:", error);
-            this.setBusy('AttachmentButtonId', false)
-            return "Error";
-          }
-        }
-        return "No Attachment";
-      },
 
       onDownloadPress: function (oEvent) {
         // Get the button that triggered the event

@@ -34,7 +34,7 @@
                     >
                         <table:Table
                             rows="{mainTableModel>/}"
-                            selectionMode="MultiToggle"
+                            selectionMode="None"
                             paste="onPaste"
                             ariaLabelledBy="title"
                             id="mainTableIdRequestStatusForm"
@@ -68,7 +68,7 @@
                                 </OverflowToolbar>
                             </table:extension>
                             <table:columns>
-                                <table:Column width="15rem">
+                                <table:Column width="20%">
                                     <Label text="CreatedDate" />
                                     <table:template>
                                         <Text
@@ -78,7 +78,7 @@
                                     </table:template>
                                 </table:Column>
 
-                                <table:Column width="15rem">
+                                <table:Column width="20%">
                                     <Label text="ProcessedBy" />
                                     <table:template>
                                         <Text
@@ -88,7 +88,7 @@
                                     </table:template>
                                 </table:Column>
 
-                                <table:Column width="15rem">
+                                <table:Column width="20%">
                                     <Label text="SendtoName" />
                                     <table:template>
                                         <Text
@@ -98,7 +98,7 @@
                                     </table:template>
                                 </table:Column>
 
-                                <table:Column width="15rem">
+                                <table:Column width="20%">
                                     <Label text="CommentZ" />
                                     <table:template>
                                         <Text

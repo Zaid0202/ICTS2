@@ -13,7 +13,7 @@
         >
             <form:toolbar>
                 <Toolbar>
-                    <Title text="Create New Request" />
+                    <Title text="{helperModel>/mainFormTitle}" />
                     <ToolbarSpacer />
                 </Toolbar>
             </form:toolbar>
@@ -50,15 +50,16 @@
                                     valueState="{mainFormErrModel>/MainService/valueState}"
                                     valueStateText="{mainFormErrModel>/MainService/valueStateText}"
                                     change=".onTaskNameChange"
-                                    forceSelection='false'
+                                    forceSelection='true'
                                     editable="{helperModel>/view/MainService/editable}"
                                     required="{helperModel>/view/MainService/required}"
                                 >
                                     <items>
-                                        <core:Item
+                                        <core:ListItem
                                             key="{localData>}"
                                             text="{localData>}"
                                         />
+                                            <!-- icon="sap-icon://badge" -->
                                     </items>
                                 </Select>
                             </form:fields>
@@ -265,17 +266,18 @@
                                     useMultipart="false"
                                     valueState="{mainFormErrModel>/Attachment/valueState}"
                                     valueStateText="{mainFormErrModel>/Attachment/valueStateText}"
-                                    visible="{helperModel>/view/Attachment/editable}"
-                                    value="{ path: 'mainFormModel>/Attachment', formatter: '.formatAttachmentText' }"
+                                    visible="{helperModel>/view/AttachmentInput/visible}"
+                                    value="{ path: 'mainFormModel>/Attachment', formatter: '.formatAttachmentText1' }"
                                     change="onFileChange"
                                 />
 
                                 <Button
-                                    id="AttachmentButton"
-                                    text="{ path: 'mainFormModel>/Attachment', formatter: '.formatAttachmentText' }"
+                                    id="AttachmentButtonId"
+                                    text="{ path: 'mainFormModel>/Attachment', formatter: '.formatAttachmentText1' }"
                                     icon="sap-icon://download"
                                     press=".onDownloadPress"
                                     type="Ghost"
+                                    visible="{helperModel>/view/AttachmentButton/visible}"
                                 >
                                     <customData>
                                         <core:CustomData
@@ -287,7 +289,7 @@
 
                                     <layoutData>
                                         <l:GridData
-                                            span="{= ${helperModel>/view/Attachment/editable} ? 'L2 M2 S5' : 'L5 M5 S5' }"
+                                            span="{= ${helperModel>/view/AttachmentInput/visible} ? 'L2 M2 S5' : 'L5 M5 S5' }"
                                         />
                                     </layoutData>
                                 </Button>
@@ -304,16 +306,17 @@
                                     name="myFile"
                                     sendXHR="true"
                                     useMultipart="false"
-                                    visible="{helperModel>/view/AdditionalAttachment/editable}"
-                                    value="{ path: 'mainFormModel>/AdditionalAttachment', formatter: 'formatAttachmentText2' }"
+                                    visible="{helperModel>/view/AdditionalAttachmentInput/visible}"
+                                    value="{ path: 'mainFormModel>/AdditionalAttachment', formatter: '.formatAttachmentText2' }"
                                     change="onFileChange2"
                                 />
                                 <Button
                                     id="AttachmentButtonId2"
-                                    text="{ path: 'mainFormModel>/AdditionalAttachment', formatter: 'formatAttachmentText2' }"
+                                    text="{ path: 'mainFormModel>/AdditionalAttachment', formatter: '.formatAttachmentText2' }"
                                     icon="sap-icon://download"
                                     press=".onDownloadPress"
                                     type="Ghost"
+                                    visible="{helperModel>/view/AdditionalAttachmentButton/visible}"
                                 >
                                     <customData>
                                         <core:CustomData
@@ -324,7 +327,7 @@
                                     </customData>
                                     <layoutData>
                                         <l:GridData
-                                            span="{= ${helperModel>/view/AdditionalAttachment/editable} ? 'L2 M2 S5' : 'L5 M5 S5' }"
+                                            span="{= ${helperModel>/view/AdditionalAttachmentInput/visible} ? 'L2 M2 S5' : 'L5 M5 S5' }"
                                         />
                                     </layoutData>
                                 </Button>
@@ -360,25 +363,6 @@
                             </form:fields>
                         </form:FormElement>
 
-                        <!-- visible="{= ${helperModel>/IsIGN} || ${helperModel>/IsRevisionRequest} }" -->
-                        <form:FormElement
-                            label="Comment"
-                            visible="{helperModel>/view/CommentZ/visible}"
-                        >
-                            <form:fields>
-                                <TextArea
-                                    value="{CommentModel>/CommentZ}"
-                                    rows="4"
-                                    width="100%"
-                                    placeholder="Enter Description..."
-                                    valueState="{CommentErrModel>/CommentZ/valueState}"
-                                    valueStateText="{CommentErrModel>/CommentZ/valueStateText}"
-                                    editable="{helperModel>/view/CommentZ/editable}"
-                                    required="{helperModel>/view/CommentZ/required}"
-                                />
-                            </form:fields>
-                        </form:FormElement>
-
                         <!-- visible="{= ${helperModel>/isAssigneesWorkFlow} }" -->
                         <form:FormElement
                             label="Assignees"
@@ -400,6 +384,25 @@
                                         />
                                     </items>
                                 </Select>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{= ${helperModel>/IsIGN} || ${helperModel>/IsRevisionRequest} }" -->
+                        <form:FormElement
+                            label="Comment"
+                            visible="{helperModel>/view/CommentZ/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    value="{CommentModel>/CommentZ}"
+                                    rows="4"
+                                    width="100%"
+                                    placeholder="Enter Description..."
+                                    valueState="{CommentErrModel>/CommentZ/valueState}"
+                                    valueStateText="{CommentErrModel>/CommentZ/valueStateText}"
+                                    editable="{helperModel>/view/CommentZ/editable}"
+                                    required="{helperModel>/view/CommentZ/required}"
+                                />
                             </form:fields>
                         </form:FormElement>
 
@@ -536,7 +539,6 @@
                                 />
                             </form:fields>
                         </form:FormElement>
-
                     </form:formElements>
                 </form:FormContainer>
             </form:formContainers>

@@ -1,7 +1,7 @@
 <mvc:View
     controllerName="internal.controller.Dashboard"
-    xmlns="sap.suite.ui.commons"
-    xmlns:m="sap.m"
+    xmlns:commons="sap.suite.ui.commons"
+    xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:viz="sap.viz.ui5.controls"
     xmlns:layout="sap.ui.layout"
@@ -10,18 +10,18 @@
     xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
     xmlns:l="sap.ui.layout"
 >
-    <m:ScrollContainer
+    <ScrollContainer
         width="100%"
         height="100%"
         vertical="true"
         horizontal="true"
         class="sapUiContentPadding"
     >
-        <m:VBox
+        <VBox
             fitContainer="true"
             class="sapUiSmallMargin sapUiShadow sapUiContentPadding sapUiRoundedBorder sapUiPageBackground"
         >
-            <ChartContainer
+            <commons:ChartContainer
                 showFullScreen="true"
                 showPersonalization="false"
                 autoAdjustHeight="false"
@@ -29,12 +29,12 @@
                             class="sapUiShadow  sapUiRoundedBorder sapUiPageBackground"
 
             >
-                <content>
-                    <ChartContainerContent
+                <commons:content>
+                    <commons:ChartContainerContent
                         icon="sap-icon://line-chart"
                         title="Line Chart"
                     >
-                        <content>
+                        <commons:content>
                             <viz:VizFrame
                                 id="idColumnChart"
                                 height="400px"
@@ -99,23 +99,23 @@
                                     />
                                 </viz:feeds>
                             </viz:VizFrame>
-                        </content>
-                    </ChartContainerContent>
+                        </commons:content>
+                    </commons:ChartContainerContent>
 
-                    <ChartContainerContent
+                    <commons:ChartContainerContent
                         icon="sap-icon://table-view"
                         title="Table"
                     >
-                        <content>
-                            <m:Table id="idTable" />
-                        </content>
-                    </ChartContainerContent>
-                </content>
+                        <commons:content>
+                            <Table id="idTable" />
+                        </commons:content>
+                    </commons:ChartContainerContent>
+                </commons:content>
 
-                <dimensionSelectors>
-                    <m:Label text="Year" />
+                <commons:dimensionSelectors>
+                    <Label text="Year" />
 
-                    <m:Select
+                    <Select
                         items="{yearsListModel>/}"
                         change="onChangeDateServicesData"
                         selectedKey="{yearsListModel>/currentYear}"
@@ -124,28 +124,28 @@
                             key="{yearsListModel>}"
                             text="{yearsListModel>}"
                         />
-                    </m:Select>
-                </dimensionSelectors>
-            </ChartContainer>
-        </m:VBox>
+                    </Select>
+                </commons:dimensionSelectors>
+            </commons:ChartContainer>
+        </VBox>
 
-        <m:VBox
+        <VBox
             fitContainer="true"
             class="sapUiSmallMargin"
         >
-            <ChartContainer
+            <commons:ChartContainer
                 showFullScreen="true"
                 showPersonalization="false"
                 autoAdjustHeight="false"
                 title="Report"
             >
-                <content>
-                    <ChartContainerContent
+                <commons:content>
+                    <commons:ChartContainerContent
                         icon="sap-icon://line-chart"
                         title="Line Chart"
                         id="idColumnChart2"
                     >
-                        <content>
+                        <commons:content>
                             <viz:VizFrame
                                 id="idStackedColumnChart"
                                 height="400px"
@@ -205,23 +205,23 @@
                                     />
                                 </viz:feeds>
                             </viz:VizFrame>
-                        </content>
-                    </ChartContainerContent>
+                        </commons:content>
+                    </commons:ChartContainerContent>
 
-                    <ChartContainerContent
+                    <commons:ChartContainerContent
                         icon="sap-icon://table-view"
                         title="Table"
                     >
-                        <content>
-                            <m:Table />
-                        </content>
-                    </ChartContainerContent>
-                </content>
+                        <commons:content>
+                            <Table />
+                        </commons:content>
+                    </commons:ChartContainerContent>
+                </commons:content>
 
-                <dimensionSelectors>
-                    <m:Label text="Year" />
+                <commons:dimensionSelectors>
+                    <Label text="Year" />
 
-                    <m:Select
+                    <Select
                         items="{yearsListModel>/}"
                         change="onChangeDateStatusData"
                         selectedKey="{yearsListModel>/currentYear}"
@@ -230,9 +230,9 @@
                             key="{yearsListModel>}"
                             text="{yearsListModel>}"
                         />
-                    </m:Select>
-                </dimensionSelectors>
-            </ChartContainer>
-        </m:VBox>
-    </m:ScrollContainer>
+                    </Select>
+                </commons:dimensionSelectors>
+            </commons:ChartContainer>
+        </VBox>
+    </ScrollContainer>
 </mvc:View>

@@ -3,16 +3,17 @@ sap.ui.define(
   [
     "internal/controller/Helper/BaseController",
     "internal/controller/Helper/SharingRequestFunctions",
+    "sap/m/MessageBox",
 
 
   ],
-  function (BaseController, SharingRequestFunctions) {
+  function (BaseController, SharingRequestFunctions, MessageBox) {
     "use strict";
 
     return BaseController.extend("internal.controller.NewRequest", {
       onInit: async function () {
         await BaseController.prototype.onInit.apply(this, []);
-
+        this.setBusy('mainFormId', true)
         // ------------------------------------ Call Classs ------------------------------------
         this.sharingRequestFunctions = new SharingRequestFunctions(this)
         let thisOfScharing = await this.sharingRequestFunctions.onInit()
@@ -25,8 +26,34 @@ sap.ui.define(
         this.setVisbileForForm2('MainService', true, true, true);
 
         this.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
+        this.helperModelInstance.setProperty("/mainFormTitle", "Create New Request")
+        this.setBusy('mainFormId', false)
+
+
       },
 
+
+      onBeforeRendering: function () {
+        console.log(" ----------------------- onBeforeRendering-----------------------")
+        let aFieldNames = this.getaFieldNames("mainFormId")
+
+        aFieldNames.forEach(function (sFieldName) {
+          // Set the visibility to false in the helper model for each field
+          this.getView().getModel("helperModel").setProperty(`/view/${sFieldName}/visible`, false);
+        }.bind(this));
+
+        // Manipulate the view elements before rendering
+      },
+
+      onAfterRendering: function () {
+        console.log(" ----------------------- onAfterRendering----------------------")
+        // Access the DOM and manipulate UI elements after rendering
+      },
+
+      onExit: function () {
+        console.log(" ----------------------- onExit-------------------")
+        // Cleanup code, like detaching events or clearing resources
+      },
 
       mergeWithSharing: async function (thisOfScharing) {
         // Helper function to introduce a 2-second delay
@@ -51,8 +78,6 @@ sap.ui.define(
         let data = this.onMainSubmitSharing()
         if (!data) { return false }
 
-       
-
         data = { ...this.getMainObj(), ...data }
         // ------------------------------------------------------------------------------------------------
 
@@ -62,6 +87,19 @@ sap.ui.define(
         data = this.oPayload_modify(data)
         console.log("New Request Part: ", data)
 
+        // this.isConfired = false
+        // MessageBox.confirm(`Are you sure you want to send the request?`, {
+        //   actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+        //   emphasizedAction: MessageBox.Action.OK,
+        //   onClose: function (sAction) {
+        //     if (sAction === "OK") {
+        //       this.isConfired = true;
+        //     }
+        //   }.bind(this)
+        // });
+
+        // if (!this.isConfired) { return false }
+
         this.setBusy(this.mainFormId, true)
         // ---------Uploade File!-------
         data = await this.uploadeFile.callUploadFiles(data)  //------- callUploadFiles Part--------- Call Uploade Files Function and add File Id on data
@@ -70,7 +108,7 @@ sap.ui.define(
         // ---------Post!-------
         let resData = await this.crud_z.post_record(this.mainEndPoint, data)
         console.log("res Data Part: ", data)
-        if(!resData){return false}
+        if (!resData) { return false }
 
         // -------History Part---------
         let history = await this.getHistoryDataWorkFlow(resData)
@@ -118,6 +156,15 @@ sap.ui.define(
 
       // ----------------------------Uplaode Files Start-------------------------------
       onFileChange: function (oEvent) {
+        const oFile = oEvent.getParameter("files")[0];
+
+        const sFileName = oFile.name;
+        const sFileType = oFile.type || "application/octet-stream";
+
+        console.log(oFile)
+        console.log(sFileName)
+        console.log(sFileType)
+        this.getView().getModel(this.mainFormModel).setProperty("/Attachment", sFileName)
         this.uploadeFile.listObjFiles.push({ oEvent: oEvent, key: 'Attachment' });
       },
 

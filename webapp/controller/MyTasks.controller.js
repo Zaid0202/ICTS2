@@ -16,6 +16,7 @@ sap.ui.define(
       onInit: async function () {
         await BaseController.prototype.onInit.apply(this, []);
 
+
         this.isMyTask = true
         // ------------------------------------ Call Classs ------------------------------------
         this.sharingRequestFunctions = new SharingRequestFunctions(this)
@@ -38,10 +39,11 @@ sap.ui.define(
 
         this.CommentModel = 'CommentModel'
         this.CommentErrModel = 'CommentErrModel'
-        
+
         this.pageName = 'MyTasks'
 
         // ------------------------------------ Initials Values ------------------------------------
+        this.helperModelInstance.setProperty("/mainFormTitle", "Request Details")
         this.onRefresh()
         this.setVisbileForFormInit()
 
@@ -203,7 +205,7 @@ sap.ui.define(
         if (!data) { return false }
         // return 1
         // ---------Uploade File!-------
-        if (this.objStatus.status == "Returned") { data = await this.uploadeFile.callUploadFiles(data) } //------- callUploadFiles Part--------- Call Uploade Files Function and add File Id on data
+        if (this.objStatus.isUpload) { data = await this.uploadeFile.callUploadFiles(data) } //------- callUploadFiles Part--------- Call Uploade Files Function and add File Id on data
 
         // ---------Post!-------
         let resData = await this.crud_z.update_record(this.mainEndPoint, data, data.Id) // Call------------
@@ -255,7 +257,7 @@ sap.ui.define(
       },
 
       onReSumbit: function (ev) {
-        this.objStatus = { status: "Pending" }
+        this.objStatus = { status: "Pending", isUpload: true }
         this.onConvirme()
 
       },
@@ -333,19 +335,32 @@ sap.ui.define(
 
         this.getView().setModel(new JSONModel(selectedTaskz), this.mainFormModel);
 
+        let status = selectedTaskz.Status;
+
 
         // Startxxx ---------Set Visibiles---------
         // console.log("this.getAdditionObj()", this.getAdditionObj())
 
-        this.setVisbileOnSelected(selectedTaskz.MainService)
+        this.setVisbileOnSelected(selectedTaskz.MainService, status)
 
         //Fileds Commnets 
         this.setVisbileForForm2(this.getAdditionObj("c")[0], true, false, false);
         this.setVisbileForForm2(this.getAdditionObj("c")[1], true, true, true);
+        this.setVisbileForForm2('MainService', true, false, false);
+
+        if (selectedTaskz.Status == "Returned") {
+          this.setVisbileForForm2('AttachmentInput', true, false, false);
+          this.setVisbileForForm2('AdditionalAttachmentInput', true, false, false);
+        } else {
+          this.setVisbileForForm2('AttachmentInput', false, false, false);
+          this.setVisbileForForm2('AdditionalAttachmentInput', false, false, false);
+        }
+        this.setVisbileForForm2('AttachmentButton', true, false, false);
+        this.setVisbileForForm2('AdditionalAttachmentButton', true, false, false);
+
 
 
         //Buttons
-        let status = selectedTaskz.Status;
         // Check if the status is "Approved" and get the next level only when needed
         let indexButtons = {
           "Pending": 2,
@@ -454,130 +469,6 @@ sap.ui.define(
         }
       },
 
-      // ================================== # Formaters Files Functions # ==================================
-      formatVisibilityReturnRejectAbrov: function (isEditModeWorkFlow, isAssigneesWorkFlow, isClosedWorkFlow) {
-        return !(isEditModeWorkFlow || isAssigneesWorkFlow || isClosedWorkFlow)
-      },
-
-      // Inside your controller
-      removeLeadingZeros: function (sId) {
-        if (sId) {
-          // Convert the string to a number to remove leading zeros
-          return Number(sId) || 0; // Return 0 if conversion fails
-        }
-        return 0; // Default return value if sId is falsy
-      },
-
-      // Inside your controller
-      formatRequesterName: function (sRequesterName, sRequesterId) {
-        // If RequesterId is undefined, assign it an empty string
-        sRequesterId = sRequesterId || '';
-
-        if (sRequesterName) {
-          // Split the full name into parts
-          const nameParts = sRequesterName.split(" ");
-          let formattedName = "";
-
-          // Get the first name
-          formattedName += nameParts[0];
-
-          // Check if there's a last name
-          if (nameParts.length > 1) {
-            // Get the last name
-            formattedName += " " + nameParts[nameParts.length - 1];
-          }
-
-          // Add the ID in parentheses
-          return `${formattedName} (${sRequesterId})`;
-        }
-
-        return `(${sRequesterId})`; // If no name is provided, just return the ID
-      },
-
-      // formatRequestDate: function (oDate) {
-      //   if (!oDate) return '';
-
-      //   // Create a date object from the input
-      //   const date = new Date(oDate);
-
-      //   // Options for formatting
-      //   const options = { month: 'short', day: '2-digit', year: 'numeric' };
-
-      //   // Get the formatted date as a string
-      //   const formattedDate = date.toLocaleDateString('en-US', options);
-
-      //   // Convert the formatted date to the desired format (MMM/DD/YYYY)
-      //   const [month, day, year] = formattedDate.split(' ');
-      //   return `${month}/${day.replace(',', '')}/${year}`; // Remove comma from day if exists
-      // },
-
-      formatRequestDate: function (oDate) {
-        if (!oDate) return '';
-
-        // Create a date object from the input
-        const date = new Date(oDate);
-
-        // Get month, day, and year
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-based, pad with zero
-        const day = String(date.getDate()).padStart(2, '0'); // Pad day with zero
-        const year = date.getFullYear();
-
-        // Return formatted date
-        return `${month}/${day}/${year}`;
-      },
-
-      formatAttachmentText: async function (sAttachment) {
-        if (sAttachment) {
-          this.setBusy('AttachmentButtonId', true)
-          try {
-            // Retrieve the file details based on the Attachment ID
-            let fileDetails = await this.crud_z.get_record(this.endsPoints['UploadFile'], sAttachment, {});
-
-            // Return the desired text (e.g., file name or description)
-            this.setBusy('AttachmentButtonId', false)
-            return fileDetails.FileName || "Download";
-          } catch (error) {
-            console.error("Failed to retrieve file details:", error);
-            this.setBusy('AttachmentButtonId', false)
-            return "Error";
-          }
-        }
-        return "No Attachment";
-      },
-
-      formatAttachmentText2: async function (sAttachment) {
-        if (sAttachment) {
-          this.setBusy('AttachmentButtonId2', true)
-          try {
-            // Retrieve the file details based on the Attachment ID
-            let fileDetails = await this.crud_z.get_record(this.endsPoints['UploadFile'], sAttachment, {});
-
-            // Return the desired text (e.g., file name or description)
-            this.setBusy('AttachmentButtonId2', false)
-            return fileDetails.FileName || "Download";
-          } catch (error) {
-            console.error("Failed to retrieve file details:", error);
-            this.setBusy('AttachmentButtonId', false)
-            return "Error";
-          }
-        }
-        return "No Attachment";
-      },
-
-
-      statusState: function (sStatus) {
-        // You can set the state of the ObjectStatus based on the status value
-        switch (sStatus) {
-          case "Pending":
-            return 'Information';
-          case "Rejecteded":
-            return 'Error';
-          case "Approved":
-            return 'Success';
-          default:
-            return 'None';
-        }
-      },
       // ================================== # Dont Use it in Proeduction!!! Delete All Data from oData!!! Dengers # ==================================
       deleteAllIn: async function () {
         let endsPoints = ["NewRequestSet", "RequestHistorySet", "UploadFileSet"];

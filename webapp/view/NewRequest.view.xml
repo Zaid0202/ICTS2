@@ -10,7 +10,7 @@
 >
     <Page
         id="page_id_NewRequest"
-        title="NewRequest"
+        title="New Request"
     >
         <content>
             <core:Fragment
