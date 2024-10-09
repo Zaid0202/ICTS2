@@ -13,7 +13,7 @@
         <content>
             <table:Table
                 rows="{mainTableModel>/}"
-                selectionMode="MultiToggle"
+                selectionMode="None"
                 paste="onPaste"
                 ariaLabelledBy="title"
                 id="mainTableIdProcessedByMe"
@@ -46,8 +46,19 @@
                         />
                     </OverflowToolbar>
                 </table:extension>
+
                 <table:columns>
-                    <table:Column width="15rem">
+                    <table:Column width="15%">
+                        <Label text="Request Id" />
+                        <table:template>
+                            <Text
+                                text="{path: 'mainTableModel>RequestId', formatter: '.removeLeadingZeros'}"
+                                wrapping="false"
+                            />
+                        </table:template>
+                    </table:Column>
+
+                    <table:Column width="15%">
                         <Label text="Created Date" />
                         <table:template>
                             <Text
@@ -57,7 +68,7 @@
                         </table:template>
                     </table:Column>
 
-                    <table:Column width="15rem">
+                    <!-- <table:Column width="15%">
                         <Label text="Processed By" />
                         <table:template>
                             <Text
@@ -65,10 +76,10 @@
                                 wrapping="false"
                             />
                         </table:template>
-                    </table:Column>
+                    </table:Column> -->
 
-                    <table:Column width="15rem">
-                        <Label text="Sendto Name" />
+                    <table:Column width="15%">
+                        <Label text="Sendto" />
                         <table:template>
                             <Text
                                 text="{mainTableModel>SendtoName}"
@@ -77,7 +88,7 @@
                         </table:template>
                     </table:Column>
 
-                    <table:Column width="15rem">
+                    <table:Column width="15%">
                         <Label text="CommentZ" />
                         <table:template>
                             <Text
@@ -87,12 +98,15 @@
                         </table:template>
                     </table:Column>
 
-                    <table:Column width="10rem">
+                    <table:Column width="15%">
                         <Label text="Status" />
                         <table:template>
-                            <Text
+                            <ObjectStatus
                                 text="{mainTableModel>Status}"
-                                wrapping="false"
+                                state="{
+                                    path: 'mainTableModel>Status',
+                                    formatter: '.statusState'
+                                            }"
                             />
                         </table:template>
                     </table:Column>

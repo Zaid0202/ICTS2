@@ -394,85 +394,6 @@ sap.ui.define([
             this.groupReset = true;
         },
 
-        // onSearch: function (ev) {
-        //     const { data, xkeys, aItems } = this._currentController.getDataXkeysAItems(ev) ?? {};
-
-        //     var sQuery = ev.getParameter("query"),
-        //         oTable = this._currentController.byId(this.tableId),
-        //         oBinding = oTable.getBinding("rows"),
-        //         aFilters = [];
-
-        //     if (sQuery && sQuery.length > 0) {
-        //         // Normalize the query string to handle different forms of Arabic characters
-        //         var normalizedQuery = this._normalizeArabic(sQuery).toLowerCase();
-
-        //         // Create filters for all keys
-        //         var oFilter = new sap.ui.model.Filter({
-        //             filters: xkeys.map(function (key) {
-        //                 return new sap.ui.model.Filter({
-        //                     path: key,
-        //                     test: function (value) {
-        //                         if (value) {
-        //                             // Normalize the value for comparison
-        //                             var normalizedValue = this._normalizeArabic(value.toLowerCase());
-        //                             return normalizedValue.includes(normalizedQuery);
-        //                         }
-        //                         return false;
-        //                     }.bind(this)
-        //                 });
-        //             }.bind(this)),
-        //             and: false
-        //         });
-
-        //         aFilters.push(oFilter);
-        //     }
-
-        //     // Apply the filter to the table binding
-        //     if (oBinding) {
-        //         oBinding.filter(aFilters);
-        //     }
-        // },
-
-        // onSearch: function (ev) {
-        //     // Destructure data, xkeys, and aItems from the method's return value
-        //     const { data, xkeys, aItems } = this._currentController.getDataXkeysAItems(ev) ?? {};
-
-        //     // Get the search query from the event
-        //     const sQuery = ev.getParameter("query");
-        //     const oTable = this._currentController.byId(this.tableId);
-        //     const oBinding = oTable.getBinding("rows");
-
-        //     // Initialize an array to hold the filters
-        //     const aFilters = [];
-        //     // Check if the search query is not empty
-        //     if (sQuery) {
-        //         // Create filters for each field specified in xkeys
-        //         xkeys.forEach(key => {
-        //             const oFilter = new sap.ui.model.Filter(key, sap.ui.model.FilterOperator.Contains, sQuery);
-        //             aFilters.push(oFilter);
-        //         });
-
-
-        //         // Combine filters using OR logic
-        //         const oCombinedFilter = new sap.ui.model.Filter({
-        //             filters: aFilters,
-        //             and: false // Set to false to combine with OR logic
-        //         });
-
-        //         // Apply the combined filter to the table binding
-        //         oBinding.filter(oCombinedFilter);
-
-        //         console.log({sQuery})
-        //         console.log({oTable})
-        //         console.log({aFilters})
-        //         console.log({oCombinedFilter})
-        //         return 1
-
-        //     } else {
-        //         // If the query is empty, clear the filters
-        //         oBinding.filter([]);
-        //     }
-        // },
         onSearch: function (ev) {
             // Destructure data, xkeys, and aItems from the method's return value
             const { data, xkeys, aItems } = this._currentController.getDataXkeysAItems(ev) ?? {};
@@ -571,8 +492,7 @@ sap.ui.define([
     });
 });
 
-
-let xx = `
+/* 
                             <table:Table
                                 rows="{mainTableModel>/}"
                                 selectionMode="MultiToggle"
@@ -631,9 +551,9 @@ let xx = `
                                     </table:Column>
                                 </table:columns>
                             </table:Table>
-`
+ */
 
-let x = `
+/* 
       // ================================== # Table FSG Functions # ==================================
       getDataXkeysAItems: function () {
         const data = this.getView()?.getModel(this.mainTableModel)?.getData();
@@ -676,4 +596,4 @@ let x = `
         // this.getView().getModel(this.mainFormModel).setProperty('/text', aCommonWords)
         this.helperModelInstance.setProperty('/multiComboBox', aCommonWords)
       },
-`
+ */

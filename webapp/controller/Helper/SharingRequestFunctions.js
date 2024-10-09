@@ -48,6 +48,7 @@ sap.ui.define([
             this.mainTableModel = 'mainTableModel'
 
             this.CommentModel = 'CommentModel'
+            this.previseCommentCommentModel = 'previseCommentCommentModel'
             this.CommentErrModel = 'CommentErrModel'
             this._currentController.getView()
             return this
@@ -125,7 +126,7 @@ sap.ui.define([
             console.log("SharingRequestFunctions -> getMainTableData -> data ", data)
             console.log("SharingRequestFunctions -> getMainTableData -> this._currentController.userInfo?.empId ", this._currentController.userInfo?.empId)
             return data?.results?.filter(function (record) {
-                console.log("SharingRequestFunctions -> getMainTableData -> record.Sendto.split(', ').map(Number)", record.Sendto.split(', ').map(Number))
+                // console.log("SharingRequestFunctions -> getMainTableData -> record.Sendto.split(', ').map(Number)", record.Sendto.split(', ').map(Number))
                 return record.Sendto.split(', ').map(Number).includes(Number(this._currentController.userInfo?.empId));
 
             }.bind(this));
@@ -138,9 +139,9 @@ sap.ui.define([
 
             if (!formN) { console.log("no Form Number!"); return false }
 
-            if (this.startValidation(data, formN)) {console.log("onMainSubmitSharing: ", { data }); return false }
+            if (this.startValidation(data, formN)) { console.log("onMainSubmitSharing: ", { data }); return false }
 
-            
+
             data.RequestDate = new Date()
             return data
         },
@@ -149,15 +150,16 @@ sap.ui.define([
         getHistoryDataWorkFlow: async function (resData, CommentZ) {
             let processedByMeObj = {
                 "RequestId": resData.Id,
-                "SendtoName": this.extractNameFromStatusDisplay(resData.StatusDisplay),
+                "SendtoName": resData.Status == "Pending" ? this.extractNameFromStatusDisplay(resData.StatusDisplay) : `User Name(${resData.Sendto})`,
                 "Status": resData.Status,
                 "CommentZ": CommentZ
             }
 
-            let historyObj = this._currentController.oPayload_modify_parent(this.getOwnerComponent().userService.getRequestHistoryObj(processedByMeObj))
+            let historyObj = await this._currentController.oPayload_modify_parent(await this.getOwnerComponent().userService.getRequestHistoryObj(processedByMeObj))
             if (!historyObj) { return false }
             historyObj.ProcessedId = String(historyObj.ProcessedId)
 
+            console.log("SharingRequestFunctions -> historyObj", historyObj)
             // if (historyObj?.CommentZ.length > 200) {
             //     historyObj?.CommentZ = historyObj.CommentZ.slice(0, 200);
             //   }
@@ -172,6 +174,14 @@ sap.ui.define([
                     sendToName: requesteData?.sendToName,
                     sendTo: requesteData?.sendTo,
                     step: requesteData?.step
+                },
+                RequesterData: {
+                    RequesterId: data?.RequesterId, // Renamed from requester_id
+                    RequesterName: data?.RequesterName, // Renamed from requester_name
+                    RequesterPosition: data?.RequesterPosition, // Renamed from requester_position
+                    RequesterSection: data?.RequesterSection, // Renamed from requester_section
+                    RequesterDept: data?.RequesterDept, // Renamed from requester_dept
+                    RequesterLocation: data?.RequesterLocation, // Renamed from requester_location
                 }
             };
             let userInfoWithRequestTamp = await this._currentController.getOwnerComponent().userService.getUserInfoWithRequestTamp(requestDataWORKFLOW)
@@ -189,20 +199,19 @@ sap.ui.define([
         // ================================== # Visibile Functions # ==================================
         setVisbileForForm2: function (fieldsName, visible, editable, required) {
             let viewHelper = {}
-
             // Convert fieldsName to an array if it is not already one
             if (!Array.isArray(fieldsName)) {
                 fieldsName = [fieldsName]; // Wrap it in an array
             }
-
             fieldsName.forEach(element => {
+
                 viewHelper[element] = { visible: visible, editable: editable, required: required }
-            });
+            })
 
             let viewOld = this._currentController.helperModelInstance.getProperty('/view')
-            viewOld = this._currentController.deepMerge(viewOld, viewHelper)
+            let newViewOld = this._currentController.deepMerge(viewOld, viewHelper)
 
-            this._currentController.helperModelInstance.setProperty('/view', viewOld)
+            this._currentController.helperModelInstance.setProperty('/view', newViewOld)
         },
 
         setVisbileForFormInit: function () {
@@ -251,6 +260,41 @@ sap.ui.define([
             this._currentController.getView().setModel(new sap.ui.model.json.JSONModel({ "SendTo": '' }), 'SettingsAssigneesFormModel');
         },
 
+        setComments: function (selectedTaskz) {
+            console.log("SharingRequestFunctions -> selectedTaskz: ", selectedTaskz)
+            // historyDataSelected
+            let h_d_s = this.historyData?.results.filter(function (item) {
+                return item.RequestId === selectedTaskz.Id;
+            });
+
+            console.log("SharingRequestFunctions -> h_d_s", h_d_s)
+
+            let showMessageComment = "" // Foor loop to all Request history and set all Comments.
+            let xx = []
+            for (let i = h_d_s.length - 1; i >= 0; i--) {
+
+
+                const element = h_d_s[i];
+                const separator = "\n---------\n";
+                showMessageComment = showMessageComment + `${element.ProcessedBy}(${element.ProcessedId}): ${element.CommentZ}\nRequest: ${this._currentController.formatDateToCustomPattern(element.CreatedDate)}${separator}`;
+
+                xx.push({
+                    sender: `${element.ProcessedBy}(${element.ProcessedId})`,
+                    info: element.Status,
+                    timestamp: this._currentController.formatRequestDate(element.CreatedDate),
+                    // timestamp: new Date(element.CreatedDate),
+                    text: element.CommentZ,
+
+                })
+
+            }
+
+            console.log("SharingRequestFunctions -> xx", xx)
+
+            this._currentController.getView().getModel(this.CommentModel)?.setProperty('/PreviseComment', `${showMessageComment}`)
+
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(xx), this.previseCommentCommentModel);
+        },
         // ================================== # Validations # ==================================
         startValidation: function (oPayload, formN) {
             let fieldsName = Object.keys(this.getMainObj(formN));

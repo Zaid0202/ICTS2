@@ -111,9 +111,12 @@
                     <table:Column width="20%">
                         <Label text="Status" />
                         <table:template>
-                            <Text
+                            <ObjectStatus
                                 text="{mainTableModel>Status}"
-                                wrapping="false"
+                                state="{
+                                    path: 'mainTableModel>Status',
+                                    formatter: '.statusState'
+                                            }"
                             />
                         </table:template>
                     </table:Column>

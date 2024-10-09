@@ -28,10 +28,10 @@ sap.ui.define([
                 return finallData;
             }
 
-            console.log("this.listObjFiles", this.listObjFiles)
-            
+            // console.log("this.listObjFiles", this.listObjFiles)
+
             for (let element of this.listObjFiles) {
-                console.log("element", element)
+                // console.log("element", element)
                 // Await the promise returned by onFileChangeX
                 let fileId = await this.onFileChangeX(element['oEvent']);
 
@@ -45,17 +45,30 @@ sap.ui.define([
         onFileChangeX: function (oEvent) {
             const oUploader = oEvent.getSource(); // Get the uploader that triggered the event
             const oFile = oEvent.getParameter("files")[0];
-            console.log("oFile", oFile)
+            // console.log("oFile", oFile)
             return new Promise((resolve, reject) => {
                 if (oFile) {
+                    // const sFileName = oFile.name;
+                    // const sFileType = oFile.type || "application/octet-stream";
+                    // const sSlugValue = `${this._currentController.userId}|${sFileName}`;
+                    // const sToken = this._currentController.getView().getModel().getSecurityToken();
+
+
                     const sFileName = oFile.name;
                     const sFileType = oFile.type || "application/octet-stream";
-                    const sSlugValue = `${this._currentController.userId}|${sFileName}`;
+
+                    // Get the current timestamp for both created_date and updated_date
+                    const oCurrentDate = new Date();
+                    const sFormattedDate = `${oCurrentDate.getFullYear()}${(oCurrentDate.getMonth() + 1).toString().padStart(2, '0')}${oCurrentDate.getDate().toString().padStart(2, '0')}${oCurrentDate.getHours().toString().padStart(2, '0')}${oCurrentDate.getMinutes().toString().padStart(2, '0')}${oCurrentDate.getSeconds().toString().padStart(2, '0')}`;
+
+                    // Concatenate the userId, fileName, created_date, and updated_date into the slug
+                    const sSlugValue = `${this._currentController.userId}|${sFileName}|${sFormattedDate}|${sFormattedDate}`;
+
+                    // Fetch security token
                     const sToken = this._currentController.getView().getModel().getSecurityToken();
-                    console.log("sToken", sToken)
+
+
                     this.setupUploaderHeaders(oUploader, sSlugValue, sFileType, sToken);
-                    console.log("sFileType", sFileType)
-                    console.log("oUploader", oUploader)
 
                     this.uploadFileAsync(oUploader)
                         .then(fileId => {
@@ -96,8 +109,6 @@ sap.ui.define([
         },
 
         uploadFileAsync: function (oUploader) {
-            console.log("oUploader", oUploader)
-
             return new Promise((resolve, reject) => {
                 // Attach the 'uploadComplete' event handler
                 oUploader.attachUploadComplete(function (oEvent) {

@@ -6,15 +6,13 @@ sap.ui.define(
     "sap/ui/core/routing/Router",
     "sap/ui/core/Fragment",
     "sap/ui/core/Configuration",
-    "internal/controller/Helper/UserService",
   ],
   function (Controller,
     UIComponent,
     ToolPage,
     Router,
     Fragment,
-    Configuration,
-    UserService) {
+    Configuration) {
     "use strict";
 
     return Controller.extend("internal.controller.App", {
@@ -58,7 +56,6 @@ sap.ui.define(
 
           oModelNavList.setData(oModelNavListData);
           this.getView().setModel(oModelNavList, "navList");
-
         }
 
 

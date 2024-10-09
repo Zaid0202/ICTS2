@@ -42,6 +42,15 @@
                     "localUri": "localService/ZEMAIL_NOTIFICATION_SRV/metadata.xml",
                     "odataVersion": "2.0"
                 }
+            },
+            "ZACCOMODATION_APPS_SRV": {
+                "uri": "/sap/opu/odata/SAP/ZACCOMODATION_APPS_SRV/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [],
+                    "localUri": "localService/ZACCOMODATION_APPS_SRV/metadata.xml",
+                    "odataVersion": "2.0"
+                }
             }
         }
     },
@@ -125,6 +134,18 @@
             },
             "ZEMAIL_NOTIFICATION_SRV": {
                 "dataSource": "ZEMAIL_NOTIFICATION_SRV",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "refreshAfterChange": false,
+                    "metadataUrlParams": {
+                        "sap-value-list": "none"
+                    }
+                }
+            },
+            "ZACCOMODATION_APPS_SRV": {
+                "dataSource": "ZACCOMODATION_APPS_SRV",
                 "preload": true,
                 "settings": {
                     "defaultBindingMode": "TwoWay",

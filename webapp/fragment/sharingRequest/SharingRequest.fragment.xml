@@ -6,7 +6,7 @@
     xmlns:form="sap.ui.layout.form"
     xmlns:u="sap.ui.unified"
 >
-    <VBox class="sapUiSmallMargin">
+    <VBox class="sapUiSmallMargin" id="mainFormVboxId" >
         <form:Form
             id="mainFormId"
             editable="true"
@@ -59,7 +59,7 @@
                                             key="{localData>}"
                                             text="{localData>}"
                                         />
-                                            <!-- icon="sap-icon://badge" -->
+                                        <!-- icon="sap-icon://badge" -->
                                     </items>
                                 </Select>
                             </form:fields>
@@ -126,16 +126,16 @@
                             visible="{helperModel>/view/PublishingDate/visible}"
                         >
                             <form:fields>
-                                <DateTimePicker
+                                <DatePicker
                                     id="PublishingDateID"
-                                    value="{mainFormModel>/PublishingDate}"
+                                    value="{ path: 'mainFormModel>/PublishingDate', formatter: '.formatDateToCustomPattern' }"
+                                    
                                     valueFormat="yyyy-MM-ddTHH:mm:ss"
                                     displayFormat="yyyy-MM-dd"
                                     valueState="{mainFormErrModel>/PublishingDate/valueState}"
                                     valueStateText="{mainFormErrModel>/PublishingDate/valueStateText}"
                                     editable="{helperModel>/view/PublishingDate/editable}"
                                     required="{helperModel>/view/PublishingDate/required}"
-                                    showCurrentTimeButton="true"
                                 />
                             </form:fields>
                         </form:FormElement>
@@ -334,34 +334,7 @@
                             </form:fields>
                         </form:FormElement>
 
-                        <!-- Add a VBox for spacing -->
-                        <!-- Use an empty label to create spacing -->
-                        <form:FormElement>
-                            <form:fields>
-                                <Label text="" />
-                            </form:fields>
-                        </form:FormElement>
-
                         <!-- x=================x=================x -->
-
-                        <!-- visible="{= ${helperModel>/IsIGN} || ${helperModel>/IsRevisionRequest} }" -->
-                        <form:FormElement
-                            label="Previse Comment"
-                            visible="{helperModel>/view/PreviseComment/visible}"
-                        >
-                            <form:fields>
-                                <TextArea
-                                    value="{CommentModel>/PreviseComment}"
-                                    rows="4"
-                                    width="100%"
-                                    placeholder="Enter Description..."
-                                    valueState="{CommentErrModel>/PreviseComment/valueState}"
-                                    valueStateText="{CommentErrModel>/PreviseComment/valueStateText}"
-                                    editable="{helperModel>/view/PreviseComment/editable}"
-                                    required="{helperModel>/view/PreviseComment/required}"
-                                />
-                            </form:fields>
-                        </form:FormElement>
 
                         <!-- visible="{= ${helperModel>/isAssigneesWorkFlow} }" -->
                         <form:FormElement
@@ -388,7 +361,7 @@
                         </form:FormElement>
 
                         <!-- visible="{= ${helperModel>/IsIGN} || ${helperModel>/IsRevisionRequest} }" -->
-                        <form:FormElement
+                        <!-- <form:FormElement
                             label="Comment"
                             visible="{helperModel>/view/CommentZ/visible}"
                         >
@@ -403,6 +376,72 @@
                                     editable="{helperModel>/view/CommentZ/editable}"
                                     required="{helperModel>/view/CommentZ/required}"
                                 />
+                            </form:fields>
+                        </form:FormElement> -->
+
+                        <form:FormElement
+                            label="Comment"
+                            visible="{helperModel>/view/CommentZ/visible}"
+                        >
+                            <form:fields>
+                                <FeedInput
+                                    post="onPost"
+                                    class="sapUiSmallMarginTopBottom"
+                                    value="{CommentModel>/CommentZ}"
+                                    showIcon='false'
+                                />
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- visible="{= ${helperModel>/IsIGN} || ${helperModel>/IsRevisionRequest} }" -->
+                        <form:FormElement
+                            label="Previse Comments"
+                            visible="{helperModel>/view/PreviseComment/visible}"
+                        >
+                            <!-- timestamp="{previseCommentCommentModel>timestamp}" -->
+                            <!-- timestamp="{ path: 'previseCommentCommentModel>timestamp', type: 'sap.ui.model.type.DateTime', formatOptions: {pattern: 'dd MMM yyyy hh:mm a'}}" -->
+
+                            <form:fields>
+                                <List
+                                    showSeparators="Inner"
+                                    items="{previseCommentCommentModel>/}"
+                                >
+                                    <FeedListItem
+                                        sender="{previseCommentCommentModel>sender}"
+                                        info="{previseCommentCommentModel>info}"
+                                        timestamp="{previseCommentCommentModel>timestamp}"
+                                        text="{previseCommentCommentModel>text}"
+                                        showIcon='false'
+                                    />
+                                </List>
+                            </form:fields>
+                        </form:FormElement>
+
+                        <!-- <form:FormElement
+                            label="Previse Comment"
+                            visible="{helperModel>/view/PreviseComment/visible}"
+                        >
+                            <form:fields>
+                                <TextArea
+                                    value="{CommentModel>/PreviseComment}"
+                                    rows="4"
+                                    width="100%"
+                                    placeholder="Enter Description..."
+                                    valueState="{CommentErrModel>/PreviseComment/valueState}"
+                                    valueStateText="{CommentErrModel>/PreviseComment/valueStateText}"
+                                    editable="{helperModel>/view/PreviseComment/editable}"
+                                    required="{helperModel>/view/PreviseComment/required}"
+                                />
+                            </form:fields>
+                        </form:FormElement> -->
+
+                        <!-- x=================x=================x -->
+
+                        <!-- Add a VBox for spacing -->
+                        <!-- Use an empty label to create spacing -->
+                        <form:FormElement>
+                            <form:fields>
+                                <Label text="" />
                             </form:fields>
                         </form:FormElement>
 

@@ -6,3 +6,24 @@
     opacity: 0.6;  /* Reduce opacity to make the text less prominent */
     color: #888;   /* Light grey color */
 }
+
+/* For Table Text  */
+.boldText {
+    font-weight: bold;
+}
+
+.sapUiSmallMarginTop {
+    margin-top: 5px;
+}
+
+.sapUiSmallMarginBottom {
+    margin-bottom: 5px;
+}
+
+.sapUiTinyMarginTop {
+    margin-top: 2px;
+}
+
+#__input0-button{
+    display: none !important;
+}

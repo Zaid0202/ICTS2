@@ -8,44 +8,14 @@ sap.ui.define([
         constructor: function (currentController, userId) {
             this.userId = userId
             this._currentController = currentController;
-        },
-
-        onInitX: async function () {
-            // await this.fetchUserInfo.call(this);
-            return await this.getUserinfoFullObj();
-        },
-
-
-        fetchUserInfo: async function () {
-            let attempts = 0;
-            const maxAttempts = 1; // Set a maximum number of attempts to avoid infinite loops
-
-            while (attempts < maxAttempts) {
-                this.userinfoFullObj = await this.getUserinfoFullObj();
-
-                if (this.userinfoFullObj) {
-                    // console.log("this.userinfoFullObj: ", this.userinfoFullObj)
-                    // If the userinfoFullObj is found, return it
-                    return true;
-                }
-
-                attempts++;
-                console.log(`Attempt ${attempts}: User info not found, retrying...`);
-
-                // Optionally, you can wait for some time before retrying
-                await new Promise(resolve => setTimeout(resolve, 1500)); // Wait for 1.5 second
-            }
-
-            // If the loop ends without finding the user info, handle accordingly
-            return 'User info does not exist after maximum attempts';
+            this.userinfoFullObj = null
         },
 
         getUserinfoFullObj: async function () {
             const mModel = this._currentController.getModel("SF");
-            let userId = this.userId
 
             try {
-                const userDetailurl = `${mModel.sServiceUrl}/User?$filter=userId eq '${userId}'&$expand=manager&$format=json`;
+                const userDetailurl = `${mModel.sServiceUrl}/User?$filter=userId eq '${this.userId}'&$expand=manager&$format=json`;
                 // const userDetailurl = `${mModel.sServiceUrl}/User('10125')/empInfo&$format=json`;
                 const response = await fetch(userDetailurl);
                 const jobData = await response.json();
@@ -58,31 +28,36 @@ sap.ui.define([
 
         },
 
-        getUserInfo:async function () {
+        getUserInfo: async function () {
             // this.userInfo = this.getUserInfo(this.userinfoFullObj)
-            let userinfoFullObj = await this.onInitX()
-            let userInfo = {
-                empId: userinfoFullObj?.userId || Number(this.userId),
-                userEmail: userinfoFullObj?.username || "Damy Data",
-                userLocation: userinfoFullObj?.city || "Damy Data",
-                displayName: `${userinfoFullObj?.displayName}` || "Damy Data",
-                // displayName: `${userinfoFullObj?.displayName}(${userinfoFullObj?.userId})` || "Damy Data",
-                position: userinfoFullObj?.title || "Damy Data",
-                grade: userinfoFullObj?.payGrade || "Damy Data",
-                division: userinfoFullObj?.division || "Damy Data",
-                department: userinfoFullObj?.department || "Damy Data",
-                city: userinfoFullObj?.city || "Damy Data",
-                managerName: userinfoFullObj?.manager?.displayName || "Damy Data",
-                managerId: userinfoFullObj?.manager?.userId || "Damy Data",
-                managerEmail: userinfoFullObj?.manager?.username || "Damy Data",
+
+            if (!this.userinfoFullObj) {
+                this.userinfoFullObj = await this.getUserinfoFullObj()
             }
-            this.userInfo = userInfo
-            console.log("UserService -> userInfo: ", userInfo)
-            return userInfo
+            // console.log("UserService -> this.userinfoFullObj: ", this.userinfoFullObj)
+
+            this.userInfo = {
+                empId: this.userinfoFullObj?.userId || Number(this.userId),
+                userEmail: this.userinfoFullObj?.username || "Damy Data",
+                userLocation: this.userinfoFullObj?.city || "Damy Data",
+                displayName: `${this.userinfoFullObj?.displayName}` || "Damy Data",
+                // displayName: `${this.userinfoFullObj?.displayName}(${this.userinfoFullObj?.userId})` || "Damy Data",
+                position: this.userinfoFullObj?.title || "Damy Data",
+                grade: this.userinfoFullObj?.payGrade || "Damy Data",
+                division: this.userinfoFullObj?.division || "Damy Data",
+                department: this.userinfoFullObj?.department || "Damy Data",
+                city: this.userinfoFullObj?.city || "Damy Data",
+                managerName: this.userinfoFullObj?.manager?.displayName || "Damy Data",
+                managerId: this.userinfoFullObj?.manager?.userId || "Damy Data",
+                managerEmail: this.userinfoFullObj?.manager?.username || "Damy Data",
+            }
+
+            // console.log("UserService -> this.userInfo: ", this.userInfo)
+            return this.userInfo
         },
 
-        getRequesterData: function () {
-            let userInfo = this.userInfo
+        getRequesterData: async function () {
+            let userInfo = await this.getUserInfo()
             return {
                 RequesterId: userInfo?.empId, // Renamed from requester_id
                 RequesterName: userInfo?.displayName, // Renamed from requester_name
@@ -145,13 +120,13 @@ sap.ui.define([
             return detailsMap[status];
         },
 
-        getRequesteData: function (obj) {
+        getRequesteData: async function (obj) {
             let status = obj?.status;
             let sendTo = obj?.sendTo;
             let sendToName = obj?.sendToName;
             let step = obj?.step;
 
-            const userInfo = this.userInfo || {};
+            let userInfo = await this.getUserInfo() || {};
 
             // Assuming getTaskDetails returns an object with "StatusDisplay", "Sendto", and "Steps"
             const workFlow = this.getTaskDetails(userInfo, status, step, sendTo, sendToName);
@@ -166,20 +141,23 @@ sap.ui.define([
             };
         },
 
-        getUserInfoWithRequestTamp: function (obj) {
-            let requesteData = this.getRequesteData(obj?.RequesteData)
-            let requesterData = this.getRequesterData()
+        getUserInfoWithRequestTamp: async function (obj) {
+            let requesteData = await this.getRequesteData(obj?.RequesteData)
+            let requesterData =  obj.RequesteData.status == "Pending" ? await this.getRequesterData() : obj?.RequesterData
 
-            // console.log({ requesteData })
-            // console.log({ requesterData })
+            console.log("UserService -> requesteData: ", requesteData)
+            console.log("UserService -> requesterData: ", requesterData)
 
             return {
                 ...requesteData, ...requesterData
             };
+
+
+            return requesteData
         },
 
-        getRequestHistoryObj: function (Obj) {
-            const userInfo = this.userInfo || {};
+        getRequestHistoryObj: async function (Obj) {
+            let userInfo = await this.getUserInfo() || {};
 
             if (!userInfo) { return false }
 

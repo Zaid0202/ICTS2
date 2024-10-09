@@ -34,6 +34,8 @@ sap.ui.define([
                     });
 
                 this.getView().setModel(new sap.ui.model.json.JSONModel(data), 'tiles')
+                console.log("Home -> helperModelInstance.getData", this.helperModelInstance.getData())
+
                 // console.log(data)
             },
 

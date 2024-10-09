@@ -270,7 +270,7 @@ sap.ui.define([
       return oData.filter(function (data) {
         return data.Year === year;
       });
-    }
+    },
 
 
   });

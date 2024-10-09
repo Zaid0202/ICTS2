@@ -6,9 +6,10 @@ sap.ui.define(
     "internal/controller/Helper/UploadeFile",
     "sap/m/MessageBox",
     "internal/controller/Helper/SharingRequestFunctions",
+    "sap/m/MessageToast",
 
   ],
-  function (BaseController, Device, JSONModel, UploadeFile, MessageBox, SharingRequestFunctions) {
+  function (BaseController, Device, JSONModel, UploadeFile, MessageBox, SharingRequestFunctions, MessageToast) {
     "use strict";
 
     return BaseController.extend("internal.controller.MyTasks", {
@@ -74,6 +75,10 @@ sap.ui.define(
         let employeeIds = {}
         let employeeNames = {}
 
+        if (this.objStatus.status === 'Pending') {
+
+        }
+
         if (this.objStatus.status === 'Approved') {
           approvalNextLvlData = await this.getSelectedMainServiceNextLvl(data)
 
@@ -110,6 +115,7 @@ sap.ui.define(
         if (this.objStatus.status === 'Rejected') {
 
         }
+
 
         if (this.objStatus.status === 'Assigned') {
           let assigneesTableModel = this.getView().getModel("SettingsAssigneesTableModel").getData()
@@ -174,6 +180,28 @@ sap.ui.define(
 
         let commentData = this.getView().getModel(this.CommentModel).getData();
 
+        // ------------------------------------------------------------------------------------------------
+
+        this.isConfired = false
+        // Create a promise for the confirmation
+        const confirmation = await new Promise((resolve) => {
+
+          MessageBox.confirm(`Are you sure you want to send the request?`, {
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+            emphasizedAction: MessageBox.Action.OK,
+            onClose: function (sAction) {
+              if (sAction === "OK") {
+                this.isConfired = true;
+              }
+              resolve(this.isConfired); // Resolve the promise with the user's choice
+            }.bind(this)
+          });
+
+        });
+
+        if (!confirmation) { return false }
+
+
         let isErr = this.startValidationComment(commentData)
         if (isErr) {
           // For AssigneesData startValidationAssingees
@@ -197,10 +225,17 @@ sap.ui.define(
           step: data.Steps
         };
         requesteData = await this.updateRequesteData(data, requesteData) // Here Set Values Bese in Status
-        console.log("MyTasks -> requesteData: ", requesteData)
+
+        if (!requesteData) { return false }
+
+        let requesteDataTamp = requesteData
+        console.log("MyTasks -> requesteDataTamp: ", requesteDataTamp)
+        let namesSendto = this.formatSendToNames(requesteDataTamp.sendTo, requesteDataTamp.sendToName)
+        console.log("MyTasks -> requesteDataTamp: ", requesteDataTamp)
+        console.log("MyTasks -> namesSendto: ", namesSendto)
 
         data = await this.getRequesteData(data, requesteData) // Here Get Values Bese in Status
-        console.log("data -> getRequesteData -> requesteData: ", data)
+        console.log("MyTasks -> data: ", data)
 
         if (!data) { return false }
         // return 1
@@ -217,7 +252,6 @@ sap.ui.define(
 
         // -------History Part---------
         let history = await this.getHistoryDataWorkFlow(data, commentData.CommentZ)
-
         if (!history) { return false }
 
         // -------Mail Part---------
@@ -225,7 +259,9 @@ sap.ui.define(
 
         // -------End Part---------
         this.onRefresh()
-        sap.m.MessageBox.success("Thank you! Your request has been successfully submitted.", {
+        let sendTo = `Forwarded to: ${namesSendto}`;
+        let messageOfSuccess = `Thank you! The Request Id:(${Number(data.Id)}) has been successfully submitted,\n${sendTo}.`
+        sap.m.MessageBox.success(messageOfSuccess, {
           title: "Success",                                    // default
           onClose: null,                                       // default
           styleClass: "",                                      // default
@@ -240,6 +276,27 @@ sap.ui.define(
 
       },
 
+      formatSendToNames: function (sIds, sNames) {
+        if (!sIds || !sNames) return "";
+
+        // Split IDs and names by commas
+        const idArray = sIds.split(", ");
+        const nameArray = sNames.split(", ");
+
+        // Ensure both arrays are the same length
+        if (idArray.length !== nameArray.length) return "";
+
+        // Combine names and IDs in the format "FirstName LastName (ID)"
+        const combinedArray = nameArray.map((name, index) => {
+          const firstNameLastName = name.split(" ").slice(0, 2).join(" ");  // Assuming names are formatted with first and last names
+          return `${firstNameLastName} (${idArray[index]})`;
+        });
+
+        // Join the results with a separator (e.g., comma)
+        return combinedArray.join(", ");
+      },
+
+
       onRefresh: async function (oEvent) {
         console.log("Start Refreshiung")
         this.setBusy('listContinerId', true)
@@ -252,62 +309,62 @@ sap.ui.define(
       // ================================== # Work Flow Presses (Buttons) # ==================================
       onAssignees: function (ev) {
         this.objStatus = { status: "Assigned" }
-        this.onConvirme()
+        this.onMainSubmit()
 
       },
 
       onReSumbit: function (ev) {
         this.objStatus = { status: "Pending", isUpload: true }
-        this.onConvirme()
+        this.onMainSubmit()
 
       },
 
       onApproval: function (ev) {
         this.objStatus = { status: "Approved" }
 
-        this.onConvirme()
+        this.onMainSubmit()
       },
 
       onRejected: function (ev) {
         this.objStatus = { status: "Rejected" }
 
-        this.onConvirme()
+        this.onMainSubmit()
       },
 
       onRetrun: function (ev) {
         this.objStatus = { status: "Returned" }
 
-        this.onConvirme()
+        this.onMainSubmit()
       },
 
       onWorkInProgress: function (ev) {
         this.objStatus = { status: "WorkInProgress" }
 
-        this.onConvirme()
+        this.onMainSubmit()
       },
 
       onCompleted: function (ev) {
         this.objStatus = { status: "Completed" }
 
-        this.onConvirme()
+        this.onMainSubmit()
       },
 
       onClosedStatus: function (ev) {
         this.objStatus = { status: "Closed" }
 
-        this.onConvirme()
+        this.onMainSubmit()
       },
 
       onConvirme: function () {
-        MessageBox.confirm(`Are you sure you want to ${this.objStatus.status} the request?`, {
-          actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-          emphasizedAction: MessageBox.Action.OK,
-          onClose: function (sAction) {
-            if (sAction === "OK") {
-              this.onMainSubmit();
-            }
-          }.bind(this)
-        });
+        // MessageBox.confirm(`Are you sure you want to ${this.objStatus.status} the request?`, {
+        //   actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+        //   emphasizedAction: MessageBox.Action.OK,
+        //   onClose: function (sAction) {
+        //     if (sAction === "OK") {
+        //       this.onMainSubmit();
+        //     }
+        //   }.bind(this)
+        // });
       },
 
 
@@ -382,6 +439,7 @@ sap.ui.define(
 
         // Set CommentZ Part  ------------------
         this.setComments(selectedTaskz)
+        // console.log("MyTasks -> selectedTaskz: ", selectedTaskz)
 
         //Assginees Part ------------------
         if (await this.isAssginees(selectedTaskz)) {
@@ -402,19 +460,19 @@ sap.ui.define(
         return ((approvalNextLvlData.length == 0) && ((selectedTaskz.Steps + 1) > 2) && (selectedTaskz.Status != "Assigned"))
       },
 
-      setComments: function (selectedTaskz) {
-        let historyDataSelected = this.historyData?.results.filter(function (item) {
-          return item.RequestId === selectedTaskz.Id;
-        });
+      // setComments: function (selectedTaskz) {
+      //   let historyDataSelected = this.historyData?.results.filter(function (item) {
+      //     return item.RequestId === selectedTaskz.Id;
+      //   });
 
-        let showMessageComment = "" // Foor loop to all Request history and set all Comments.
-        for (let i = historyDataSelected.length - 1; i >= 0; i--) {
-          const element = historyDataSelected[i];
-          const separator = "\n---------\n";
-          showMessageComment = showMessageComment + `${element.ProcessedBy}(${element.ProcessedId}): ${element.CommentZ}\nRequest: ${this.formatDateToCustomPattern(element.CreatedDate)}${separator}`;
-        }
-        this.getView().getModel(this.CommentModel)?.setProperty('/PreviseComment', `${showMessageComment}`)
-      },
+      //   let showMessageComment = "" // Foor loop to all Request history and set all Comments.
+      //   for (let i = historyDataSelected.length - 1; i >= 0; i--) {
+      //     const element = historyDataSelected[i];
+      //     const separator = "\n---------\n";
+      //     showMessageComment = showMessageComment + `${element.ProcessedBy}(${element.ProcessedId}): ${element.CommentZ}\nRequest: ${this.formatDateToCustomPattern(element.CreatedDate)}${separator}`;
+      //   }
+      //   this.getView().getModel(this.CommentModel)?.setProperty('/PreviseComment', `${showMessageComment}`)
+      // },
 
       // ================================== # Uploade Files Functions # ==================================
       onTaskNameChange: function (oEvent) {
@@ -471,7 +529,7 @@ sap.ui.define(
 
       // ================================== # Dont Use it in Proeduction!!! Delete All Data from oData!!! Dengers # ==================================
       deleteAllIn: async function () {
-        let endsPoints = ["NewRequestSet", "RequestHistorySet", "UploadFileSet"];
+        let endsPoints = ["NewRequestSet", "RequestHistorySet", "UploadFileSet", "SettingsApprovalsSet", "SettingsAssigneesSet"];
         console.log("start Deleting...")
         for (let element of endsPoints) {
           let data = await this.crud_z.get_record(element);
@@ -480,6 +538,7 @@ sap.ui.define(
           for (let elementIn of data) {
             try {
               await this.crud_z.delete_record(element, elementIn.Id);
+              console.log("Deleted: ", element, elementIn.Id)
             } catch (error) {
               console.error(`Failed to delete record with ID: ${elementIn.Id}`, error);
             }

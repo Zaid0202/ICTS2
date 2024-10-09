@@ -18,6 +18,9 @@ sap.ui.define([
 
 
         start: async function (finallData, historyOb) {
+            console.log("EmailService -> finallData: ", finallData)
+            console.log("EmailService -> historyOb: ", historyOb)
+
             // let sendToList = finallData.Sendto -- > "14717, 10125" || "14717"
             let sendToList = finallData.Sendto.includes(',')
                 ? finallData.Sendto.split(',').map(id => id.trim())

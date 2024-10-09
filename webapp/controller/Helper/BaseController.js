@@ -18,8 +18,6 @@ sap.ui.define(
 
         let ownerComponent = this.getOwnerComponent();
 
-        console.log("View: ", this.getView());
-        console.log("ownerComponent: ", ownerComponent);
         if (!ownerComponent) {
           throw new Error("Owner Component not initialized");
         }
@@ -40,14 +38,12 @@ sap.ui.define(
           console.log("NO Uset Data!")
         }
         this.userInfo = userData.userInfo
-        this.userId = userData.empId
+        this.userId = this.userInfo.empId
         this.sUserRole = userData.role
         console.log("BaseController -> this.userInfo", this.userInfo)
         console.log("BaseController -> this.sUserRole", this.sUserRole)
 
         //--------------------------------
-
-
         this.helperModel = 'helperModel'
         this.getView()?.setModel(new sap.ui.model.json.JSONModel({}), this.helperModel)
         this.helperModelInstance = this.getView()?.getModel(this.helperModel)
@@ -55,18 +51,22 @@ sap.ui.define(
         console.log("Finsh THe Base Controller: ");
 
       },
+
       onBeforeRendering: function () {
-        console.log("onBeforeRendering-----------------------")
+        // console.log("onBeforeRendering-----------------------")
         // Manipulate the view elements before rendering
       },
+
       onAfterRendering: function () {
-        console.log("onAfterRendering----------------------")
+        // console.log("onAfterRendering----------------------")
         // Access the DOM and manipulate UI elements after rendering
       },
+
       onExit: function () {
         console.log("onExit-------------------")
         // Cleanup code, like detaching events or clearing resources
       },
+      
       setMode: function (mode) {
         this.helperModelInstance?.setProperty('/Mode', mode)
       },
@@ -140,7 +140,7 @@ sap.ui.define(
         // Regular expression to extract the name
         // let nameMatch = statusDisplay.match(/Forwarded to\s(.*?)\s*\(/); // Approved Rejected Returned Closed
         let nameMatch = statusDisplay.match(/(?:Forwarded to|Approved by|Rejected by|Returned by|Closed by)\s*(.*?)\s*\(/);
-        console.log({ nameMatch })
+        // console.log({ nameMatch })
         // Return the extracted name or null if not found
         return nameMatch ? nameMatch[1] : "Employee Name not found!";
       },
@@ -253,30 +253,65 @@ sap.ui.define(
       //   const options = { month: 'short', day: '2-digit', year: 'numeric' };
 
       //   // Get the formatted date as a string
-      //   const formattedDate = date.toLocaleDateString('en-US', options);
+      //   const formattedDate = date.toLocaleDateString('en-US', options);f
 
       //   // Convert the formatted date to the desired format (MMM/DD/YYYY)
       //   const [month, day, year] = formattedDate.split(' ');
       //   return `${month}/${day.replace(',', '')}/${year}`; // Remove comma from day if exists
       // },
 
+      // formatRequestDate: function (oDate) {
+      //   if (!oDate) return '';
+
+      //   // Create a date object from the input
+      //   const date = new Date(oDate);
+
+      //   // Get month, day, and year
+      //   const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-based, pad with zero
+      //   const day = String(date.getDate()).padStart(2, '0'); // Pad day with zero
+      //   const year = date.getFullYear();
+
+      //   // Return formatted date
+      //   return `${month}/${day}/${year}`;
+      // },
       formatRequestDate: function (oDate) {
         if (!oDate) return '';
 
-        // Create a date object from the input
+        // Create a date object from the input timestamp
         const date = new Date(oDate);
 
-        // Get month, day, and year
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-based, pad with zero
-        const day = String(date.getDate()).padStart(2, '0'); // Pad day with zero
-        const year = date.getFullYear();
+        // Define options to format the date into the desired pattern
+        const options = {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        };
 
-        // Return formatted date
-        return `${month}/${day}/${year}`;
+        // Use JavaScript's built-in Intl.DateTimeFormat for localization and formatting
+        return new Intl.DateTimeFormat('en-US', options).format(date);
+      },
+
+      // FormatS 
+      formatDateToCustomPattern: function (oDate, pattern = "M-d-yyyy") {
+        if (!oDate) {
+          return ""; // Return an empty string if no date is provided
+        }
+
+        // Create a DateFormat instance with the desired pattern
+        var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+          pattern: "M-d-yyyy" // Custom pattern: month-day-year
+        });
+
+        // Format the passed date object to the specified pattern
+        return this.formatRequestDate(oDate);
+        return oDateFormat.format(oDate);
       },
 
       formatAttachmentText1: async function (sAttachment) {
-        console.log("BaseController -> sAttachment", sAttachment)
+        // console.log("BaseController -> sAttachment", sAttachment)
 
         let isAllDigits = /^[0-9]{10}$/.test(sAttachment); // Checks if it's exactly 10 digits
 
@@ -318,33 +353,30 @@ sap.ui.define(
       },
 
       statusState: function (sStatus) {
-        // You can set the state of the ObjectStatus based on the status value
+        // Set the state of the ObjectStatus based on the status value
         switch (sStatus) {
           case "Pending":
             return 'Information';
-          case "Rejecteded":
-            return 'Error';
           case "Approved":
             return 'Success';
+          case "Rejected":
+            return 'Error';
+          case "Returned":
+            return 'Warning';
+          case "Assigned":
+            return 'Information';
+          case "WorkInProgress":
+            return 'Warning';
+          case "Completed":
+            return 'Success';
+          case "Closed":
+            return 'Success';
           default:
-            return 'None';
+            return 'None';  // Default state if the status doesn't match any case
         }
       },
 
-      // FormatS 
-      formatDateToCustomPattern: function (oDate, pattern = "M-d-yyyy") {
-        if (!oDate) {
-          return ""; // Return an empty string if no date is provided
-        }
 
-        // Create a DateFormat instance with the desired pattern
-        var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-          pattern: "M-d-yyyy" // Custom pattern: month-day-year
-        });
-
-        // Format the passed date object to the specified pattern
-        return oDateFormat.format(oDate);
-      },
 
       formatIdToCustomPattern: function (Id) {
         if (!Id) {
@@ -359,29 +391,64 @@ sap.ui.define(
       },
 
       // ================================== # Formaters Files Functions # ==================================
+      // deepMerge: function (target, source) {
+      //   // Ensure both target and source are objects
+      //   if (typeof target !== 'object' || target === null) {
+      //     target = {};
+      //   }
+
+      //   if (typeof source !== 'object' || source === null) {
+      //     return target; // Nothing to merge if source is not an object
+      //   }
+
+      //   for (let key in source) {
+      //     // Check if the source value is an object and if the key exists in both target and source
+      //     if (source[key] instanceof Object && key in target && target[key] instanceof Object) {
+      //       // Recursively merge objects
+      //       target[key] = this.deepMerge(target[key], source[key]);
+      //     } else {
+      //       // Otherwise, assign the source value to the target
+      //       target[key] = source[key];
+      //     }
+      //   }
+
+      //   return target; // Return the merged object
+      // },
+
       deepMerge: function (target, source) {
-        // Ensure both target and source are objects
         if (typeof target !== 'object' || target === null) {
           target = {};
         }
 
         if (typeof source !== 'object' || source === null) {
-          return target; // Nothing to merge if source is not an object
+          return target;
         }
+
+        // console.log("BaseController -> source ", source)
 
         for (let key in source) {
-          // Check if the source value is an object and if the key exists in both target and source
-          if (source[key] instanceof Object && key in target && target[key] instanceof Object) {
-            // Recursively merge objects
+          // console.log("BaseController -> key ", key)
+          if (typeof source[key] === 'object' && source[key] !== null && !(source[key] instanceof Array)) {
+            // Recursively merge only if the value is an object (not array or primitive)
+            if (!target[key]) {
+              target[key] = {};  // Ensure the key exists in the target
+            }
+            // console.log("BaseController -> key ", key)
+            // console.log("BaseController -> target[key] ", target[key])
+            // console.log("BaseController -> source[key] ", source[key])
             target[key] = this.deepMerge(target[key], source[key]);
           } else {
-            // Otherwise, assign the source value to the target
+            // Directly assign the value (scalar or array) from source to target
             target[key] = source[key];
+            // console.log("BaseController -> [key] ", key, target[key])
           }
         }
+        // console.log("BaseController -> deepMerge Finsh\n\ntarget", target)
+        return target;
+      }
 
-        return target; // Return the merged object
-      },
+      ,
+
       getaFieldNames: function (formId) {
 
         // Get the form by its ID
@@ -418,7 +485,7 @@ sap.ui.define(
             }
           });
         });
-        return aFieldNames
+        return aFieldNames.map(el => el != "MainService")
         // Get the form by its ID
         // let oForm = this.getView().byId("mainFormId");
 

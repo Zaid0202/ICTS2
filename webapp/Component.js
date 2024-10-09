@@ -8,11 +8,12 @@ sap.ui.define([
     "internal/model/models",
     "sap/f/FlexibleColumnLayoutSemanticHelper",
     "internal/controller/Helper/UserService",
+    "internal/controller/Helper/CRUD_z",
 
 
 
 ],
-    function (UIComponent, Device, models, FlexibleColumnLayoutSemanticHelper, UserService) {
+    function (UIComponent, Device, models, FlexibleColumnLayoutSemanticHelper, UserService, CRUD_z) {
         "use strict";
 
 
@@ -26,16 +27,26 @@ sap.ui.define([
              * @public
              * @override
              */
-            init:async  function () {
-                
+            init: async function () {
+
                 // call the base component's init function
-                 UIComponent.prototype.init.apply(this, arguments);
+                UIComponent.prototype.init.apply(this, arguments);
 
                 // enable routing
                 this.getRouter().initialize();
 
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
+
+                // Id:5 
+                // admin:true 
+                // analytics:true 
+                // appId:"3" 
+                // appName:"3 - Internal Communication Ticketing system" 
+                // create:true 
+                // report:true 
+                // status : true 
+                // userId : "22225"
 
             },
 
@@ -62,27 +73,81 @@ sap.ui.define([
             },
 
             getUserData: async function () {
-                let [userId, userRule] = this.getUserIdAndRule()
+                const [userId] = this.getUserIdAndRule(); // Unpack only userId since userRule2 is not used
+                let userRule = 'Normal User';
+
+                // Initialize userService
                 this.userService = new UserService(this, userId);
-                
-                if (!this.userInfo){
-                    this.userInfo = await this.userService.getUserInfo()
-                    console.log("Component -> this.userInfo: ", this.userInfo)
+
+                // Fetch user info if not already present
+                if (!this.userInfo) {
+                    this.userInfo = await this.userService.getUserInfo();
+                    const crud_z = new CRUD_z(this, "ZACCOMODATION_APPS_SRV", true);
+
+                    // Fetch access user set
+                    const access_UserSet = await crud_z.get_record('Access_UserSet', '', {});
+
+                    // Filter access user set for specific appId and userId
+                    const access_UserSet_Filtered = access_UserSet?.results.filter(el =>
+                        String(el.appId) === '3' && String(el.userId) === userId
+                    );
+
+                    // Assign the first match or null
+                    const accessUser = access_UserSet_Filtered.length > 0 ? access_UserSet_Filtered[0] : null;
+
+                    // Determine user role based on access user data
+                    if (accessUser) {
+                        if (accessUser.admin && accessUser.report) {
+                            userRule = 'Super User';
+                        } else if (accessUser.report) {
+                            userRule = 'Mid User';
+                        }
+                    }
+
+                    // Store user role in local storage
+                    localStorage.setItem("UserRole", userRule);
                 }
 
                 return {
                     userInfo: this.userInfo,
                     role: userRule
-                }
-
-                this.setModel(new sap.ui.model.json.JSONModel({
-                    userInfo: this.userService.userInfo,
-                    role: userRule
-                }), "userModel");
+                };
             },
 
+            // getUserData: async function () {
+            //     let [userId, userRule2] = this.getUserIdAndRule()
+            //     let userRule = 'Normal User'
 
-            // getuserInfo_f: function () { return this.getModel("userModel").getProperty("/userInfo") },
+            //     this.userService = new UserService(this, userId);
+
+            //     if (!this.userInfo) {
+            //         this.userInfo = await this.userService.getUserInfo()
+            //         let crud_z = new CRUD_z(this, "ZACCOMODATION_APPS_SRV", true)
+            //         let access_UserSet = await crud_z.get_record('Access_UserSet', '', {})
+            //         let access_UserSet_Filterd = access_UserSet?.results.filter(el => String(el.appId) === String(3) && String(el.userId) === String(userId));
+            //         if (access_UserSet_Filterd.length > 0) {
+            //             access_UserSet_Filterd = access_UserSet_Filterd[0];
+            //         } else {
+            //             access_UserSet_Filterd = null; // or handle the case when the array is empty as needed
+            //         }
+            //         if (access_UserSet_Filterd) {
+            //             if (access_UserSet_Filterd.admin && access_UserSet_Filterd.report) {
+            //                 userRule = 'Super User'
+            //             } else if (access_UserSet_Filterd.report) {
+            //                 userRule = 'Mid User'
+            //             }
+            //             else {
+            //                 userRule = 'Normal User'
+            //             }
+            //         }
+            //         localStorage.setItem("UserRole", userRule)
+            //     }
+            //     return {
+            //         userInfo: this.userInfo,
+            //         role: userRule
+            //     }
+            // },
+
 
             filterNavigationByRole: function (navigationItems, userRole) {
                 return navigationItems.filter(item => {

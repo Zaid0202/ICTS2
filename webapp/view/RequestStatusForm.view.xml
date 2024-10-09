@@ -79,7 +79,7 @@
                                 </table:Column>
 
                                 <table:Column width="20%">
-                                    <Label text="ProcessedBy" />
+                                    <Label text="Processed By" />
                                     <table:template>
                                         <Text
                                             text="{mainTableModel>ProcessedBy}"
@@ -88,8 +88,21 @@
                                     </table:template>
                                 </table:Column>
 
+                                <table:Column width="10rem">
+                                    <Label text="Status" />
+                                    <table:template>
+                                        <ObjectStatus
+                                            text="{mainTableModel>Status}"
+                                            state="{
+                                    path: 'mainTableModel>Status',
+                                    formatter: '.statusState'
+                                            }"
+                                        />
+                                    </table:template>
+                                </table:Column>
+
                                 <table:Column width="20%">
-                                    <Label text="SendtoName" />
+                                    <Label text="Send to" />
                                     <table:template>
                                         <Text
                                             text="{mainTableModel>SendtoName}"
@@ -103,16 +116,6 @@
                                     <table:template>
                                         <Text
                                             text="{mainTableModel>CommentZ}"
-                                            wrapping="false"
-                                        />
-                                    </table:template>
-                                </table:Column>
-
-                                <table:Column width="10rem">
-                                    <Label text="Status" />
-                                    <table:template>
-                                        <Text
-                                            text="{mainTableModel>Status}"
                                             wrapping="false"
                                         />
                                     </table:template>

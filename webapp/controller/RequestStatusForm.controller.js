@@ -37,8 +37,19 @@ sap.ui.define(
 
       },
 
+      // onRefresh: async function (oEvent) {
+      //   console.log("Start Refreshiung")
+      //   this.setBusy('listContinerId', true)
+      //   this.reSetValues()
+      //   this.getSplitContObj().toDetail(this.createId("empty"));
+      //   await this.setInVlus()
+      //   this.setBusy('listContinerId', false)
+      // },
+
       _onRouteMatcheds2s: async function (ev) {
         this.reSetValues()
+        await this.setInVlus()
+
         const oArgs = ev.getParameter("arguments");
         const sId = oArgs.Id;
 
@@ -65,8 +76,25 @@ sap.ui.define(
           // } else {
           //   console.error("DatePicker with ID 'PublishingDateID' not found.");
           // }
+          // console.log("RequestStatusForm -> selectedTaskz: ", selectedTaskz)
+          this.setComments(selectedTaskz)
+
+
+
 
           this.setVisbileOnSelected(selectedTaskz.MainService)
+
+          //Fileds Commnets 
+          this.setVisbileForForm2(this.getAdditionObj("c")[0], true, false, false);
+
+          this.setVisbileForForm2('AttachmentInput', false, false, false);
+          this.setVisbileForForm2('AdditionalAttachmentInput', false, false, false);
+
+          
+          this.setVisbileForForm2('AttachmentButton', true, false, false);
+          this.setVisbileForForm2('AdditionalAttachmentButton', true, false, false);
+
+
           console.log("Finsheing _onRouteMatched -----------------------try-----------------")
 
 

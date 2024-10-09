@@ -12,8 +12,9 @@ sap.ui.define(
 
     return BaseController.extend("internal.controller.NewRequest", {
       onInit: async function () {
+        this.getView()?.byId('mainFormVboxId')?.setBusy(true);
         await BaseController.prototype.onInit.apply(this, []);
-        this.setBusy('mainFormId', true)
+
         // ------------------------------------ Call Classs ------------------------------------
         this.sharingRequestFunctions = new SharingRequestFunctions(this)
         let thisOfScharing = await this.sharingRequestFunctions.onInit()
@@ -22,13 +23,13 @@ sap.ui.define(
         Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(thisOfScharing));
 
         this.setVisbileForFormInit()
-        // Set Main Service True visible
-        this.setVisbileForForm2('MainService', true, true, true);
 
         this.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
         this.helperModelInstance.setProperty("/mainFormTitle", "Create New Request")
-        this.setBusy('mainFormId', false)
+        this.getView()?.byId('mainFormVboxId')?.setBusy(false);
 
+        // Set Main Service True visible
+        this.setVisbileForForm2('MainService', true, true, true);
 
       },
 
@@ -36,7 +37,7 @@ sap.ui.define(
       onBeforeRendering: function () {
         console.log(" ----------------------- onBeforeRendering-----------------------")
         let aFieldNames = this.getaFieldNames("mainFormId")
-
+        console.log("aFieldNames", aFieldNames)
         aFieldNames.forEach(function (sFieldName) {
           // Set the visibility to false in the helper model for each field
           this.getView().getModel("helperModel").setProperty(`/view/${sFieldName}/visible`, false);
@@ -75,11 +76,35 @@ sap.ui.define(
       },
 
       onMainSubmit: async function (ev) {
+        let isError = false
+
         let data = this.onMainSubmitSharing()
         if (!data) { return false }
 
         data = { ...this.getMainObj(), ...data }
+
+        if (!data) { isError = true } // Set Error True
         // ------------------------------------------------------------------------------------------------
+
+        this.isConfired = false
+        // Create a promise for the confirmation
+        const confirmation = await new Promise((resolve) => {
+
+          MessageBox.confirm(`Are you sure you want to send the request?`, {
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+            emphasizedAction: MessageBox.Action.OK,
+            onClose: function (sAction) {
+              if (sAction === "OK") {
+                this.isConfired = true;
+              }
+              resolve(this.isConfired); // Resolve the promise with the user's choice
+            }.bind(this)
+          });
+
+        });
+
+        if (!confirmation) { return false }
+        this.setBusy(this.mainFormId, true)
 
         // -------New Request Part---------
         let requesteData = { status: "Pending" }
@@ -87,38 +112,48 @@ sap.ui.define(
         data = this.oPayload_modify(data)
         console.log("New Request Part: ", data)
 
-        // this.isConfired = false
-        // MessageBox.confirm(`Are you sure you want to send the request?`, {
-        //   actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-        //   emphasizedAction: MessageBox.Action.OK,
-        //   onClose: function (sAction) {
-        //     if (sAction === "OK") {
-        //       this.isConfired = true;
-        //     }
-        //   }.bind(this)
-        // });
+        // return
 
-        // if (!this.isConfired) { return false }
-
-        this.setBusy(this.mainFormId, true)
         // ---------Uploade File!-------
         data = await this.uploadeFile.callUploadFiles(data)  //------- callUploadFiles Part--------- Call Uploade Files Function and add File Id on data
         console.log("callUploadFiles Part: ", data)
+
+        if (!data) { isError = true } // Set Error True
 
         // ---------Post!-------
         let resData = await this.crud_z.post_record(this.mainEndPoint, data)
         console.log("res Data Part: ", data)
         if (!resData) { return false }
-
+        
         // -------History Part---------
         let history = await this.getHistoryDataWorkFlow(resData)
+        console.log("NewRequest -> history: ", history)
+        if (!history) { isError = true }
 
         // -------Mail Part---------
-        this.emailService.start(resData, history)
+        let mail = this.emailService.start(resData, history)
+        if (!mail) { isError = true }
 
+        let messageOfSuccess = `Thank you! Your request Id: ${Number(resData.Id)} has been successfully submitted,\n${resData.StatusDisplay}.`
         // -------End Part---------
+
+        this.setBusy(this.mainFormId, false)
+
+        if (isError) {
+          sap.m.MessageBox.error("Something went wrong, please contact the support team.", {
+            title: "Error",                                      // Set the title to "Error"
+            onClose: null,                                       // default behavior, no specific action on close
+            styleClass: "",                                      // default
+            actions: sap.m.MessageBox.Action.OK,                 // default
+            emphasizedAction: sap.m.MessageBox.Action.OK,        // default
+            initialFocus: null,                                  // default
+            textDirection: sap.ui.core.TextDirection.Inherit,    // default
+            dependentOn: null                                    // default
+          });
+        }
+
         this.reSetValues()
-        sap.m.MessageBox.success("Thank you! Your request has been successfully submitted.", {
+        sap.m.MessageBox.success(messageOfSuccess, {
           title: "Success",                                    // default
           onClose: null,                                       // default
           styleClass: "",                                      // default
@@ -129,7 +164,6 @@ sap.ui.define(
           dependentOn: null                                    // default
         });
 
-        this.setBusy(this.mainFormId, false)
       },
 
 
