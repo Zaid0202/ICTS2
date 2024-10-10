@@ -66,7 +66,7 @@ sap.ui.define(
         console.log("onExit-------------------")
         // Cleanup code, like detaching events or clearing resources
       },
-      
+
       setMode: function (mode) {
         this.helperModelInstance?.setProperty('/Mode', mode)
       },
@@ -275,6 +275,8 @@ sap.ui.define(
       //   return `${month}/${day}/${year}`;
       // },
       formatRequestDate: function (oDate) {
+        console.log("BaseController -> oDate ", oDate)
+
         if (!oDate) return '';
 
         // Create a date object from the input timestamp
@@ -289,7 +291,6 @@ sap.ui.define(
           minute: '2-digit',
           hour12: true
         };
-
         // Use JavaScript's built-in Intl.DateTimeFormat for localization and formatting
         return new Intl.DateTimeFormat('en-US', options).format(date);
       },

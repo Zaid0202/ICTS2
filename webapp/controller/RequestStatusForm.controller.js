@@ -47,19 +47,24 @@ sap.ui.define(
       // },
 
       _onRouteMatcheds2s: async function (ev) {
+        this.setBusy('page_id_RequestStatusForm', true)
+        this.setBusy('mainFormVboxId', true)
+        this.setBusy(this.mainFormId, true)
+        this.setBusy(this.mainTableId, true)
+
         this.reSetValues()
         await this.setInVlus()
 
         const oArgs = ev.getParameter("arguments");
         const sId = oArgs.Id;
 
-        this.setBusy(this.mainFormId, true)
-        this.setBusy(this.mainTableId, true)
 
         try {
           // mainFormData Part ------------
           let selectedTaskz = await this.getMainFormData(sId)
           let mainTableData = await this.getMainTableData2(sId)
+
+          selectedTaskz.PublishingDate = this.formatRequestDate(selectedTaskz.PublishingDate);
 
           this.getView().setModel(new sap.ui.model.json.JSONModel(selectedTaskz), this.mainFormModel);
           this.getView().setModel(new sap.ui.model.json.JSONModel(mainTableData), this.mainTableModel);
@@ -104,6 +109,8 @@ sap.ui.define(
 
         this.setBusy(this.mainFormId, false)
         this.setBusy(this.mainTableId, false)
+        this.setBusy('mainFormVboxId', false)
+        this.setBusy('page_id_RequestStatusForm', false)
 
         // You can now use sId in your logic
       },

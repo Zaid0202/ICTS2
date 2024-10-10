@@ -75,6 +75,7 @@ sap.ui.define([
             this.isMyTasks = this.viewName == "internal.view.MyTasks"
             this.isNewRequest = this.viewName == "internal.view.NewRequest"
             this.isRequestStatusForm = this.viewName == "internal.view.RequestStatusForm"
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel({ isMyTasks: this.isMyTasks, isNewRequest: this.isNewRequest, isRequestStatusForm: this.isRequestStatusForm }), 'isPageNameModel');
         },
 
 
@@ -173,7 +174,9 @@ sap.ui.define([
                     status: requesteData?.status, // This will be one of: Pending, Approved, Rejected, Returned, Closed
                     sendToName: requesteData?.sendToName,
                     sendTo: requesteData?.sendTo,
-                    step: requesteData?.step
+                    step: requesteData?.step,
+                    escalationId: requesteData?.escalationId,
+                    lastActionBy: requesteData?.lastActionBy,
                 },
                 RequesterData: {
                     RequesterId: data?.RequesterId, // Renamed from requester_id

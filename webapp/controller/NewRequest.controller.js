@@ -181,12 +181,12 @@ sap.ui.define(
       },
 
 
-      onDateTimeChange: function (ev) {
-        var oDateTimePicker = ev.getSource();
-        this.dateTime = oDateTimePicker
-        var sValue = oDateTimePicker.getValue();
-        this.getView().getModel(this.IGNModel).setProperty('/PublishingDate', sValue)
-      },
+      // onDateTimeChange: function (ev) {
+      //   var oDateTimePicker = ev.getSource();
+      //   this.dateTime = oDateTimePicker
+      //   var sValue = oDateTimePicker.getValue();
+      //   this.getView().getModel(this.IGNModel).setProperty('/PublishingDate', sValue)
+      // },
 
       // ----------------------------Uplaode Files Start-------------------------------
       onFileChange: function (oEvent) {

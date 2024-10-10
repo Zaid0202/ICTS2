@@ -222,7 +222,9 @@ sap.ui.define(
           status: this.objStatus.status, // This will be one of: Pending, Approved, Rejected, Returned, Closed,  Assigned , Progress
           sendTo: "",
           sendToName: "",
-          step: data.Steps
+          step: data.Steps,
+          escalationId: '',
+          lastActionBy: data.LastActionBy
         };
         requesteData = await this.updateRequesteData(data, requesteData) // Here Set Values Bese in Status
 
@@ -230,6 +232,7 @@ sap.ui.define(
 
         let requesteDataTamp = requesteData
         console.log("MyTasks -> requesteDataTamp: ", requesteDataTamp)
+
         let namesSendto = this.formatSendToNames(requesteDataTamp.sendTo, requesteDataTamp.sendToName)
         console.log("MyTasks -> requesteDataTamp: ", requesteDataTamp)
         console.log("MyTasks -> namesSendto: ", namesSendto)
@@ -370,6 +373,7 @@ sap.ui.define(
 
       // ================================== # Chaange Events Functions # ==================================
       onListItemPress: async function (oEvent) {
+        this.setBusy('mainFormVboxId', true)
         // Start ------------------
         var oListItem = oEvent.getSource(); // This retrieves the ObjectListItem that triggered the event
 
@@ -394,6 +398,7 @@ sap.ui.define(
 
         let status = selectedTaskz.Status;
 
+        selectedTaskz.PublishingDate = this.formatRequestDate(selectedTaskz.PublishingDate);
 
         // Startxxx ---------Set Visibiles---------
         // console.log("this.getAdditionObj()", this.getAdditionObj())
@@ -445,6 +450,7 @@ sap.ui.define(
         if (await this.isAssginees(selectedTaskz)) {
           this.helperModelInstance.setProperty("/isAssigneesWorkFlow", true)
         }
+        this.setBusy('mainFormVboxId', false)
 
         this.getSplitContObj().toDetail(this.createId("detailPage"));
       },
@@ -529,7 +535,8 @@ sap.ui.define(
 
       // ================================== # Dont Use it in Proeduction!!! Delete All Data from oData!!! Dengers # ==================================
       deleteAllIn: async function () {
-        let endsPoints = ["NewRequestSet", "RequestHistorySet", "UploadFileSet", "SettingsApprovalsSet", "SettingsAssigneesSet"];
+        // let endsPoints = ["NewRequestSet", "RequestHistorySet", "UploadFileSet", "SettingsApprovalsSet", "SettingsAssigneesSet"];
+        let endsPoints = ["NewRequestSet", "RequestHistorySet", "UploadFileSet"];
         console.log("start Deleting...")
         for (let element of endsPoints) {
           let data = await this.crud_z.get_record(element);

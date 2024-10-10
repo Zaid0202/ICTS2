@@ -6,7 +6,10 @@
     xmlns:form="sap.ui.layout.form"
     xmlns:u="sap.ui.unified"
 >
-    <VBox class="sapUiSmallMargin" id="mainFormVboxId" >
+    <VBox
+        class="sapUiSmallMargin"
+        id="mainFormVboxId"
+    >
         <form:Form
             id="mainFormId"
             editable="true"
@@ -121,17 +124,17 @@
                             </form:fields>
                         </form:FormElement>
 
+                        <!-- value="{ path: 'mainFormModel>/PublishingDate', formatter: '.formatRequestDate' }" -->
+                        <!-- value="{mainFormModel>/PublishingDate}" -->
+
                         <form:FormElement
                             label="Publishing Date"
                             visible="{helperModel>/view/PublishingDate/visible}"
                         >
                             <form:fields>
-                                <DatePicker
+                                <DateTimePicker
                                     id="PublishingDateID"
-                                    value="{ path: 'mainFormModel>/PublishingDate', formatter: '.formatDateToCustomPattern' }"
-                                    
-                                    valueFormat="yyyy-MM-ddTHH:mm:ss"
-                                    displayFormat="yyyy-MM-dd"
+                                    value="{mainFormModel>/PublishingDate}"
                                     valueState="{mainFormErrModel>/PublishingDate/valueState}"
                                     valueStateText="{mainFormErrModel>/PublishingDate/valueStateText}"
                                     editable="{helperModel>/view/PublishingDate/editable}"

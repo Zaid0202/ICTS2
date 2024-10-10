@@ -125,7 +125,7 @@ sap.ui.define([
             let sendTo = obj?.sendTo;
             let sendToName = obj?.sendToName;
             let step = obj?.step;
-
+            let lastActionBy = obj?.lastActionBy
             let userInfo = await this.getUserInfo() || {};
 
             // Assuming getTaskDetails returns an object with "StatusDisplay", "Sendto", and "Steps"
@@ -135,15 +135,16 @@ sap.ui.define([
                 StatusDisplay: workFlow?.statusDisplay || "",
                 Sendto: workFlow?.sendto,
                 Steps: workFlow?.steps,
-                LastActionBy: `${userInfo.displayName || "Unknown"}(${userInfo.empId || "Unknown"})`,
+                LastActionBy: status ==  'WorkInProgress' ? lastActionBy : `${userInfo.displayName || "Unknown"}(${userInfo.empId || "Unknown"})`,
                 LastActionDate: new Date(),
                 AssignedDate: new Date(), // Renamed from assigned_date
+                EscalationId: ''
             };
         },
 
         getUserInfoWithRequestTamp: async function (obj) {
             let requesteData = await this.getRequesteData(obj?.RequesteData)
-            let requesterData =  obj.RequesteData.status == "Pending" ? await this.getRequesterData() : obj?.RequesterData
+            let requesterData = obj.RequesteData.status == "Pending" ? await this.getRequesterData() : obj?.RequesterData
 
             console.log("UserService -> requesteData: ", requesteData)
             console.log("UserService -> requesterData: ", requesterData)
