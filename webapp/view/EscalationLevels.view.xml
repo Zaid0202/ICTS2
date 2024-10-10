@@ -1,0 +1,300 @@
+<mvc:View
+    controllerName="internal.controller.EscalationLevels"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:c="sap.ui.core"
+    xmlns:table="sap.ui.table"
+>
+    <Page
+        id="page_id_EscalationLevels"
+        title="Escalation Levels"
+        showHeader="true"
+    >
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <form:Form
+                    editable="true"
+                    id="mainFormIdEscalationLevels"
+                >
+                    <form:toolbar>
+                        <Toolbar>
+                            <Title text="Escalation Levels" />
+                            <ToolbarSpacer />
+                        </Toolbar>
+                    </form:toolbar>
+                    <form:layout>
+                        <form:ResponsiveGridLayout
+                            labelSpanXL="3"
+                            labelSpanL="3"
+                            labelSpanM="3"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="4"
+                            emptySpanL="4"
+                            emptySpanM="4"
+                            emptySpanS="0"
+                            columnsXL="1"
+                            columnsL="1"
+                            columnsM="1"
+                            singleContainerFullSize="false"
+                        />
+                    </form:layout>
+                    <form:formContainers>
+                        <form:FormContainer>
+                            <form:formElements>
+                                <form:FormElement label="Main Services">
+                                    <form:fields>
+                                        <Select
+                                            selectedKey="{mainFormModel>/MainServiceName}"
+                                            items="{localData>/MainServices}"
+                                            forceSelection='false'
+                                            valueState="{mainFormErrModel>/MainServiceName/valueState}"
+                                            valueStateText="{mainFormErrModel>/MainServiceName/valueStateText}"
+                                        >
+                                            <items>
+                                                <c:Item
+                                                    key="{localData>}"
+                                                    text="{localData>}"
+                                                />
+                                            </items>
+                                        </Select>
+                                    </form:fields>
+                                </form:FormElement>
+                                <form:FormElement label="Escalation Levels">
+                                    <form:fields>
+                                        <Select
+                                            selectedKey="{mainFormModel>/EscalationLevels}"
+                                            items="{localData>/Escalations}"
+                                            forceSelection='false'
+                                            valueState="{mainFormErrModel>/EscalationLevels/valueState}"
+                                            valueStateText="{mainFormErrModel>/EscalationLevels/valueStateText}"
+                                        >
+                                            <items>
+                                                <c:Item
+                                                    key="{localData>key}"
+                                                    text="{localData>text}"
+                                                />
+                                            </items>
+                                        </Select>
+                                    </form:fields>
+                                </form:FormElement>
+
+                                <form:FormElement label="Employee Id">
+                                    <form:fields>
+                                        <VBox>
+                                            <Input
+                                                value="{mainFormModel>/EmployeeId}"
+                                                liveChange="onChangeInputUserId"
+                                                submit="onSubmitInputUserId"
+                                                maxLength="5"
+                                                valueState="{mainFormErrModel>/EmployeeId/valueState}"
+                                                valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
+                                                placeholder="Employee Id"
+                                                type="Text"
+                                                tooltip="Press Enter after input"
+                                            >
+                                                <layoutData>
+                                                    <l:GridData
+                                                        span="XL1 L2 M2 S12"
+                                                    />
+                                                </layoutData>
+                                            </Input>
+                                        </VBox>
+
+                                        <Input
+                                            id="inputEmployeeNameId"
+                                            value="{mainFormModel>/EmployeeName}"
+                                            valueState="{mainFormErrModel>/EmployeeName/valueState}"
+                                            valueStateText="{mainFormErrModel>/EmployeeName/valueStateText}"
+                                            placeholder="Employee Name"
+                                            editable="false"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL4 L3 M3 S12"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                    </form:fields>
+                                </form:FormElement>
+
+                                <form:FormElement label="" />
+
+                                <form:FormElement
+                                    label=""
+                                    visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
+                                >
+                                    <form:fields>
+                                        <Button
+                                            text="Submite"
+                                            type="Emphasized"
+                                            visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
+                                            press="onMainSubmit"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL5 L5 M5 S5"
+                                                />
+                                            </layoutData>
+                                        </Button>
+                                    </form:fields>
+                                </form:FormElement>
+
+                                <form:FormElement
+                                    label=""
+                                    visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
+                                >
+                                    <form:fields>
+                                        <Button
+                                            text="Update"
+                                            type="Emphasized"
+                                            visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
+                                            press="onMainSubmit"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL3 L3 M3 S5"
+                                                />
+                                            </layoutData>
+                                        </Button>
+                                        <Button
+                                            text="Reset"
+                                            type="Ghost"
+                                            visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
+                                            press="onCleare"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL2 L2 M2 S5"
+                                                />
+                                            </layoutData>
+                                        </Button>
+                                    </form:fields>
+                                </form:FormElement>
+                            </form:formElements>
+                        </form:FormContainer>
+                    </form:formContainers>
+                </form:Form>
+            </VBox>
+
+            <VBox class="sapUiSmallMargin">
+                <table:Table
+                    id='mainTableIdEscalationLevels'
+                    rows="{mainTableModel>/}"
+                    selectionMode="MultiToggle"
+                    paste="onPaste"
+                    ariaLabelledBy="title"
+                >
+                    <table:extension>
+                        <OverflowToolbar style="Clear">
+                            <Title text="Report" />
+                            <ToolbarSpacer />
+                            <Button
+                                tooltip="Sort"
+                                icon="sap-icon://sort"
+                                press="handleSortButtonPressed"
+                            />
+                            <Button
+                                tooltip="Filter"
+                                icon="sap-icon://filter"
+                                press="handleFilterButtonPressed"
+                            />
+                            <Button
+                                tooltip="Group"
+                                icon="sap-icon://group-2"
+                                press="handleGroupButtonPressed"
+                            />
+
+                            <SearchField
+                                width="20%"
+                                placeholder="search"
+                                search=".onSearch"
+                            />
+                        </OverflowToolbar>
+                    </table:extension>
+                    <table:columns>
+                        <table:Column width="16.6%">
+                            <Label text="Id" />
+                            <table:template>
+                                <Text
+                                    text="{ path: 'mainTableModel>Id', formatter: '.formatIdToCustomPattern' }"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+                        <table:Column width="16.6%">
+                            <Label text="Main Services" />
+                            <table:template>
+                                <Text
+                                    text="{mainTableModel>MainServiceName}"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+                        <table:Column width="16.6%">
+                            <Label text="Escalation Levels" />
+                            <table:template>
+                                <Text
+                                    text="{= 'Level ' + ${mainTableModel>EscalationLevels}  }"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+                        <table:Column width="16.6%">
+                            <Label text="Employee Id" />
+                            <table:template>
+                                <Text
+                                    text="{mainTableModel>EmployeeId}"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column width="30%">
+                            <Label text="Employee Name" />
+                            <table:template>
+                                <Text
+                                    text="{mainTableModel>EmployeeName}"
+                                    wrapping="false"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="8.3%"
+                            hAlign="Center"
+                        >
+                            <Label text="" />
+                            <table:template>
+                                <Button
+                                    visible="true"
+                                    icon="sap-icon://edit"
+                                    tooltip="Edit"
+                                    press="onEdit"
+                                />
+                            </table:template>
+                        </table:Column>
+
+                        <table:Column
+                            width="8.3%"
+                            hAlign="Center"
+                        >
+                            <Label text="" />
+                            <table:template>
+                                <Button
+                                    visible="true"
+                                    icon="sap-icon://delete"
+                                    tooltip="Edit"
+                                    press="onDelete"
+                                />
+                            </table:template>
+                        </table:Column>
+                    </table:columns>
+                </table:Table>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

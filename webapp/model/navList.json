@@ -68,17 +68,25 @@
       ],
       "items": [
         {
-          "title": "Assignees",
+          "title": "Approvals Levels",
           "icon": "sap-icon://e-care",
-          "key": "RouteSettingsAssignees",
+          "key": "RouteSettingsApprovals",
           "roles": [
             "Super User"
           ]
         },
         {
-          "title": "Approvals Levels",
+          "title": "Escalation Levels",
           "icon": "sap-icon://e-care",
-          "key": "RouteSettingsApprovals",
+          "key": "RouteEscalationLevels",
+          "roles": [
+            "Super User"
+          ]
+        },
+        {
+          "title": "Assignees",
+          "icon": "sap-icon://e-care",
+          "key": "RouteSettingsAssignees",
           "roles": [
             "Super User"
           ]

@@ -257,6 +257,15 @@ sap.ui.define([
             });
         },
 
+        getSelectedMainServiceNextLvl2: async function (data) {
+            let filterMainServiceName = { "name": 'MainServiceName', "value": data.MainService }
+            let dataMainServiceName = await this._currentController.crud_z.get_record(this._currentController.endsPoints['SettingsEscalation'], '', filterMainServiceName)
+
+            return dataMainServiceName.results.filter(function (item) {
+                return item.EscalationLevels === 1;
+            });
+        },
+
         setSettingsAssigneesData: async function () {
             let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['SettingsAssignees'])
             this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(data?.results), 'SettingsAssigneesTableModel');

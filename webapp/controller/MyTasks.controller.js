@@ -101,6 +101,14 @@ sap.ui.define(
           requesteData.sendTo = employeeIds
           requesteData.sendToName = employeeNames
 
+          let approvalNextLvlData2 = await this.getSelectedMainServiceNextLvl({ MainService: data.MainService, Steps: data.Steps + 1 })
+
+          if (approvalNextLvlData2.length == 0) {
+            let approvalNextLvlData2_ = await this.getSelectedMainServiceNextLvl2(data)
+            if (approvalNextLvlData2_.length != 0) {
+              requesteData.escalationId = approvalNextLvlData2_.EmployeeId
+            }
+          }
         }
 
         if (this.objStatus.status === 'Returned') {
@@ -148,18 +156,23 @@ sap.ui.define(
         }
 
         if (this.objStatus.status === 'Completed') {
-          approvalNextLvlData = await this.getSelectedMainServiceNextLvl(data, true)
-          console.log("approvalNextLvlData:  ", approvalNextLvlData)
+          // approvalNextLvlData = await this.getSelectedMainServiceNextLvl(data, true)
+          // console.log("approvalNextLvlData:  ", approvalNextLvlData)
 
-          // Extract EmployeeIds as a comma-separated string
-          employeeIds = approvalNextLvlData?.map(function (emp) {
-            return emp.EmployeeId;
-          }).join(", ");
+          // // Extract EmployeeIds as a comma-separated string
+          // employeeIds = approvalNextLvlData?.map(function (emp) {
+          //   return emp.EmployeeId;
+          // }).join(", ");
 
-          // Extract EmployeeNames as a comma-separated string
-          employeeNames = approvalNextLvlData?.map(function (emp) {
-            return emp.EmployeeName;
-          }).join(", ");
+          // // Extract EmployeeNames as a comma-separated string
+          // employeeNames = approvalNextLvlData?.map(function (emp) {
+          //   return emp.EmployeeName;
+          // }).join(", ");
+          let str = data.lastActionBy
+          // Use regular expressions to extract the name and the number
+          employeeIds = str.match(/\((\d+)\)/)[1]; // Extract the number inside parentheses
+          employeeNames = str.match(/^[a-zA-Z]+/)[0]; // Extract the name part
+
 
           requesteData.sendTo = employeeIds
           requesteData.sendToName = employeeNames
@@ -447,9 +460,10 @@ sap.ui.define(
         // console.log("MyTasks -> selectedTaskz: ", selectedTaskz)
 
         //Assginees Part ------------------
-        if (await this.isAssginees(selectedTaskz)) {
-          this.helperModelInstance.setProperty("/isAssigneesWorkFlow", true)
-        }
+        // if (await this.isAssginees(selectedTaskz)) {
+        //   this.helperModelInstance.setProperty("/isAssigneesWorkFlow", true)
+        // }
+
         this.setBusy('mainFormVboxId', false)
 
         this.getSplitContObj().toDetail(this.createId("detailPage"));

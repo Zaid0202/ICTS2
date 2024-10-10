@@ -1,6 +1,7 @@
 {
     "NewRequest":"NewRequestSet",
     "SettingsApprovals":"SettingsApprovalsSet",
+    "SettingsEscalation":"SettingsEscalationSet",
     "SettingsAssignees":"SettingsAssigneesSet",
     "ProcessedByMe":"RequestHistorySet",
     "UploadFile":"UploadFileSet"
