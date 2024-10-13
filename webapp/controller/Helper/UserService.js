@@ -138,7 +138,7 @@ sap.ui.define([
                 LastActionBy: status ==  'WorkInProgress' ? lastActionBy : `${userInfo.displayName || "Unknown"}(${userInfo.empId || "Unknown"})`,
                 LastActionDate: new Date(),
                 AssignedDate: new Date(), // Renamed from assigned_date
-                EscalationId: ''
+                EscalationId: status ==  'Approved' ? obj.escalationId : ""
             };
         },
 
@@ -146,8 +146,8 @@ sap.ui.define([
             let requesteData = await this.getRequesteData(obj?.RequesteData)
             let requesterData = obj.RequesteData.status == "Pending" ? await this.getRequesterData() : obj?.RequesterData
 
-            console.log("UserService -> requesteData: ", requesteData)
-            console.log("UserService -> requesterData: ", requesterData)
+            // console.log("UserService -> requesteData: ", requesteData)
+            // console.log("UserService -> requesterData: ", requesterData)
 
             return {
                 ...requesteData, ...requesterData

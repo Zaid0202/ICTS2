@@ -138,8 +138,10 @@ sap.ui.define(
 
       extractNameFromStatusDisplay: function (statusDisplay) {
         // Regular expression to extract the name
-        // let nameMatch = statusDisplay.match(/Forwarded to\s(.*?)\s*\(/); // Approved Rejected Returned Closed
-        let nameMatch = statusDisplay.match(/(?:Forwarded to|Approved by|Rejected by|Returned by|Closed by)\s*(.*?)\s*\(/);
+        // let nameMatch = statusDisplay.match(/(?:Forwarded to|Approved by|Rejected by|Returned by|Closed by)\s*(.*?)\s*\(/);
+        
+        let nameMatch = statusDisplay.match(/(?:Forwarded to|Approved by|Rejected by|Returned by|Closed by):?\s*([a-zA-Z\s]+\(\d+\))/);
+
         // console.log({ nameMatch })
         // Return the extracted name or null if not found
         return nameMatch ? nameMatch[1] : "Employee Name not found!";
@@ -275,7 +277,7 @@ sap.ui.define(
       //   return `${month}/${day}/${year}`;
       // },
       formatRequestDate: function (oDate) {
-        console.log("BaseController -> oDate ", oDate)
+        // console.log("BaseController -> oDate ", oDate)
 
         if (!oDate) return '';
 

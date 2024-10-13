@@ -17,14 +17,22 @@ sap.ui.define(
         this.mainTableModel = 'mainTableModel'
         this.mainTableId = 'mainTableId' + this.pageName
         this.UiTableFSG2.setTableId(this.mainTableId)
+
+        await this.onRefresh()
+      },
+
+
+      onRefresh: async function () {
+        this.setBusy(this.mainTableId, true)
         
         this.getView().setModel(new sap.ui.model.json.JSONModel(await this.getMainTableData()), this.mainTableModel);
+        this.setBusy(this.mainTableId, false)
+
       },
 
       getMainTableData: async function () {
         // let filter = { "name": "Id", "value": RequestId }
         // let data = await this.crud_z.get_record(this.mainEndPoint, '', filter)
-        console.log("ProcessedByMe -> this.userInfo", this.userInfo)
         let data = await this.crud_z.get_record(this.mainEndPoint)
         var filteredRecords = data.results.filter(function (record) {
           return record.ProcessedId == this.userInfo.empId;

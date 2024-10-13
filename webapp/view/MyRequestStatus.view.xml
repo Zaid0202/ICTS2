@@ -9,6 +9,14 @@
         id="page_id_MyRequestStatus"
         title="My Request Status"
     >
+        <headerContent>
+            <Button
+                icon="sap-icon://synchronize"
+                press="onRefresh"
+                tooltip="Refresh"
+            />
+        </headerContent>
+
         <content>
             <MessageStrip
                 text="Click on the request in the table to see the more details of your request!"

@@ -220,7 +220,7 @@ sap.ui.define(
         var oContext = oRow.getBindingContext(this.mainTableModel);
         var oData = oContext.getObject();
 
-        sap.m.MessageBox.confirm("Are you sure you want to delete this item?", {
+        sap.m.MessageBox.confirm("Are you sure you want to delete this user?", {
           title: "Confirm Deletion",
           actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
           onClose: async function (oAction) {
@@ -230,7 +230,7 @@ sap.ui.define(
               let res = await this.crud_z.delete_record(this.mainEndPoint, oData.Id)
               this.getView().setModel(new sap.ui.model.json.JSONModel(await this.getMainTableData()), this.mainTableModel)
               this.setBusy(this.mainTableId, false)
-              sap.m.MessageToast.show("Item deleted successfully.");
+              sap.m.MessageToast.show("User deleted successfully.");
             } else {
               // Cancel the delete action
               sap.m.MessageToast.show("Deletion Canceled.");

@@ -18,18 +18,17 @@ sap.ui.define([
 
 
         start: async function (finallData, historyOb) {
-            console.log("EmailService -> finallData: ", finallData)
-            console.log("EmailService -> historyOb: ", historyOb)
+            // console.log("EmailService -> finallData: ", finallData)
+            // console.log("EmailService -> historyOb: ", historyOb)
 
             // let sendToList = finallData.Sendto -- > "14717, 10125" || "14717"
             let sendToList = finallData.Sendto.includes(',')
                 ? finallData.Sendto.split(',').map(id => id.trim())
                 : [finallData.Sendto.trim()];
 
-            console.log("Starting Sending Emails")
-            for (let index = 0; index < sendToList.length; index++) {
-                console.log("Starting for")
+            sendToList = finallData.Status == "Closed" ? [finallData.RequesterId] : sendToList // send to Requester
 
+            for (let index = 0; index < sendToList.length; index++) {
                 let data = {
                     // "SendTo": `${sendToList[index]}@nadec.com.sa`,
                     "SendTo": `30464@nadec.com.sa`,
@@ -48,6 +47,7 @@ sap.ui.define([
         },
 
         getBody: function (finallData, historyOb) {
+            historyOb.SendtoName = finallData.Status == "Closed" ? `${finallData.RequesterName}(${finallData.RequesterId})` : historyOb
             var emailBody = `<html>
   <body>
     <div style="padding: 20px; border: 1px solid #ddd; background-color: #f9f9f9; max-width: 600px; margin: auto; font-family: Arial, sans-serif; line-height: 1.6;">

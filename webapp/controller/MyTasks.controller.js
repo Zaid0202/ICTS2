@@ -103,10 +103,26 @@ sap.ui.define(
 
           let approvalNextLvlData2 = await this.getSelectedMainServiceNextLvl({ MainService: data.MainService, Steps: data.Steps + 1 })
 
-          if (approvalNextLvlData2.length == 0) {
+          console.log("MyTasks -> approvalNextLvlData2: ", approvalNextLvlData2)
+          console.log("MyTasks -> approvalNextLvlData2.length: ", approvalNextLvlData2.length)
+
+          if (approvalNextLvlData2.length == 0) { // Ensure the last Aprovel levale and will Assgineer new
+            let employeeIds_escalation = {}
+            let employeeNames_escalation = {}
             let approvalNextLvlData2_ = await this.getSelectedMainServiceNextLvl2(data)
             if (approvalNextLvlData2_.length != 0) {
-              requesteData.escalationId = approvalNextLvlData2_.EmployeeId
+
+              // Extract EmployeeIds as a comma-separated string
+              employeeIds_escalation = approvalNextLvlData2_?.map(function (emp) {
+                return emp.EmployeeId;
+              }).join(", ");
+
+              // Extract EmployeeNames as a comma-separated string
+              employeeNames_escalation = approvalNextLvlData2_?.map(function (emp) {
+                return emp.EmployeeName;
+              }).join(", ");
+
+              requesteData.escalationId = employeeIds_escalation
             }
           }
         }
@@ -168,10 +184,13 @@ sap.ui.define(
           // employeeNames = approvalNextLvlData?.map(function (emp) {
           //   return emp.EmployeeName;
           // }).join(", ");
-          let str = data.lastActionBy
+          let str = data.LastActionBy
+          console.log("MyTask -> str: ", str)
           // Use regular expressions to extract the name and the number
           employeeIds = str.match(/\((\d+)\)/)[1]; // Extract the number inside parentheses
+          console.log("MyTask -> str ->  employeeIds: ", employeeIds)
           employeeNames = str.match(/^[a-zA-Z]+/)[0]; // Extract the name part
+          console.log("MyTask -> str ->  employeeNames: ", employeeNames)
 
 
           requesteData.sendTo = employeeIds
@@ -244,14 +263,12 @@ sap.ui.define(
         if (!requesteData) { return false }
 
         let requesteDataTamp = requesteData
-        console.log("MyTasks -> requesteDataTamp: ", requesteDataTamp)
 
-        let namesSendto = this.formatSendToNames(requesteDataTamp.sendTo, requesteDataTamp.sendToName)
-        console.log("MyTasks -> requesteDataTamp: ", requesteDataTamp)
-        console.log("MyTasks -> namesSendto: ", namesSendto)
+        let namesSendtoXForUni = this.formatSendToNames(requesteDataTamp.sendTo, requesteDataTamp.sendToName)
+        console.log("MyTasks -> namesSendtoXForUni: ", namesSendtoXForUni)
 
         data = await this.getRequesteData(data, requesteData) // Here Get Values Bese in Status
-        console.log("MyTasks -> data: ", data)
+        console.log("MyTasks -> getRequesteData -> data: ", data)
 
         if (!data) { return false }
         // return 1
@@ -259,15 +276,14 @@ sap.ui.define(
         if (this.objStatus.isUpload) { data = await this.uploadeFile.callUploadFiles(data) } //------- callUploadFiles Part--------- Call Uploade Files Function and add File Id on data
 
         // ---------Post!-------
-        let resData = await this.crud_z.update_record(this.mainEndPoint, data, data.Id) // Call------------
-        console.log("data -> resData ", resData)
+        await this.crud_z.update_record(this.mainEndPoint, data, data.Id) // Call------------
 
 
         // Set Mode --> Create.
         this.setMode("Create")
 
         // -------History Part---------
-        let history = await this.getHistoryDataWorkFlow(data, commentData.CommentZ)
+        let history = await this.getHistoryDataWorkFlow(data, commentData.CommentZ, namesSendtoXForUni)
         if (!history) { return false }
 
         // -------Mail Part---------
@@ -275,7 +291,9 @@ sap.ui.define(
 
         // -------End Part---------
         this.onRefresh()
-        let sendTo = `Forwarded to: ${namesSendto}`;
+
+        let sendTo = namesSendtoXForUni ? `Forwarded to: ${namesSendtoXForUni}` : "";
+
         let messageOfSuccess = `Thank you! The Request Id:(${Number(data.Id)}) has been successfully submitted,\n${sendTo}.`
         sap.m.MessageBox.success(messageOfSuccess, {
           title: "Success",                                    // default
@@ -314,7 +332,6 @@ sap.ui.define(
 
 
       onRefresh: async function (oEvent) {
-        console.log("Start Refreshiung")
         this.setBusy('listContinerId', true)
         this.reSetValues()
         this.getSplitContObj().toDetail(this.createId("empty"));

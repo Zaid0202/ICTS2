@@ -124,8 +124,8 @@ sap.ui.define([
             // let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['NewRequest'], '', filter)
 
             let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['NewRequest'])
-            console.log("SharingRequestFunctions -> getMainTableData -> data ", data)
-            console.log("SharingRequestFunctions -> getMainTableData -> this._currentController.userInfo?.empId ", this._currentController.userInfo?.empId)
+            // console.log("SharingRequestFunctions -> getMainTableData -> data ", data)
+            // console.log("SharingRequestFunctions -> getMainTableData -> this._currentController.userInfo?.empId ", this._currentController.userInfo?.empId)
             return data?.results?.filter(function (record) {
                 // console.log("SharingRequestFunctions -> getMainTableData -> record.Sendto.split(', ').map(Number)", record.Sendto.split(', ').map(Number))
                 return record.Sendto.split(', ').map(Number).includes(Number(this._currentController.userInfo?.empId));
@@ -148,10 +148,11 @@ sap.ui.define([
         },
 
         // ================================== # Work Flow Data Functiolns XX # ==================================
-        getHistoryDataWorkFlow: async function (resData, CommentZ) {
+        getHistoryDataWorkFlow: async function (resData, CommentZ, namesSendto) {
+            console.log("SharingRequestFunctions -> resData.StatusDisplay:", resData.StatusDisplay)
             let processedByMeObj = {
                 "RequestId": resData.Id,
-                "SendtoName": resData.Status == "Pending" ? this.extractNameFromStatusDisplay(resData.StatusDisplay) : `User Name(${resData.Sendto})`,
+                "SendtoName": resData.Status == "Pending" ? this.extractNameFromStatusDisplay(resData.StatusDisplay) : `${namesSendto}`,
                 "Status": resData.Status,
                 "CommentZ": CommentZ
             }
@@ -260,7 +261,7 @@ sap.ui.define([
         getSelectedMainServiceNextLvl2: async function (data) {
             let filterMainServiceName = { "name": 'MainServiceName', "value": data.MainService }
             let dataMainServiceName = await this._currentController.crud_z.get_record(this._currentController.endsPoints['SettingsEscalation'], '', filterMainServiceName)
-
+            console.log("SharingRequestFunctions -> dataMainServiceName:", dataMainServiceName)
             return dataMainServiceName.results.filter(function (item) {
                 return item.EscalationLevels === 1;
             });
@@ -301,7 +302,7 @@ sap.ui.define([
 
             }
 
-            console.log("SharingRequestFunctions -> xx", xx)
+            // console.log("SharingRequestFunctions -> xx", xx)
 
             this._currentController.getView().getModel(this.CommentModel)?.setProperty('/PreviseComment', `${showMessageComment}`)
 

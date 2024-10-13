@@ -25,17 +25,20 @@ sap.ui.define(
         this.mainTableId = 'mainTableId' + this.pageName
         this.UiTableFSG2.setTableId(this.mainTableId)
 
+        await this.onRefresh()
+
+      },
+
+
+      onRefresh: async function () {
         this.setBusy(this.mainTableId, true)
         this.getView().setModel(new sap.ui.model.json.JSONModel(this.getObjMain()), this.mainFormModel);
         let tableData = await this.getMainTableData()
         this.getView().setModel(new sap.ui.model.json.JSONModel(tableData), this.mainTableModel)// Set
         this.setBusy(this.mainTableId, false)
-        console.log("Fishing MyRequestStatus")
-
       },
 
-
-      getObjMain: async function () {
+      getObjMain: function () {
         return { Id: '' }
       },
 
@@ -53,7 +56,7 @@ sap.ui.define(
 
         return filteredRecords
       },
-      
+
       formatAttachmentText: async function (sAttachment) {
         if (sAttachment) {
           this.setBusy('AttachmentButtonId', true)

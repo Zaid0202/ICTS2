@@ -10,6 +10,14 @@
     xmlns:table="sap.ui.table"
 >
     <Page title="Processed By Me">
+        <headerContent>
+            <Button
+                icon="sap-icon://synchronize"
+                press="onRefresh"
+                tooltip="Refresh"
+            />
+        </headerContent>
+
         <content>
             <table:Table
                 rows="{mainTableModel>/}"
