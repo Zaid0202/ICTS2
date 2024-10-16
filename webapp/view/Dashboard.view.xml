@@ -21,13 +21,22 @@
             fitContainer="true"
             class="sapUiSmallMargin sapUiShadow sapUiContentPadding sapUiRoundedBorder sapUiPageBackground"
         >
+            <core:Fragment
+                fragmentName="internal.fragment.sharingRequest.SharingMyRequestStatus"
+                type="XML"
+            />
+        </VBox>
+
+        <VBox
+            fitContainer="true"
+            class="sapUiSmallMargin sapUiShadow sapUiContentPadding sapUiRoundedBorder sapUiPageBackground"
+        >
             <commons:ChartContainer
                 showFullScreen="true"
                 showPersonalization="false"
                 autoAdjustHeight="false"
                 title="Report"
-                            class="sapUiShadow  sapUiRoundedBorder sapUiPageBackground"
-
+                class="sapUiShadow  sapUiRoundedBorder sapUiPageBackground"
             >
                 <commons:content>
                     <commons:ChartContainerContent

@@ -1,21 +1,37 @@
 sap.ui.define([
   "internal/controller/Helper/BaseController",
-], function (BaseController) {
+  "internal/controller/Helper/SharingRequestFunctions",
+  "sap/ui/core/UIComponent",
+
+
+], function (BaseController, SharingRequestFunctions, UIComponent) {
   "use strict";
   return BaseController.extend("internal.controller.Dashboard", {
     onInit: async function () {
       await BaseController.prototype.onInit.apply(this, []);
 
+      // ------------------------------------ Call Classs ------------------------------------
+      this.sharingRequestFunctions = new SharingRequestFunctions(this)
+      let thisOfScharing = await this.sharingRequestFunctions.onInit()
+      thisOfScharing = await this.mergeWithSharing(thisOfScharing)
+      Object.assign(this, thisOfScharing);
+      Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(thisOfScharing));
+
+
+
       this.pageName = 'Dashboard'
       this.mainEndPoint = this.endsPoints['NewRequest']
-      this.mainTableModel = "mainTableModel"
+      this.mainTableModel_MyRequestStatus_XX = "mainTableModel_MyRequestStatus_XX"
       this.mainTableModel2 = "mainTableModel2"
       this.mainTableModel3 = "mainTableModel3"
       this.yearsListModel = "yearsListModel"
 
+      this.mainTableId_MyRequestStatus_XX = 'mainTableId_MyRequestStatus_XX'
+      this.UiTableFSG2.setTableId(this.mainTableId_MyRequestStatus_XX)
+
 
       this.getView().setModel(new sap.ui.model.json.JSONModel(this.getYearsList(2020)), this.yearsListModel);
-      this.getView().setModel(new sap.ui.model.json.JSONModel(await this.getMainTableData()), this.mainTableModel)// Set
+      this.getView().setModel(new sap.ui.model.json.JSONModel(await this.getMainTableData1()), this.mainTableModel_MyRequestStatus_XX)// Set
       this.getView().setModel(new sap.ui.model.json.JSONModel(this.functiontoSetInitialfilter(await this.chartData())), this.mainTableModel2);
       this.getView().setModel(new sap.ui.model.json.JSONModel(await this.chartData()), this.mainTableModel3); // Set oData Before Filter to Use it Again.
 
@@ -75,19 +91,29 @@ sap.ui.define([
         }
       });
 
+      // ---------------------------
+      this.reSetValues()
+      this.setVisbileForFormInit()
+
+      this.mainTableId = 'mainTableIdRequestStatusForm'
+      this.helperModelInstance.setProperty("/mainFormTitle", "Request Details")
+
+      // const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
+      // if (oRouter.getRoute("RouteRequestStatusForm")) {
+      //   console.log("if (oRouter.getRoute(RouteRequestStatusForm))")
+      //   oRouter.getRoute("RouteRequestStatusForm").attachPatternMatched(this._onRouteMatcheds2s, this);
+      // } else {
+      //   console.log("RequestStatusForm -> else (oRouter)", oRouter)
+      // }
+      // ---------------------------
+
     },
 
-    getMainTableData: async function () {
-      // let filter = { "name": "Id", "value": this.userInfo.empId }
-      // let data = await this.crud_z.get_record(this.mainEndPoint, '', filter)
-
+    getMainTableData1: async function () {
       let data = await this.crud_z.get_record(this.mainEndPoint)
 
-      // var filteredRecords = data.results.filter(function (record) {
-      //   return record.RequesterId == this.userInfo.empId;
-      // }.bind(this));
-
-      console.log(data.results)
+      console.log("Dashboard - > getMainTableData1 -> data.results", data.results)
 
       return data.results
     },
@@ -103,7 +129,7 @@ sap.ui.define([
 
     //------------------------- Chart Data
     chartData: async function () {
-     let StatusData = [
+      let StatusData = [
         { Month: "January", Pending: 5, Closed: 3, Rejected: 2, Year: "2023" },
         { Month: "February", Pending: 8, Closed: 6, Rejected: 4, Year: "2023" },
         { Month: "March", Pending: 6, Closed: 4, Rejected: 5, Year: "2023" },
@@ -154,7 +180,7 @@ sap.ui.define([
       };
 
       // Group data by Month and Year
-      let dataArryObj = this.getView().getModel(this.mainTableModel).getData()
+      let dataArryObj = this.getView().getModel(this.mainTableModel_MyRequestStatus_XX).getData()
       console.log({ dataArryObj })
       const groupedData = dataArryObj.reduce((acc, request) => {
         const month = this.getMonthName(request.RequestDate);
@@ -219,7 +245,7 @@ sap.ui.define([
         });
       });
 
-      return oData                                                                       
+      return oData
     },
 
     // Function to filter data by year
@@ -271,7 +297,164 @@ sap.ui.define([
         return data.Year === year;
       });
     },
+    // ##================================== # Functions for Report (Table just)# ==================================##
+    mergeWithSharing: async function (thisOfScharing) {
+      // Helper function to introduce a 2-second delay
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+      // Loop until thisOfScharing is available
+      while (!thisOfScharing) {
+        thisOfScharing = await this.sharingRequestFunctions.onInit()
+
+        // Wait for 2 seconds before each iteration
+        await delay(2000);
+
+        // After delay, do the assignments (only if thisOfScharing is still undefined/null)
+        if (thisOfScharing) {
+          return thisOfScharing
+        }
+      }
+      return thisOfScharing
+    },
+
+    // _onRouteMatcheds2s: async function (ev) {
+    //   this.setBusy('page_id_RequestStatusForm', true)
+    //   this.setBusy('mainFormVboxId', true)
+    //   this.setBusy(this.mainFormId, true)
+    //   this.setBusy(this.mainTableId, true)
+
+    //   this.reSetValues()
+    //   await this.setInVlus()
+
+    //   const oArgs = ev.getParameter("arguments");
+    //   const sId = oArgs.Id;
+
+    //   try {
+    //     // mainFormData Part ------------
+    //     let selectedTaskz = await this.getMainFormDataX(sId)
+    //     let mainTableData = await this.getMainTableData2(sId)
+
+    //     console.log("Dashboard -> _onRouteMatcheds2s -> selectedTaskz", selectedTaskz)
+    //     // Ensure selectedTaskz is defined before accessing its properties
+    //     // if (selectedTaskz && selectedTaskz.PublishingDate) {
+    //     selectedTaskz.PublishingDate = this.formatRequestDate(selectedTaskz.PublishingDate);
+    //     // }
+
+    //     this.getView().setModel(new sap.ui.model.json.JSONModel(selectedTaskz), this.mainFormModel);
+    //     this.getView().setModel(new sap.ui.model.json.JSONModel(mainTableData), this.mainTableModel);
 
 
+    //     this.setComments(selectedTaskz)
+
+    //     this.setVisbileOnSelected(selectedTaskz.MainService)
+
+    //     //Fileds Commnets 
+    //     this.setVisbileForForm2(this.getAdditionObj("c")[0], true, false, false);
+
+    //     this.setVisbileForForm2('AttachmentInput', false, false, false);
+    //     this.setVisbileForForm2('AdditionalAttachmentInput', false, false, false);
+
+
+    //     this.setVisbileForForm2('AttachmentButton', true, false, false);
+    //     this.setVisbileForForm2('AdditionalAttachmentButton', true, false, false);
+
+
+    //     console.log("Finsheing _onRouteMatched -----------------------try-----------------")
+
+
+    //   } catch (error) {
+    //     console.error("RequestStatusForm -> Error:", error);
+    //   }
+
+    //   this.setBusy(this.mainFormId, false)
+    //   this.setBusy(this.mainTableId, false)
+    //   this.setBusy('mainFormVboxId', false)
+    //   this.setBusy('page_id_RequestStatusForm', false)
+
+    //   // You can now use sId in your logic
+    // },
+
+    // ================================== # XX Functions# ==================================
+    // getMainFormData: async function (RequesteId) {
+    //   // let filter = { "name": "Id", "value": this.userInfo.empId }
+    //   // let data = await this.crud_z.get_record(this.mainEndPoint, '', filter)
+
+    //   let data = await this.crud_z.get_record(this.mainEndPoint, RequesteId)
+    //   // var filteredRecords = data.results.filter(function (record) {
+    //   //   return record.RequesterId == this.userInfo.empId;
+    //   // }.bind(this));
+    //   console.log("Dashboard -> getMainFormData -> data", data)
+    //   return data
+
+    // },
+
+    // getMainTableData2: async function (RequestId) {
+    //   // let filter = { "name": "Id", "value": RequestId }
+    //   // let data = await this.crud_z.get_record(this.mainEndPoint, '', filter)
+
+    //   let data = await this.crud_z.get_record(this.endsPoints['ProcessedByMe'])
+    //   var filteredRecords = data.results.filter(function (record) {
+    //     return record.RequestId == RequestId;
+    //   }.bind(this));
+
+    //   return filteredRecords
+
+    // },
+    // ================================== # Table FSG Functions # ==================================
+    getDataXkeysAItems: function (ev) {
+      let changeTextAItems = [{ oldtext: "Comment Z", newtext: "Comment" }]
+      return this.UiTableFSG2.getDataXkeysAItems(ev, this.mainTableModel_MyRequestStatus_XX, changeTextAItems)
+    },
+    // ======
+
+    handleSortButtonPressed: function (ev) {
+      this.UiTableFSG2.handleSortButtonPressed(ev)
+    },
+
+    handleFilterButtonPressed: function (ev) {
+      this.UiTableFSG2.handleFilterButtonPressed(ev)
+    },
+
+    handleGroupButtonPressed: function (ev) {
+      this.UiTableFSG2.handleGroupButtonPressed(ev)
+
+    },
+    // ======
+    onSearch: function (oEvent) {
+      this.UiTableFSG2.onSearch(oEvent)
+    },
+
+    // ================================== # XX Functions# ==================================
+    onRowSelectionChange: function (ev) {
+      // Get the selected index
+      const iSelectedIndex = ev.getParameter("rowIndex");
+
+      // Get the binding context of the selected row
+      const oTable = this.byId(this.mainTableId_MyRequestStatus_XX);
+      const oContext = oTable.getContextByIndex(iSelectedIndex);
+
+      // Check if a row is selected and if there's a valid context
+      if (oContext) {
+        // Retrieve the data from the selected row
+        const oSelectedRowData = oContext.getObject();
+
+        // Assuming 'Id' is the field in your model for the row's unique ID
+        const sSelectedId = oSelectedRowData.Id;
+
+        console.log("Selected Row ID:", sSelectedId);
+
+        this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({isShowAllRequest:true}), "isShowAllRequest");
+        // You can now use the ID for navigation or any other purpose
+        // this.onRowNavigate(sSelectedId);
+        var oRouter = UIComponent.getRouterFor(this);
+
+        oRouter.navTo('RouteRequestStatusForm', {
+          Id: sSelectedId
+        })
+
+      }
+    },
+
+    // ##================================== # Functions for Report (Table just)# ==================================##
   });
 });

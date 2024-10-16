@@ -13,7 +13,7 @@ sap.ui.define([
             this.isDefaultGroup = false
             // this.tableId = this._currentController.mainTableId
             // Define your grouping functions
-            this._currentController._mViewSettingsDialogs ={ }
+            this._currentController._mViewSettingsDialogs = {}
         },
 
         onInit: function () {
@@ -24,8 +24,13 @@ sap.ui.define([
         },
 
         // ================================== # Tables Functions # ==================================
-        getDataXkeysAItems: function (ev, mainTableModel = 'mainTableModel', changeTextAItems = []) {
-            const data = this._currentController.getView()?.getModel((this._currentController.mainTableModel || mainTableModel))?.getData();
+        getDataXkeysAItems: function (ev, mainTableModel = '', changeTextAItems = []) {
+            // const data = this._currentController.getView()?.getModel((this._currentController.mainTableModel || mainTableModel))?.getData();
+
+            // If mainTableModel has a value, use it; otherwise, default to 'mainTableModel'
+            const modelName = mainTableModel || this._currentController.mainTableModel;
+            console.log("UiTableFSG2 ->  getDataXkeysAItems -> modelName:", modelName)
+            const data = this._currentController.getView()?.getModel(modelName)?.getData();
 
             if (data.length == 0) {
                 return null

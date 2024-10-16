@@ -1,0 +1,132 @@
+<core:FragmentDefinition
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:table="sap.ui.table"
+    xmlns:core="sap.ui.core"
+>
+    <VBox id="mainFormVboxId2">
+        <MessageStrip
+            text="Click on the request in the table to see the more details of your request!"
+            showIcon="true"
+            class="sapUiTinyMargin"
+            showCloseButton="true"
+        />
+        <table:Table
+            rows="{mainTableModel_MyRequestStatus_XX>/}"
+            selectionMode="Single"
+            selectionBehavior="RowOnly"
+            ariaLabelledBy="title"
+            id="mainTableId_MyRequestStatus_XX"
+            rowSelectionChange="onRowSelectionChange"
+        >
+            <table:rowActionTemplate>
+                <table:RowAction>
+                    <table:items>
+                        <table:RowActionItem
+                            type="Delete"
+                            press="onRowNavigate"
+                        />
+                    </table:items>
+                </table:RowAction>
+            </table:rowActionTemplate>
+
+            <table:extension>
+                <OverflowToolbar
+                    style="Clear"
+                    visible="true"
+                >
+                    <Title text="Report" />
+                    <ToolbarSpacer />
+                    <Button
+                        tooltip="Sort"
+                        icon="sap-icon://sort"
+                        press="handleSortButtonPressed"
+                    />
+                    <Button
+                        tooltip="Filter"
+                        icon="sap-icon://filter"
+                        press="handleFilterButtonPressed"
+                    />
+                    <Button
+                        tooltip="Group"
+                        icon="sap-icon://group-2"
+                        press="handleGroupButtonPressed"
+                    />
+
+                    <SearchField
+                        id="searchFielde"
+                        width="20%"
+                        placeholder="search"
+                        search="onSearch"
+                    />
+                </OverflowToolbar>
+            </table:extension>
+
+            <table:columns>
+                <table:Column width="20%">
+                    <Label text="Request id" />
+                    <table:template>
+                        <Text
+                            text="{ path: 'mainTableModel_MyRequestStatus_XX>Id', formatter: '.formatIdToCustomPattern' }"
+                            wrapping="false"
+                        />
+                    </table:template>
+                </table:Column>
+
+                <table:Column width="20%">
+                    <Label text="Employee Name and ID" />
+                    <table:template>
+                        <Text
+                            text="{parts: [{path: 'mainTableModel_MyRequestStatus_XX>RequesterName'}, {path: 'mainTableModel_MyRequestStatus_XX>RequesterId'}], formatter: '.formatRequester'}"
+                            wrapping="false"
+                        />
+                    </table:template>
+                </table:Column>
+
+                <table:Column width="20%">
+                    <Label text="Request Date" />
+                    <table:template>
+                        <Text
+                            text="{ path: 'mainTableModel_MyRequestStatus_XX>CreatedDate', formatter: '.formatDateToCustomPattern' }"
+                            wrapping="false"
+                        />
+                    </table:template>
+                </table:Column>
+
+                <table:Column width="20%">
+                    <Label text="Service" />
+                    <table:template>
+                        <Text
+                            text="{mainTableModel_MyRequestStatus_XX>MainService}"
+                            wrapping="false"
+                        />
+                    </table:template>
+                </table:Column>
+
+                <table:Column width="20%">
+                    <Label text="Priority" />
+                    <table:template>
+                        <Text
+                            text="{mainTableModel_MyRequestStatus_XX>Urgency}"
+                            wrapping="false"
+                        />
+                    </table:template>
+                </table:Column>
+
+                <table:Column width="20%">
+                    <Label text="Status" />
+                    <table:template>
+                        <ObjectStatus
+                            text="{mainTableModel_MyRequestStatus_XX>Status}"
+                            state="{
+                                    path: 'mainTableModel_MyRequestStatus_XX>Status',
+                                    formatter: '.statusState'
+                                            }"
+                        />
+                    </table:template>
+                </table:Column>
+            </table:columns>
+        </table:Table>
+    </VBox>
+</core:FragmentDefinition>

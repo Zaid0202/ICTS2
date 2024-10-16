@@ -12,6 +12,7 @@ sap.ui.define(
 
     return BaseController.extend("internal.controller.Helper.BaseController", {
       onInit: async function () {
+
         // endsPoints  CRUD_z     User Info Here The Isusues..
 
         // Check if endsPoints model is available
@@ -49,6 +50,7 @@ sap.ui.define(
         this.helperModelInstance = this.getView()?.getModel(this.helperModel)
         this.setMode('Create')
         console.log("Finsh THe Base Controller: ");
+        this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({isShowAllRequest:false}), "isShowAllRequest");
 
       },
 
@@ -139,7 +141,7 @@ sap.ui.define(
       extractNameFromStatusDisplay: function (statusDisplay) {
         // Regular expression to extract the name
         // let nameMatch = statusDisplay.match(/(?:Forwarded to|Approved by|Rejected by|Returned by|Closed by)\s*(.*?)\s*\(/);
-        
+
         let nameMatch = statusDisplay.match(/(?:Forwarded to|Approved by|Rejected by|Returned by|Closed by):?\s*([a-zA-Z\s]+\(\d+\))/);
 
         // console.log({ nameMatch })
@@ -391,6 +393,11 @@ sap.ui.define(
       /// 
       camelCaseToNormal: function (camelCaseStr) {
         return camelCaseStr.replace(/([a-z])([A-Z])/g, '$1 $2');
+      },
+
+      formatRequester: function (sName, sId) {
+        // console.log("basecontllre -> formatRequester -> sName, sId", sName, sId)
+        return sName && sId ? `${sName}(${sId})` : "";
       },
 
       // ================================== # Formaters Files Functions # ==================================

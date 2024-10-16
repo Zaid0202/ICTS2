@@ -21,9 +21,11 @@ sap.ui.define(
         this.mainFormErrModel = "mainFormErrModel"
         this.mainFormId = 'mainFormId' + this.pageName
 
-        this.mainTableModel = 'mainTableModel'
-        this.mainTableId = 'mainTableId' + this.pageName
+        this.mainTableModel_MyRequestStatus_XX = 'mainTableModel_MyRequestStatus_XX'
+        this.mainTableId = 'mainTableId_MyRequestStatus_XX'
         this.UiTableFSG2.setTableId(this.mainTableId)
+
+        this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({isShowAllRequest:false}), "isShowAllRequest");
 
         await this.onRefresh()
 
@@ -34,7 +36,7 @@ sap.ui.define(
         this.setBusy(this.mainTableId, true)
         this.getView().setModel(new sap.ui.model.json.JSONModel(this.getObjMain()), this.mainFormModel);
         let tableData = await this.getMainTableData()
-        this.getView().setModel(new sap.ui.model.json.JSONModel(tableData), this.mainTableModel)// Set
+        this.getView().setModel(new sap.ui.model.json.JSONModel(tableData), this.mainTableModel_MyRequestStatus_XX)// Set
         this.setBusy(this.mainTableId, false)
       },
 

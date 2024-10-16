@@ -3,9 +3,10 @@ sap.ui.define(
     "internal/controller/Helper/BaseController",
     "sap/ui/core/UIComponent",
     "internal/controller/Helper/SharingRequestFunctions",
+    "internal/controller/Helper/SharingMyRequestStatusForm",
 
   ],
-  function (BaseController, UIComponent, SharingRequestFunctions) {
+  function (BaseController, UIComponent, SharingRequestFunctions, SharingMyRequestStatusForm) {
     "use strict";
 
     return BaseController.extend("internal.controller.RequestStatusForm", {
@@ -32,19 +33,9 @@ sap.ui.define(
           oRouter.getRoute("RouteRequestStatusForm").attachPatternMatched(this._onRouteMatcheds2s, this);
         } else {
           console.log("RequestStatusForm -> else (oRouter)", oRouter)
-
         }
-
       },
 
-      // onRefresh: async function (oEvent) {
-      //   console.log("Start Refreshiung")
-      //   this.setBusy('listContinerId', true)
-      //   this.reSetValues()
-      //   this.getSplitContObj().toDetail(this.createId("empty"));
-      //   await this.setInVlus()
-      //   this.setBusy('listContinerId', false)
-      // },
 
       _onRouteMatcheds2s: async function (ev) {
         this.setBusy('page_id_RequestStatusForm', true)
@@ -58,7 +49,6 @@ sap.ui.define(
         const oArgs = ev.getParameter("arguments");
         const sId = oArgs.Id;
 
-
         try {
           // mainFormData Part ------------
           let selectedTaskz = await this.getMainFormData(sId)
@@ -70,22 +60,7 @@ sap.ui.define(
           this.getView().setModel(new sap.ui.model.json.JSONModel(mainTableData), this.mainTableModel);
 
 
-          // const oDatePicker = this.byId("PublishingDateID"); // Get the DatePicker by its ID
-          // if (oDatePicker) {
-          //   // Set the date value
-          //   oDatePicker.setDateValue(mainFormData?.PublishingDate); // Sets the date in the DatePicker
-          //   this.getView().getModel(this.IGNModel).setProperty('/PublishingDate', mainFormData?.PublishingDate)
-
-          //   // mainTable Data Part ------------
-
-          // } else {
-          //   console.error("DatePicker with ID 'PublishingDateID' not found.");
-          // }
-          // console.log("RequestStatusForm -> selectedTaskz: ", selectedTaskz)
           this.setComments(selectedTaskz)
-
-
-
 
           this.setVisbileOnSelected(selectedTaskz.MainService)
 
@@ -95,7 +70,7 @@ sap.ui.define(
           this.setVisbileForForm2('AttachmentInput', false, false, false);
           this.setVisbileForForm2('AdditionalAttachmentInput', false, false, false);
 
-          
+
           this.setVisbileForForm2('AttachmentButton', true, false, false);
           this.setVisbileForForm2('AdditionalAttachmentButton', true, false, false);
 
@@ -103,8 +78,8 @@ sap.ui.define(
           console.log("Finsheing _onRouteMatched -----------------------try-----------------")
 
 
-        } catch {
-          console.error("RequestStatusForm -> Error")
+        } catch (error) {
+          console.error("RequestStatusForm -> Error", error)
         }
 
         this.setBusy(this.mainFormId, false)
@@ -212,11 +187,20 @@ sap.ui.define(
         //   return record.RequesterId == this.userInfo.empId;
         // }.bind(this));
 
-        if (data.RequesterId == this.userInfo.empId) {
-          console.log({ data })
-          return data
 
+        var oModelNavList = this.getOwnerComponent().getModel("isShowAllRequest");
+        var oModelNavListData = oModelNavList.getData();
+        var isShowAllRequest = oModelNavListData.isShowAllRequest;
+
+        if (!isShowAllRequest) {
+          if (data.RequesterId == this.userInfo.empId) {
+            return data
+            
+          }
+          return []
         }
+
+        return data
       },
 
       getMainTableData2: async function (RequestId) {
@@ -228,14 +212,22 @@ sap.ui.define(
           return record.RequestId == RequestId;
         }.bind(this));
 
-        if (filteredRecords[0].ProcessedId == this.userInfo.empId) {
-          console.log({ filteredRecords })
-          return filteredRecords
+        var oModelNavList = this.getOwnerComponent().getModel("isShowAllRequest");
+        var oModelNavListData = oModelNavList.getData();
+        var isShowAllRequest = oModelNavListData.isShowAllRequest;
+
+        if (!isShowAllRequest) {
+          if (filteredRecords[0].ProcessedId == this.userInfo.empId) {
+            console.log({ filteredRecords })
+            return filteredRecords
+          }
+          return []
         }
+        return filteredRecords
 
       },
-      // ================================== # Helper Functions # ==================================
 
+      // ================================== # Helper Functions # ==================================
       startValidation: function (oPayload) {
         let fieldsName = Object.keys(this.getMainObj());
         let requiredList = fieldsName.filter(field => field);
@@ -260,13 +252,6 @@ sap.ui.define(
       setBusy: function (id, status) {
         this.getView().byId(id).setBusy(status);
       },
-
-      // reSetValues: function () {
-      //   this.getView().setModel(new sap.ui.model.json.JSONModel(this.getObjRevisionRequest()), this.RevisionRequestModel);
-      //   this.getView().setModel(new sap.ui.model.json.JSONModel(this.getObjIGN()), this.IGNModel);
-
-      //   this.dateTime?.setValue('')
-      // },
 
       setVisbileForForm: function (sSelectedKey) {
         if (["Internal Announcement", "Graphic Design", "Nadec Home Post"].includes(sSelectedKey)) {
@@ -315,12 +300,12 @@ sap.ui.define(
         this.UiTableFSG2.handleGroupButtonPressed(ev)
 
       },
-
       // ======
       onSearch: function (oEvent) {
         this.UiTableFSG2.onSearch(oEvent)
       },
 
+      // ================================== # XXXX Functions # ==================================
 
     });
   }

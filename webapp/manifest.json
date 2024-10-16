@@ -52,6 +52,20 @@
           "odataVersion": "2.0"
         }
       }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "internal_cts-mange": {
+          "semanticObject": "internal_cts",
+          "action": "mange",
+          "title": "{{flpTitle}}",
+          "subTitle": "{{flpSubtitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
     }
   },
   "sap.ui": {
@@ -251,6 +265,13 @@
           "target": [
             "TargetEscalationLevels"
           ]
+        },
+        {
+          "name": "RouteReAssignee",
+          "pattern": "RouteReAssignee",
+          "target": [
+            "TargetReAssignee"
+          ]
         }
       ],
       "targets": {
@@ -330,6 +351,13 @@
           "clearControlAggregation": false,
           "viewId": "EscalationLevels",
           "viewName": "EscalationLevels"
+        },
+        "TargetReAssignee": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "ReAssignee",
+          "viewName": "ReAssignee"
         }
       }
     },
@@ -339,5 +367,9 @@
       "async": true,
       "id": "App"
     }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "internal"
   }
 }

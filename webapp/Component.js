@@ -74,7 +74,7 @@ sap.ui.define([
 
             getUserData: async function () {
                 const [userId] = this.getUserIdAndRule(); // Unpack only userId since userRule2 is not used
-                let userRule = 'Normal User';
+                let userRule = ["Normal"];
 
                 // Initialize userService
                 this.userService = new UserService(this, userId);
@@ -93,14 +93,15 @@ sap.ui.define([
                     );
 
                     // Assign the first match or null
-                    const accessUser = access_UserSet_Filtered.length > 0 ? access_UserSet_Filtered[0] : null;
+                    const accessUser = access_UserSet_Filtered?.length > 0 ? access_UserSet_Filtered[0] : null;
 
                     // Determine user role based on access user data
                     if (accessUser) {
-                        if (accessUser.admin && accessUser.report) {
-                            userRule = 'Super User';
-                        } else if (accessUser.report) {
-                            userRule = 'Mid User';
+                        if (accessUser.admin) {
+                            userRule.push("Settings")
+                        }
+                        if (accessUser.report) {
+                            userRule.push("Report")
                         }
                     }
 
@@ -148,20 +149,37 @@ sap.ui.define([
             //     }
             // },
 
-
-            filterNavigationByRole: function (navigationItems, userRole) {
+            filterNavigationByRole: function (navigationItems, userRoles) {
                 return navigationItems.filter(item => {
-                    // Check if the current role is allowed for this item
-                    if (item.roles && item.roles.includes(userRole)) {
-                        // If there are subitems (e.g., for Settings), filter them too
-                        if (item.items) {
-                            item.items = this.filterNavigationByRole(item.items, userRole);
+                    // Check if the current item has roles
+                    if (item.roles) {
+                        // Check if any of the user roles match the item's roles
+                        const hasRole = userRoles.some(role => item.roles.includes(role));
+                        if (hasRole) {
+                            // If there are subitems (e.g., for Settings), filter them too
+                            if (item.items) {
+                                item.items = this.filterNavigationByRole(item.items, userRoles);
+                            }
+                            return true;
                         }
-                        return true;
                     }
                     return false;
                 });
             },
+            
+            // filterNavigationByRole: function (navigationItems, userRole) {
+            //     return navigationItems.filter(item => {
+            //         // Check if the current role is allowed for this item
+            //         if (item.roles && item.roles.includes(userRole)) {
+            //             // If there are subitems (e.g., for Settings), filter them too
+            //             if (item.items) {
+            //                 item.items = this.filterNavigationByRole(item.items, userRole);
+            //             }
+            //             return true;
+            //         }
+            //         return false;
+            //     });
+            // },
 
             inSureUserInfo: async function () {
                 let attempts = 0;

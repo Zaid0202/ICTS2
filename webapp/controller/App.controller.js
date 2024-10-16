@@ -17,7 +17,10 @@ sap.ui.define(
 
     return Controller.extend("internal.controller.App", {
       onInit: async function () {
-        this.isDarkMode = true;
+
+        this.getView()?.byId('App_id').setBusy(true)
+
+        this.isDarkMode = false;
         this.onToggleTheme();
 
         this.oView = this.getView();
@@ -56,18 +59,53 @@ sap.ui.define(
 
           oModelNavList.setData(oModelNavListData);
           this.getView().setModel(oModelNavList, "navList");
+          this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({ isShowAllRequest: false }), "isShowAllRequest");
+
         }
 
 
         //-----------Route Part---------
+        // var oRouter2 = sap.ui.core.UIComponent.getRouterFor(this);
+        // oRouter2.attachRouteMatched(this._onRouteMatched, this);
+
         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
+        // Attach routeMatched event for dynamic navigation
         oRouter.attachRouteMatched(this._onRouteMatched, this);
+
+        // Get the current URL hash (e.g., 'RouteNewRequest')
+        var oHash = oRouter.getHashChanger().getHash();
+        // console.log("App -> _onRouteMatched -> oHash:", oHash);
+
+        // If a hash exists, attempt to find a route based on the hash
+        if (oHash) {
+          // The route might be correctly identified using the hash (which should match the route pattern)
+          var oRoute = oRouter.getRoute(oHash);
+
+          // Check if the route exists
+          if (oRoute) {
+            // console.log("App -> _onRouteMatched -> oRoute:", oRoute);
+
+            // Since getName() doesn't exist, we manually pass the hash as the route name
+            this._onRouteMatched({
+              getParameter: function () {
+                return oHash; // Return the hash as the route name
+              }
+            });
+          } else {
+            console.error("No route found for the current hash:", oHash);
+          }
+        }
+        this.getView()?.byId('App_id').setBusy(false)
+
         //--------------------
 
       },
 
       _onRouteMatched: async function (oEvent) { // Implamints the Rules For Routes.
         var oRouteName = oEvent.getParameter("name");
+
+        // console.log("App -> _onRouteMatched -> oRouteName:", oRouteName)
 
         var oModelNavList = await this.getOwnerComponent().getModel("navList");
         let oModelNavListData = oModelNavList.getData();
@@ -77,11 +115,11 @@ sap.ui.define(
 
         // Find the object with the matching key
         let foundItem = this.findItem(allRouteNew, oRouteName)
-        console.log("foundItem", foundItem);
+        // console.log("foundItem", foundItem);
 
         // Check if the roles array contains the role to check
         if (foundItem) {
-          if (foundItem.roles.includes(this.sUserRole)) {
+          if (this.sUserRole.some(role => foundItem.roles.includes(role))) {
           } else {
             this.getOwnerComponent().getRouter().navTo("RouteHome"); // Redirect to the home view or another default view
             sap.m.MessageToast.show("Access Denied! You don't have permission to access this view.");

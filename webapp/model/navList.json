@@ -5,9 +5,7 @@
       "icon": "sap-icon://home",
       "key": "RouteHome",
       "roles": [
-        "Normal User",
-        "Mid User",
-        "Super User"
+        "Normal"
       ]
     },
     {
@@ -15,9 +13,7 @@
       "icon": "sap-icon://add",
       "key": "RouteNewRequest",
       "roles": [
-        "Normal User",
-        "Mid User",
-        "Super User"
+        "Normal"
       ]
     },
     {
@@ -25,9 +21,7 @@
       "icon": "sap-icon://activity-assigned-to-goal",
       "key": "RouteMyTasks",
       "roles": [
-        "Normal User",
-        "Mid User",
-        "Super User"
+        "Normal"
       ]
     },
     {
@@ -35,9 +29,7 @@
       "icon": "sap-icon://history",
       "key": "RouteMyRequestStatus",
       "roles": [
-        "Normal User",
-        "Mid User",
-        "Super User"
+        "Normal"
       ]
     },
     {
@@ -45,9 +37,7 @@
       "icon": "sap-icon://e-care",
       "key": "RouteProcessedByMe",
       "roles": [
-        "Normal User",
-        "Mid User",
-        "Super User"
+        "Normal"
       ]
     },
     {
@@ -55,8 +45,7 @@
       "icon": "sap-icon://bbyd-dashboard",
       "key": "RouteDashboard",
       "roles": [
-        "Mid User",
-        "Super User"
+        "Report"
       ]
     },
     {
@@ -64,7 +53,7 @@
       "icon": "sap-icon://settings",
       "key": "RouteSettings",
       "roles": [
-        "Super User"
+        "Settings"
       ],
       "items": [
         {
@@ -72,7 +61,7 @@
           "icon": "sap-icon://e-care",
           "key": "RouteSettingsApprovals",
           "roles": [
-            "Super User"
+            "Settings"
           ]
         },
         {
@@ -80,7 +69,7 @@
           "icon": "sap-icon://e-care",
           "key": "RouteEscalationLevels",
           "roles": [
-            "Super User"
+            "Settings"
           ]
         },
         {
@@ -88,10 +77,23 @@
           "icon": "sap-icon://e-care",
           "key": "RouteSettingsAssignees",
           "roles": [
-            "Super User"
+            "Settings"
+          ]
+        },
+        {
+          "title": "Re Assignee",
+          "icon": "sap-icon://e-care",
+          "key": "RouteReAssignee",
+          "roles": [
+            "Settings"
           ]
         }
       ]
+    },
+    {
+      "title": "ReAssignee",
+      "icon": "sap-icon://e-care",
+      "key": "RouteReAssignee"
     }
   ],
   "navigationAddtion": [
@@ -100,9 +102,9 @@
       "icon": "sap-icon://home",
       "key": "RouteRequestStatusForm",
       "roles": [
-        "Normal User",
-        "Mid User",
-        "Super User"
+        "Normal",
+        "Report",
+        "Settings"
       ]
     }
   ]

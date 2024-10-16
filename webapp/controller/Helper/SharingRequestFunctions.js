@@ -20,20 +20,6 @@ sap.ui.define([
         },
 
         onInit: function () {
-            console.log('Initializing SharingRequestFunctions...');
-
-            // console.log("Before merging: ", this);
-            // console.log("Current controller: ", this._currentController);
-
-            // Merge instance methods from `this._currentController` (MyTask instance)
-            // Object.assign(this, this._currentController);
-
-            // Merge prototype methods from _currentController into SharingRequestFunctions' prototype
-            // Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(this._currentController));
-            // Object.assign(Object.getPrototypeOf(this), Object.getPrototypeOf(Object.getPrototypeOf(this._currentController)));
-
-            // console.log("After merging: ", this);
-
             // ------------------------------------ Call Classs ------------------------------------
             this.uploadeFile = new UploadeFile(this._currentController)
             this.emailService = new EmailService(this._currentController)
@@ -44,7 +30,7 @@ sap.ui.define([
             this.mainFormModel = 'mainFormModel'
             this.mainFormErrModel = "mainFormErrModel"
 
-            this.mainTableId = 'mainTableId'
+            // this.mainTableId = 'mainTableId'
             this.mainTableModel = 'mainTableModel'
 
             this.CommentModel = 'CommentModel'
@@ -53,8 +39,6 @@ sap.ui.define([
             this._currentController.getView()
             return this
         },
-
-
 
 
         // ================================== # Init Functiolns XX # ==================================
@@ -119,13 +103,10 @@ sap.ui.define([
             return selec == "c" ? comment : selec == "a" ? assigne : selec == "b" ? buttons : [...comment, ...assigne, ...buttons]
         },
 
-        getMainTableData: async function () {
+        getMainTableData: async function (xx) {
             // let filter = { "name": "Sendto", "value": this.userInfo.empId }
             // let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['NewRequest'], '', filter)
-
             let data = await this._currentController.crud_z.get_record(this._currentController.endsPoints['NewRequest'])
-            // console.log("SharingRequestFunctions -> getMainTableData -> data ", data)
-            // console.log("SharingRequestFunctions -> getMainTableData -> this._currentController.userInfo?.empId ", this._currentController.userInfo?.empId)
             return data?.results?.filter(function (record) {
                 // console.log("SharingRequestFunctions -> getMainTableData -> record.Sendto.split(', ').map(Number)", record.Sendto.split(', ').map(Number))
                 return record.Sendto.split(', ').map(Number).includes(Number(this._currentController.userInfo?.empId));
