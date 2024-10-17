@@ -56,6 +56,100 @@ sap.ui.define([
             return this.userInfo
         },
 
+        getTaskDetails: function (userInfo, status, step, sendTo, sendToName) {
+            let isMangeerExist = userInfo?.managerName && userInfo?.managerId ? true : false
+            status = (!isMangeerExist && status === "Pending") ? "Approved" : status  // To Go next Lvl if no Line manager is Exist.
+            console.log("getTaskDetails -> this._currentController", this._currentController)
+            let namesSendtoXForUni = this.formatSendToNames(userInfo.managerId, userInfo.managerName)
+
+            const detailsMap = {
+                "Pending": {
+                    statusDisplay: isMangeerExist
+                        ? `Forwarded to: ${userInfo.managerName}(${userInfo.managerId})`
+                        : `Forwarded to: ${sendToName}(${sendTo})`,
+                    sendto: isMangeerExist ? userInfo.managerId : sendTo,
+                    sendToName: isMangeerExist ? namesSendtoXForUni : sendToName,
+                    steps: 1
+                },
+                "Approved": {
+                    statusDisplay: `Approved by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    sendToName: sendToName,
+                    steps: step + 1
+                },
+                "Rejected": {
+                    statusDisplay: `Rejected by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: '',
+                    sendToName: '',
+                    steps: 100
+                },
+                "Returned": {
+                    statusDisplay: `Returned by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    sendToName: sendToName,
+                    steps: 0
+                },
+                "Assigned": {
+                    statusDisplay: `Assigned by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    sendToName: sendToName,
+                    steps: step + 1
+                },
+                "ReAssignee": {
+                    statusDisplay: `ReAssignee by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    sendToName: sendToName,
+                    steps: step
+                },
+                "WorkInProgress": {
+                    statusDisplay: `Work In Progress by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    sendToName: sendToName,
+                    steps: step
+                },
+                "Completed": {
+                    statusDisplay: `Completed by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: sendTo,
+                    sendToName: sendToName,
+                    steps: 99
+                },
+                "Closed": {
+                    statusDisplay: `Closed by: ${userInfo?.displayName}(${userInfo?.empId})`,
+                    sendto: '',
+                    sendToName: '',
+                    steps: 100
+                }
+            };
+
+            return detailsMap[status];
+        },
+
+        getRequesteData: async function (obj) {
+            let status = obj?.status;
+            let status2 = obj?.status2  || status;
+            let sendTo = obj?.sendTo;
+            let sendToName = obj?.sendToName;
+            let step = obj?.step;
+            let lastActionBy = obj?.lastActionBy
+            let userInfo = await this.getUserInfo() || {};
+
+            // Assuming getTaskDetails returns an object with "StatusDisplay", "Sendto", and "Steps"
+            const workFlow = this.getTaskDetails(userInfo, status, step, sendTo, sendToName);
+            return {
+                Status: status == "ReAssignee" ? status2 : status, // This will be one of: Pending, Approved, Rejected, Returned, Closed
+                Status2: status2,
+                StatusDisplay: workFlow?.statusDisplay || "",
+                Sendto: workFlow?.sendto,
+                SendtoName: workFlow?.sendToName,
+                Steps: workFlow?.steps,
+                LastActionBy: status == 'WorkInProgress' ? lastActionBy : `${userInfo.displayName || "Unknown"}(${userInfo.empId || "Unknown"})`,
+                LastActionDate: new Date(),
+                AssignedDate: new Date(), // Renamed from assigned_date
+                EscalationId: status == 'Approved' ? obj.escalationId : ""
+            };
+        },
+
+
         getRequesterData: async function () {
             let userInfo = await this.getUserInfo()
             return {
@@ -66,80 +160,6 @@ sap.ui.define([
                 RequesterDept: userInfo?.division, // Renamed from requester_dept
                 RequesterLocation: userInfo?.city, // Renamed from requester_location
             }
-        },
-
-        getTaskDetails: function (userInfo, status, step, sendTo, sendToName) {
-            let isMangeerExist = userInfo?.managerName && userInfo?.managerId ? true : false
-            status = (!isMangeerExist && status === "Pending") ? "Approved" : status  // To Go next Lvl if no Line manager is Exist. 
-
-            const detailsMap = {
-                "Pending": {
-                    statusDisplay: isMangeerExist
-                        ? `Forwarded to: ${userInfo.managerName}(${userInfo.managerId})`
-                        : `Forwarded to: ${sendToName}(${sendTo})`,
-                    sendto: isMangeerExist ? userInfo.managerId : sendTo,
-                    steps: 1
-                },
-                "Approved": {
-                    statusDisplay: `Approved by: ${userInfo?.displayName}(${userInfo?.empId})`,
-                    sendto: sendTo,
-                    steps: step + 1
-                },
-                "Rejected": {
-                    statusDisplay: `Rejected by: ${userInfo?.displayName}(${userInfo?.empId})`,
-                    sendto: '',
-                    steps: 100
-                },
-                "Returned": {
-                    statusDisplay: `Returned by: ${userInfo?.displayName}(${userInfo?.empId})`,
-                    sendto: sendTo,
-                    steps: 0
-                },
-                "Assigned": {
-                    statusDisplay: `Assigned by: ${userInfo?.displayName}(${userInfo?.empId})`,
-                    sendto: sendTo,
-                    steps: step + 1
-                },
-                "WorkInProgress": {
-                    statusDisplay: `Work In Progress by: ${userInfo?.displayName}(${userInfo?.empId})`,
-                    sendto: sendTo,
-                    steps: step
-                },
-                "Completed": {
-                    statusDisplay: `Completed by: ${userInfo?.displayName}(${userInfo?.empId})`,
-                    sendto: sendTo,
-                    steps: 99
-                },
-                "Closed": {
-                    statusDisplay: `Closed by: ${userInfo?.displayName}(${userInfo?.empId})`,
-                    sendto: '',
-                    steps: 100
-                }
-            };
-
-            return detailsMap[status];
-        },
-
-        getRequesteData: async function (obj) {
-            let status = obj?.status;
-            let sendTo = obj?.sendTo;
-            let sendToName = obj?.sendToName;
-            let step = obj?.step;
-            let lastActionBy = obj?.lastActionBy
-            let userInfo = await this.getUserInfo() || {};
-
-            // Assuming getTaskDetails returns an object with "StatusDisplay", "Sendto", and "Steps"
-            const workFlow = this.getTaskDetails(userInfo, status, step, sendTo, sendToName);
-            return {
-                Status: status, // This will be one of: Pending, Approved, Rejected, Returned, Closed
-                StatusDisplay: workFlow?.statusDisplay || "",
-                Sendto: workFlow?.sendto,
-                Steps: workFlow?.steps,
-                LastActionBy: status ==  'WorkInProgress' ? lastActionBy : `${userInfo.displayName || "Unknown"}(${userInfo.empId || "Unknown"})`,
-                LastActionDate: new Date(),
-                AssignedDate: new Date(), // Renamed from assigned_date
-                EscalationId: status ==  'Approved' ? obj.escalationId : ""
-            };
         },
 
         getUserInfoWithRequestTamp: async function (obj) {
@@ -168,6 +188,7 @@ sap.ui.define([
             let RequestId = Obj?.RequestId || '0000000000';
             let SendtoName = Obj?.SendtoName;
             let CommentZ = Obj?.CommentZ || `New Request.`;
+            let SeqId = Obj?.SeqId;
             let Status = Obj?.Status;
 
 
@@ -176,7 +197,7 @@ sap.ui.define([
 
             // Adjusting sendtoName if the status is 'Pending'
             return {
-                SeqId: 0, // Assuming this is auto-generated or set elsewhere
+                SeqId: SeqId, // Assuming this is auto-generated or set elsewhere
                 RequestId: RequestId,
                 CommentZ: CommentZ,
                 Status: Status,
@@ -187,6 +208,27 @@ sap.ui.define([
                 SendtoName: SendtoName,
             };
         },
+
+        formatSendToNames: function (sIds, sNames) {
+            if (!sIds || !sNames) return "";
+    
+            // Split IDs and names by commas
+            const idArray = sIds.split(", ");
+            const nameArray = sNames.split(", ");
+    
+            // Ensure both arrays are the same length
+            if (idArray.length !== nameArray.length) return "";
+    
+            // Combine names and IDs in the format "FirstName LastName (ID)"
+            const combinedArray = nameArray.map((name, index) => {
+              const firstNameLastName = name.split(" ").slice(0, 2).join(" ");  // Assuming names are formatted with first and last names
+              return `${firstNameLastName} (${idArray[index]})`;
+            });
+    
+            // Join the results with a separator (e.g., comma)
+            return combinedArray.join(", ");
+          },
+
 
     });
 });

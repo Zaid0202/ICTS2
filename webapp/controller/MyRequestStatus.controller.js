@@ -25,9 +25,11 @@ sap.ui.define(
         this.mainTableId = 'mainTableId_MyRequestStatus_XX'
         this.UiTableFSG2.setTableId(this.mainTableId)
 
-        this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({isShowAllRequest:false}), "isShowAllRequest");
+        this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({ isShowAllRequest: false }), "isShowAllRequest");
 
         await this.onRefresh()
+
+        this.switchState();
 
       },
 
@@ -151,6 +153,40 @@ sap.ui.define(
       onSearch: function (oEvent) {
         this.UiTableFSG2.onSearch(oEvent)
       },
+      // ======
+
+      switchState: function () {
+        const oTable = this.byId(this.mainTableId);
+
+        let oTemplate = oTable.getRowActionTemplate();
+        if (oTemplate) {
+          oTemplate.destroy();
+          oTemplate = null;
+        }
+        // Define the press function
+
+        let mode_x =
+        {
+          key: "Navigation",
+          text: "Navigation",
+          handler: function () {
+            const oTemplate = new sap.ui.table.RowAction({
+              items: [
+                new sap.ui.table.RowActionItem({
+                  type: "Navigation",
+                  press: this.onRowSelectionChange.bind(this),
+                  visible: "{Available}"
+                })
+              ]
+            });
+            return [1, oTemplate];
+          }.bind(this)
+        }
+
+        oTable.setRowActionTemplate(mode_x.handler()[1]);
+        oTable.setRowActionCount(mode_x.handler()[0]);
+      },
+
 
     });
   }

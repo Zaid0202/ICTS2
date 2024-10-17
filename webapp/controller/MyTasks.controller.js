@@ -166,8 +166,8 @@ sap.ui.define(
           //   return emp.EmployeeName;
           // }).join(", ");
 
-          requesteData.sendTo = data.sendTo
-          requesteData.sendToName = this.extractNameFromStatusDisplay(data.StatusDisplay)
+          requesteData.sendTo = data.SendTo
+          requesteData.sendToName = data.SendtoName
 
         }
 
@@ -214,6 +214,21 @@ sap.ui.define(
 
         // ------------------------------------------------------------------------------------------------
 
+
+
+
+        let isErr = this.startValidationComment(commentData)
+        if (isErr) {
+          // For AssigneesData startValidationAssingees
+          let AssigneesData = this.getView().getModel("SettingsAssigneesFormModel").getData();
+          let isErrAssingees = this.startValidationAssingees(AssigneesData)
+          if (isErrAssingees && (this.objStatus == "Assigned")) {
+            return false
+          }
+          return false
+        }
+
+        
         this.isConfired = false
         // Create a promise for the confirmation
         const confirmation = await new Promise((resolve) => {
@@ -232,18 +247,6 @@ sap.ui.define(
         });
 
         if (!confirmation) { return false }
-
-
-        let isErr = this.startValidationComment(commentData)
-        if (isErr) {
-          // For AssigneesData startValidationAssingees
-          let AssigneesData = this.getView().getModel("SettingsAssigneesFormModel").getData();
-          let isErrAssingees = this.startValidationAssingees(AssigneesData)
-          if (isErrAssingees && (this.objStatus == "Assigned")) {
-            return false
-          }
-          return false
-        }
         // ------------------------------------------------------------------------------------------------
         // Set Mode --> Edit.
         this.setMode("Edit")
@@ -265,9 +268,10 @@ sap.ui.define(
         let requesteDataTamp = requesteData
 
         let namesSendtoXForUni = this.formatSendToNames(requesteDataTamp.sendTo, requesteDataTamp.sendToName)
-        console.log("MyTasks -> namesSendtoXForUni: ", namesSendtoXForUni)
+        requesteData.sendToName = namesSendtoXForUni
 
         data = await this.getRequesteData(data, requesteData) // Here Get Values Bese in Status
+
         console.log("MyTasks -> getRequesteData -> data: ", data)
 
         if (!data) { return false }
@@ -280,7 +284,7 @@ sap.ui.define(
 
 
         // Set Mode --> Create.
-        this.setMode("Create")
+        // this.setMode("Create")
 
         // -------History Part---------
         let history = await this.getHistoryDataWorkFlow(data, commentData.CommentZ, namesSendtoXForUni)
@@ -310,25 +314,7 @@ sap.ui.define(
 
       },
 
-      formatSendToNames: function (sIds, sNames) {
-        if (!sIds || !sNames) return "";
 
-        // Split IDs and names by commas
-        const idArray = sIds.split(", ");
-        const nameArray = sNames.split(", ");
-
-        // Ensure both arrays are the same length
-        if (idArray.length !== nameArray.length) return "";
-
-        // Combine names and IDs in the format "FirstName LastName (ID)"
-        const combinedArray = nameArray.map((name, index) => {
-          const firstNameLastName = name.split(" ").slice(0, 2).join(" ");  // Assuming names are formatted with first and last names
-          return `${firstNameLastName} (${idArray[index]})`;
-        });
-
-        // Join the results with a separator (e.g., comma)
-        return combinedArray.join(", ");
-      },
 
 
       onRefresh: async function (oEvent) {

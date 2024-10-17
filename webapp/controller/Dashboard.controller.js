@@ -107,6 +107,7 @@ sap.ui.define([
       //   console.log("RequestStatusForm -> else (oRouter)", oRouter)
       // }
       // ---------------------------
+      this.switchState();
 
     },
 
@@ -422,6 +423,38 @@ sap.ui.define([
     // ======
     onSearch: function (oEvent) {
       this.UiTableFSG2.onSearch(oEvent)
+    },
+    // ======
+    switchState: function () {
+      const oTable = this.byId(this.mainTableId_MyRequestStatus_XX);
+
+      let oTemplate = oTable.getRowActionTemplate();
+      if (oTemplate) {
+        oTemplate.destroy();
+        oTemplate = null;
+      }
+      // Define the press function
+
+      let mode_x =
+      {
+        key: "Navigation",
+        text: "Navigation",
+        handler: function () {
+          const oTemplate = new sap.ui.table.RowAction({
+            items: [
+              new sap.ui.table.RowActionItem({
+                type: "Navigation",
+                press: this.onRowSelectionChange.bind(this),
+                visible: "{Available}"
+              })
+            ]
+          });
+          return [1, oTemplate];
+        }.bind(this)
+      }
+
+      oTable.setRowActionTemplate(mode_x.handler()[1]);
+      oTable.setRowActionCount(mode_x.handler()[0]);
     },
 
     // ================================== # XX Functions# ==================================

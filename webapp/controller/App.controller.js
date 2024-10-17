@@ -156,12 +156,12 @@ sap.ui.define(
       onToggleTheme: function () {
         if (!this.isDarkMode) {
           Configuration.setTheme("sap_horizon"); // Set to normal theme
-          this.byId("themeToggleButton").setTooltip("Switch to Dark Mode");
-          this.byId("themeToggleButton").setIcon("sap-icon://light-mode");
+          this?.byId("themeToggleButton")?.setTooltip("Switch to Dark Mode");
+          this?.byId("themeToggleButton")?.setIcon("sap-icon://light-mode");
         } else {
           Configuration.setTheme("sap_horizon_dark"); // Set to dark theme
-          this.byId("themeToggleButton").setTooltip("Switch to Light Mode");
-          this.byId("themeToggleButton").setIcon("sap-icon://dark-mode");
+          this?.byId("themeToggleButton")?.setTooltip("Switch to Light Mode");
+          this?.byId("themeToggleButton")?.setIcon("sap-icon://dark-mode");
         }
         this.isDarkMode = !this.isDarkMode;
       },

@@ -34,7 +34,7 @@
     },
     {
       "title": "Processed By Me",
-      "icon": "sap-icon://e-care",
+      "icon": "sap-icon://employee",
       "key": "RouteProcessedByMe",
       "roles": [
         "Normal"

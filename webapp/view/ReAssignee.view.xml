@@ -4,12 +4,104 @@
     displayBlock="true"
     xmlns:core="sap.ui.core"
     xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:c="sap.ui.core"
 >
     <Page
         id="page_id_ReAssignee"
         title="ReAssignee"
     >
         <content>
+            <VBox class="sapUiSmallMargin">
+                <form:Form
+                    editable="true"
+                    id="mainFormIdSettingsAssignees"
+                >
+                    <form:toolbar>
+                        <Toolbar>
+                            <Title text="Settings Assignees" />
+                            <ToolbarSpacer />
+                        </Toolbar>
+                    </form:toolbar>
+                    <form:layout>
+                        <form:ResponsiveGridLayout
+                            labelSpanXL="3"
+                            labelSpanL="3"
+                            labelSpanM="3"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="4"
+                            emptySpanL="4"
+                            emptySpanM="4"
+                            emptySpanS="0"
+                            columnsXL="1"
+                            columnsL="1"
+                            columnsM="1"
+                            singleContainerFullSize="false"
+                        />
+                    </form:layout>
+                    <form:formContainers>
+                        <form:FormContainer>
+                            <form:formElements>
+                                <form:FormElement label="Employee Id">
+                                    <form:fields>
+                                        <VBox>
+                                            <Input
+                                                value="{mainFormModel>/EmployeeId}"
+                                                liveChange="onChangeInputUserId"
+                                                submit="onSubmitInputUserId"
+                                                maxLength="5"
+                                                valueState="{mainFormErrModel>/EmployeeId/valueState}"
+                                                valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
+                                                placeholder="Employee Id"
+                                                type="Text"
+                                                tooltip="Press Enter after input"
+                                            >
+                                                <layoutData>
+                                                    <l:GridData
+                                                        span="XL1 L2 M2 S12"
+                                                    />
+                                                </layoutData>
+                                            </Input>
+                                        </VBox>
+                                        <Input
+                                            id="inputEmployeeNameId"
+                                            value="{mainFormModel>/EmployeeName}"
+                                            valueState="{mainFormErrModel>/EmployeeName/valueState}"
+                                            valueStateText="{mainFormErrModel>/EmployeeName/valueStateText}"
+                                            placeholder="Employee Name"
+                                            editable="false"
+                                        >
+                                            <layoutData>
+                                                <l:GridData
+                                                    span="XL4 L3 M3 S12"
+                                                />
+                                            </layoutData>
+                                        </Input>
+                                    </form:fields>
+                                </form:FormElement>
+
+                                <!-- Add a VBox for spacing -->
+                                <!-- Use an empty label to create spacing -->
+
+                                <form:FormElement label="" />
+
+                                <form:FormElement label="">
+                                    <form:fields>
+                                        <Button
+                                            text="Submit"
+                                            type="Emphasized"
+                                            press="onMainSubmit"
+                                        />
+                                    </form:fields>
+                                </form:FormElement>
+                            </form:formElements>
+                        </form:FormContainer>
+                    </form:formContainers>
+                </form:Form>
+            </VBox>
+
             <VBox
                 fitContainer="true"
                 class="sapUiSmallMargin sapUiShadow sapUiContentPadding sapUiRoundedBorder sapUiPageBackground"

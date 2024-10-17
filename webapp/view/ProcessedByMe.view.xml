@@ -10,17 +10,11 @@
     xmlns:table="sap.ui.table"
 >
     <Page title="Processed By Me">
-        <headerContent>
-            <Button
-                icon="sap-icon://synchronize"
-                press="onRefresh"
-                tooltip="Refresh"
-            />
-        </headerContent>
+        <headerContent />
 
         <content>
             <table:Table
-                rows="{mainTableModel>/}"
+                rows="{path: 'mainTableModel>/', sorter: {path: 'mainTableModel>RequestId', descending: true}}"
                 selectionMode="None"
                 paste="onPaste"
                 ariaLabelledBy="title"
@@ -30,6 +24,12 @@
                     <OverflowToolbar style="Clear">
                         <Title text="History" />
                         <ToolbarSpacer />
+                        <Button
+                            icon="sap-icon://synchronize"
+                            press="onRefresh"
+                            tooltip="Refresh"
+                        />
+
                         <Button
                             tooltip="Sort"
                             icon="sap-icon://sort"

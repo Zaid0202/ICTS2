@@ -18,24 +18,19 @@
                     homeIcon="./image/main_logo.png"
                     homeIconTooltip="Main Logo"
                     menuButtonPressed="onMenuButtonPress"
-                    showNotifications="true"
+                    showNotifications="false"
                     notificationsPressed=""
                     notificationsNumber="4"
                     id="idImage"
                 >
-                    <ff:additionalContent>
+                    <!-- <ff:additionalContent>
                         <OverflowToolbarButton
                             press="onToggleTheme"
                             tooltip="Switch Theme"
                             icon="sap-icon://light-mode"
                             id="themeToggleButton"
                         />
-                        <OverflowToolbarButton
-                            press=""
-                            tooltip="Start tour to understand the functionality"
-                            icon="sap-icon://learning-assistant"
-                        />
-                    </ff:additionalContent>
+                    </ff:additionalContent> -->
 
                     <ff:profile>
                         <Avatar

@@ -24,7 +24,7 @@ sap.ui.define(
 
         this.setVisbileForFormInit()
 
-        this.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
+        this.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObjCharing()), this.mainFormModel);
         this.helperModelInstance.setProperty("/mainFormTitle", "Create New Request")
         this.getView()?.byId('mainFormVboxId')?.setBusy(false);
 
@@ -81,7 +81,7 @@ sap.ui.define(
         let data = this.onMainSubmitSharing()
         if (!data) { return false }
 
-        data = { ...this.getMainObj(), ...data }
+        data = { ...this.getMainObjCharing(), ...data }
 
         if (!data) { isError = true } // Set Error True
         // ------------------------------------------------------------------------------------------------
@@ -107,6 +107,7 @@ sap.ui.define(
         this.setBusy(this.mainFormId, true)
 
         // -------New Request Part---------
+
         let requesteData = { status: "Pending" }
         data = await this.getRequesteData(data, requesteData)
         data = this.oPayload_modify(data)

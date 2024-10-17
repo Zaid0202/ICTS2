@@ -6,26 +6,28 @@
     xmlns:core="sap.ui.core"
 >
     <VBox id="mainFormVboxId2">
-        <MessageStrip
+        <!-- <MessageStrip
             text="Click on the request in the table to see the more details of your request!"
             showIcon="true"
             class="sapUiTinyMargin"
             showCloseButton="true"
-        />
+        /> -->
+
         <table:Table
-            rows="{mainTableModel_MyRequestStatus_XX>/}"
-            selectionMode="Single"
-            selectionBehavior="RowOnly"
+            rows="{path: 'mainTableModel_MyRequestStatus_XX>/', sorter: {path: 'mainTableModel_MyRequestStatus_XX>Id', descending: true}}"
+            selectionMode="MultiToggle"
+            selectionBehavior="RowSelector"
             ariaLabelledBy="title"
             id="mainTableId_MyRequestStatus_XX"
-            rowSelectionChange="onRowSelectionChange"
+            rowSelectionChange=""
         >
             <table:rowActionTemplate>
                 <table:RowAction>
                     <table:items>
                         <table:RowActionItem
-                            type="Delete"
-                            press="onRowNavigate"
+                            type="Navigation"
+                            press="onRowSelectionChange"
+                            visible="true"
                         />
                     </table:items>
                 </table:RowAction>
@@ -38,6 +40,12 @@
                 >
                     <Title text="Report" />
                     <ToolbarSpacer />
+                    <Button
+                        icon="sap-icon://synchronize"
+                        press="onRefresh"
+                        tooltip="Refresh"
+                    />
+
                     <Button
                         tooltip="Sort"
                         icon="sap-icon://sort"
@@ -75,10 +83,20 @@
                 </table:Column>
 
                 <table:Column width="20%">
-                    <Label text="Employee Name and ID" />
+                    <Label text="Requester Name &amp; Id" />
                     <table:template>
                         <Text
                             text="{parts: [{path: 'mainTableModel_MyRequestStatus_XX>RequesterName'}, {path: 'mainTableModel_MyRequestStatus_XX>RequesterId'}], formatter: '.formatRequester'}"
+                            wrapping="false"
+                        />
+                    </table:template>
+                </table:Column>
+
+                <table:Column width="20%">
+                    <Label text="Send to" />
+                    <table:template>
+                        <Text
+                            text="{mainTableModel_MyRequestStatus_XX>SendtoName}"
                             wrapping="false"
                         />
                     </table:template>

@@ -44,7 +44,7 @@ sap.ui.define([
         // ================================== # Init Functiolns XX # ==================================
         setInVlus: async function () {
             // By Default
-            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObjCharing()), this.mainFormModel);
 
             let mainTableData = await this.getMainTableData()
             this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(mainTableData), this.mainTableModel)// Set
@@ -64,15 +64,15 @@ sap.ui.define([
 
 
         reSetValues: function () {
-            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObj()), this.mainFormModel);
+            this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(this.getMainObjCharing()), this.mainFormModel);
 
-            let setvalueStateValues = this._currentController.validation_z.reSetValuesState(Object.keys(this.getMainObj()), {})
+            let setvalueStateValues = this._currentController.validation_z.reSetValuesState(Object.keys(this.getMainObjCharing()), {})
             this._currentController.getView().setModel(new sap.ui.model.json.JSONModel(setvalueStateValues), this.mainFormErrModel);
 
             this._currentController.dateTime?.setValue('')
         },
 
-        getMainObj: function (selec = "") {
+        getMainObjCharing: function (selec = "") {
             let form1 = {
                 "MainService": "",
                 "Urgency": "",
@@ -130,20 +130,22 @@ sap.ui.define([
 
         // ================================== # Work Flow Data Functiolns XX # ==================================
         getHistoryDataWorkFlow: async function (resData, CommentZ, namesSendto) {
+            this._currentController.setMode("Create")
             console.log("SharingRequestFunctions -> resData.StatusDisplay:", resData.StatusDisplay)
             let processedByMeObj = {
                 "RequestId": resData.Id,
-                "SendtoName": resData.Status == "Pending" ? this.extractNameFromStatusDisplay(resData.StatusDisplay) : `${namesSendto}`,
+                "SendtoName":  namesSendto,
                 "Status": resData.Status,
-                "CommentZ": CommentZ
+                "CommentZ": CommentZ,
+                "SeqId": resData.Steps
             }
-
+            
             let historyObj = await this._currentController.oPayload_modify_parent(await this.getOwnerComponent().userService.getRequestHistoryObj(processedByMeObj))
             if (!historyObj) { return false }
             historyObj.ProcessedId = String(historyObj.ProcessedId)
 
             console.log("SharingRequestFunctions -> historyObj", historyObj)
-            // if (historyObj?.CommentZ.length > 200) {
+             // if (historyObj?.CommentZ.length > 200) {
             //     historyObj?.CommentZ = historyObj.CommentZ.slice(0, 200);
             //   }
 
@@ -154,6 +156,7 @@ sap.ui.define([
             const requestDataWORKFLOW = {
                 RequesteData: {
                     status: requesteData?.status, // This will be one of: Pending, Approved, Rejected, Returned, Closed
+                    status2: requesteData?.status2, // This will be one of: Pending, Approved, Rejected, Returned, Closed
                     sendToName: requesteData?.sendToName,
                     sendTo: requesteData?.sendTo,
                     step: requesteData?.step,
@@ -200,7 +203,7 @@ sap.ui.define([
         },
 
         setVisbileForFormInit: function () {
-            this.fieldsName = Object.keys(this.getMainObj())
+            this.fieldsName = Object.keys(this.getMainObjCharing())
 
             let fieldsName = [...this.fieldsName, ...this.getAdditionObj()]
 
@@ -209,14 +212,14 @@ sap.ui.define([
 
         setVisbileOnSelected: function (sSelectedKey, status = '') {
             this.setVisbileForForm2(this.getAdditionObj(), false, false, false);
-            this.setVisbileForForm2(Object.keys(this.getMainObj()), false, false, false);
+            this.setVisbileForForm2(Object.keys(this.getMainObjCharing()), false, false, false);
 
             let editable = this.isNewRequest ? true : this.isMyTasks ? status == "Returned" ? true : false : false
 
             if (["Internal Announcement", "Graphic Design", "Nadec Home Post"].includes(sSelectedKey)) {
-                this.setVisbileForForm2(Object.keys(this.getMainObj("f1")), true, editable, true);
+                this.setVisbileForForm2(Object.keys(this.getMainObjCharing("f1")), true, editable, true);
             } else if (["Revision Request"].includes(sSelectedKey)) {
-                this.setVisbileForForm2(Object.keys(this.getMainObj("f2")), true, editable, true);
+                this.setVisbileForForm2(Object.keys(this.getMainObjCharing("f2")), true, editable, true);
                 this.setVisbileForForm2('AdditionalLink', true, editable, false);
             }
 
@@ -291,7 +294,7 @@ sap.ui.define([
         },
         // ================================== # Validations # ==================================
         startValidation: function (oPayload, formN) {
-            let fieldsName = Object.keys(this.getMainObj(formN));
+            let fieldsName = Object.keys(this.getMainObjCharing(formN));
 
             let requiredList = fieldsName.filter(field => field);
 

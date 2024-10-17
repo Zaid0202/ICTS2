@@ -24,7 +24,7 @@ sap.ui.define([
         },
 
         // ================================== # Tables Functions # ==================================
-        getDataXkeysAItems: function (ev, mainTableModel = '', changeTextAItems = []) {
+        getDataXkeysAItems: function (ev, mainTableModel = '', changeTextAItems = [], bindingPathsExtra = []) {
             // const data = this._currentController.getView()?.getModel((this._currentController.mainTableModel || mainTableModel))?.getData();
 
             // If mainTableModel has a value, use it; otherwise, default to 'mainTableModel'
@@ -41,7 +41,9 @@ sap.ui.define([
             var oParent = oButton.getParent();
 
             // Loop through the parent controls to find the table
-            var aBindingPaths = [];
+            console.log("1- bindingPathsExtra:", bindingPathsExtra);
+            var aBindingPaths = [...bindingPathsExtra];
+
             while (oParent) {
                 // Check if the current parent is of type sap.ui.table.Table
                 if (oParent instanceof sap.ui.table.Table) {
@@ -62,7 +64,7 @@ sap.ui.define([
                     });
 
                     // Log all binding paths
-                    console.log("Binding paths:", aBindingPaths);
+                    console.log("2- Binding paths:", aBindingPaths);
                     break; // Exit the loop once the table is found
                 }
                 // Move to the next parent

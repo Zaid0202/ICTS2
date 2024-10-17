@@ -60,6 +60,9 @@
                 type="Active"
                 press="onNewItemPressChangingUserId"
             /> -->
+
+            <CustomListItem />
+
             <StandardListItem
                 id="NewItemId"
                 title="New Item"
@@ -69,16 +72,29 @@
 
             <CustomListItem>
                 <HBox>
-                    <Input
-                        id="ChangingUserId"
-                        placeholder="Enter User Id"
-                        valueLiveUpdate="true"
-                        submit="onNewItemSubmit"
-                    />
+                    <VBox
+                        alignItems="Center"
+                        justifyContent="Center"
+                        width="100%"
+                    >
+                        <Input
+                            id="ChangingUserId"
+                            placeholder="Enter User Id"
+                            valueLiveUpdate="true"
+                            submit="onNewItemSubmit"
+                        />
+
+                        <Button
+                            press="onToggleTheme"
+                            tooltip="Switch Theme"
+                            icon="sap-icon://light-mode"
+                            id="themeToggleButton"
+                        />
+                    </VBox>
                 </HBox>
             </CustomListItem>
 
-            <CustomListItem>
+            <!-- <CustomListItem>
                 <HBox>
                     <Input
                         id="ChangingUserRole"
@@ -87,7 +103,7 @@
                         submit="onNewItemSubmitRole"
                     />
                 </HBox>
-            </CustomListItem>
+            </CustomListItem> -->
         </items>
     </List>
 </core:FragmentDefinition>

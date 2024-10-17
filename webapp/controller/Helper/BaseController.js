@@ -50,7 +50,7 @@ sap.ui.define(
         this.helperModelInstance = this.getView()?.getModel(this.helperModel)
         this.setMode('Create')
         console.log("Finsh THe Base Controller: ");
-        this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({isShowAllRequest:false}), "isShowAllRequest");
+        this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({ isShowAllRequest: false }), "isShowAllRequest");
 
       },
 
@@ -397,9 +397,28 @@ sap.ui.define(
 
       formatRequester: function (sName, sId) {
         // console.log("basecontllre -> formatRequester -> sName, sId", sName, sId)
-        return sName && sId ? `${sName}(${sId})` : "";
+        return sName && sId ? `${sName} (${sId})` : "";
       },
 
+      formatSendToNames: function (sIds, sNames) {
+        if (!sIds || !sNames) return "";
+
+        // Split IDs and names by commas
+        const idArray = sIds.split(", ");
+        const nameArray = sNames.split(", ");
+
+        // Ensure both arrays are the same length
+        if (idArray.length !== nameArray.length) return "";
+
+        // Combine names and IDs in the format "FirstName LastName (ID)"
+        const combinedArray = nameArray.map((name, index) => {
+          const firstNameLastName = name.split(" ").slice(0, 2).join(" ");  // Assuming names are formatted with first and last names
+          return `${firstNameLastName} (${idArray[index]})`;
+        });
+
+        // Join the results with a separator (e.g., comma)
+        return combinedArray.join(", ");
+      },
       // ================================== # Formaters Files Functions # ==================================
       // deepMerge: function (target, source) {
       //   // Ensure both target and source are objects
