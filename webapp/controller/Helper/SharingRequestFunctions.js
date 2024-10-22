@@ -129,23 +129,31 @@ sap.ui.define([
         },
 
         // ================================== # Work Flow Data Functiolns XX # ==================================
-        getHistoryDataWorkFlow: async function (resData, CommentZ, namesSendto) {
+        getHistoryDataWorkFlow: async function (resData, CommentZ) {
+
+            let filter = { "name": "RequestId", "value": resData.Id }
+            let oldHistory = await this._currentController.crud_z.get_record(this._currentController.endsPoints['ProcessedByMe'])
+            oldHistory = oldHistory.results.filter(el => el.RequestId == resData.Id)
+            let SeqId = 1
+            if (oldHistory){
+                SeqId = oldHistory.SeqId
+            }
             this._currentController.setMode("Create")
             console.log("SharingRequestFunctions -> resData.StatusDisplay:", resData.StatusDisplay)
             let processedByMeObj = {
                 "RequestId": resData.Id,
-                "SendtoName":  namesSendto,
+                "SendtoName": resData.SendtoName,
                 "Status": resData.Status,
                 "CommentZ": CommentZ,
-                "SeqId": resData.Steps
+                "SeqId": SeqId
             }
-            
+
             let historyObj = await this._currentController.oPayload_modify_parent(await this.getOwnerComponent().userService.getRequestHistoryObj(processedByMeObj))
             if (!historyObj) { return false }
             historyObj.ProcessedId = String(historyObj.ProcessedId)
 
             console.log("SharingRequestFunctions -> historyObj", historyObj)
-             // if (historyObj?.CommentZ.length > 200) {
+            // if (historyObj?.CommentZ.length > 200) {
             //     historyObj?.CommentZ = historyObj.CommentZ.slice(0, 200);
             //   }
 

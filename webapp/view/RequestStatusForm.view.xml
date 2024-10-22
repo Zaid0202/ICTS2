@@ -69,7 +69,7 @@
                             </table:extension>
                             <table:columns>
                                 <table:Column width="20%">
-                                    <Label text="CreatedDate" />
+                                    <Label text="Created Date" />
                                     <table:template>
                                         <Text
                                             text="{ path: 'mainTableModel>CreatedDate', formatter: '.formatDateToCustomPattern' }"
@@ -88,6 +88,16 @@
                                     </table:template>
                                 </table:Column>
 
+                                <table:Column width="20%">
+                                    <Label text="Send to" />
+                                    <table:template>
+                                        <Text
+                                            text="{mainTableModel>SendtoName}"
+                                            wrapping="false"
+                                        />
+                                    </table:template>
+                                </table:Column>
+                                
                                 <table:Column width="10rem">
                                     <Label text="Status" />
                                     <table:template>
@@ -101,18 +111,9 @@
                                     </table:template>
                                 </table:Column>
 
-                                <table:Column width="20%">
-                                    <Label text="Send to" />
-                                    <table:template>
-                                        <Text
-                                            text="{mainTableModel>SendtoName}"
-                                            wrapping="false"
-                                        />
-                                    </table:template>
-                                </table:Column>
 
                                 <table:Column width="20%">
-                                    <Label text="CommentZ" />
+                                    <Label text="Comment" />
                                     <table:template>
                                         <Text
                                             text="{mainTableModel>CommentZ}"

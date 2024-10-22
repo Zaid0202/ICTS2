@@ -92,7 +92,7 @@ sap.ui.define(
 
 
           // -------History Part---------
-          let history = await this.getHistoryDataWorkFlow(data, "Re Assignee", namesSendtoXForUni)
+          let history = await this.getHistoryDataWorkFlow(data, "Re Assignee")
           console.log("NewRequest -> history: ", history)
           if (!history) { isError = true }
 

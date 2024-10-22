@@ -287,7 +287,7 @@ sap.ui.define(
         // this.setMode("Create")
 
         // -------History Part---------
-        let history = await this.getHistoryDataWorkFlow(data, commentData.CommentZ, namesSendtoXForUni)
+        let history = await this.getHistoryDataWorkFlow(data, commentData.CommentZ)
         if (!history) { return false }
 
         // -------Mail Part---------

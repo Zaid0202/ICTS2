@@ -126,7 +126,7 @@ sap.ui.define([
 
         getRequesteData: async function (obj) {
             let status = obj?.status;
-            let status2 = obj?.status2  || status;
+            let status2 = obj?.status2 || status;
             let sendTo = obj?.sendTo;
             let sendToName = obj?.sendToName;
             let step = obj?.step;
@@ -197,7 +197,7 @@ sap.ui.define([
 
             // Adjusting sendtoName if the status is 'Pending'
             return {
-                SeqId: SeqId, // Assuming this is auto-generated or set elsewhere
+                SeqId: SeqId ? SeqId + 1  : 1, // Assuming this is auto-generated or set elsewhere
                 RequestId: RequestId,
                 CommentZ: CommentZ,
                 Status: Status,
@@ -211,23 +211,23 @@ sap.ui.define([
 
         formatSendToNames: function (sIds, sNames) {
             if (!sIds || !sNames) return "";
-    
+
             // Split IDs and names by commas
             const idArray = sIds.split(", ");
             const nameArray = sNames.split(", ");
-    
+
             // Ensure both arrays are the same length
             if (idArray.length !== nameArray.length) return "";
-    
+
             // Combine names and IDs in the format "FirstName LastName (ID)"
             const combinedArray = nameArray.map((name, index) => {
-              const firstNameLastName = name.split(" ").slice(0, 2).join(" ");  // Assuming names are formatted with first and last names
-              return `${firstNameLastName} (${idArray[index]})`;
+                const firstNameLastName = name.split(" ").slice(0, 2).join(" ");  // Assuming names are formatted with first and last names
+                return `${firstNameLastName} (${idArray[index]})`;
             });
-    
+
             // Join the results with a separator (e.g., comma)
             return combinedArray.join(", ");
-          },
+        },
 
 
     });
