@@ -10,7 +10,7 @@
 >
     <Page
         id="page_id_EscalationLevels"
-        title="Escalation Levels"
+        title="{i18n>escalationlevels_escalation_levels}"
         showHeader="true"
     >
         <content>
@@ -21,7 +21,7 @@
                 >
                     <form:toolbar>
                         <Toolbar>
-                            <Title text="Escalation Levels" />
+                            <Title text="{i18n>escalationlevels_escalation_levels}" />
                             <ToolbarSpacer />
                         </Toolbar>
                     </form:toolbar>
@@ -45,7 +45,7 @@
                     <form:formContainers>
                         <form:FormContainer>
                             <form:formElements>
-                                <form:FormElement label="Main Services">
+                                <form:FormElement label="{i18n>escalationlevels_main_services}">
                                     <form:fields>
                                         <Select
                                             selectedKey="{mainFormModel>/MainServiceName}"
@@ -63,7 +63,7 @@
                                         </Select>
                                     </form:fields>
                                 </form:FormElement>
-                                <form:FormElement label="Escalation Levels">
+                                <form:FormElement label="{i18n>escalationlevels_escalation_levels}">
                                     <form:fields>
                                         <Select
                                             selectedKey="{mainFormModel>/EscalationLevels}"
@@ -82,7 +82,7 @@
                                     </form:fields>
                                 </form:FormElement>
 
-                                <form:FormElement label="Employee Id">
+                                <form:FormElement label="{i18n>escalationlevels_employee_id}">
                                     <form:fields>
                                         <VBox>
                                             <Input
@@ -92,9 +92,9 @@
                                                 maxLength="5"
                                                 valueState="{mainFormErrModel>/EmployeeId/valueState}"
                                                 valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
-                                                placeholder="Employee Id"
+                                                placeholder="{i18n>escalationlevels_employee_id}"
                                                 type="Text"
-                                                tooltip="Press Enter after input"
+                                                tooltip="{i18n>escalationlevels_press_enter_after_in}"
                                             >
                                                 <layoutData>
                                                     <l:GridData
@@ -109,7 +109,7 @@
                                             value="{mainFormModel>/EmployeeName}"
                                             valueState="{mainFormErrModel>/EmployeeName/valueState}"
                                             valueStateText="{mainFormErrModel>/EmployeeName/valueStateText}"
-                                            placeholder="Employee Name"
+                                            placeholder="{i18n>escalationlevels_employee_name}"
                                             editable="false"
                                         >
                                             <layoutData>
@@ -121,15 +121,15 @@
                                     </form:fields>
                                 </form:FormElement>
 
-                                <form:FormElement label="" />
+                                <form:FormElement label="{i18n>escalationlevels_}" />
 
                                 <form:FormElement
-                                    label=""
+                                    label="{i18n>escalationlevels_}"
                                     visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
                                 >
                                     <form:fields>
                                         <Button
-                                            text="Submite"
+                                            text="{i18n>escalationlevels_submite}"
                                             type="Emphasized"
                                             visible="{= ${helperModel>/Mode} === 'Create' ? true : false }"
                                             press="onMainSubmit"
@@ -144,12 +144,12 @@
                                 </form:FormElement>
 
                                 <form:FormElement
-                                    label=""
+                                    label="{i18n>escalationlevels_}"
                                     visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
                                 >
                                     <form:fields>
                                         <Button
-                                            text="Update"
+                                            text="{i18n>escalationlevels_update}"
                                             type="Emphasized"
                                             visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
                                             press="onMainSubmit"
@@ -161,7 +161,7 @@
                                             </layoutData>
                                         </Button>
                                         <Button
-                                            text="Reset"
+                                            text="{i18n>escalationlevels_reset}"
                                             type="Ghost"
                                             visible="{= ${helperModel>/Mode} === 'Create' ? false : true }"
                                             press="onCleare"
@@ -190,34 +190,34 @@
                 >
                     <table:extension>
                         <OverflowToolbar style="Clear">
-                            <Title text="Report" />
+                            <Title text="{i18n>escalationlevels_report}" />
                             <ToolbarSpacer />
                             <Button
-                                tooltip="Sort"
+                                tooltip="{i18n>escalationlevels_sort}"
                                 icon="sap-icon://sort"
                                 press="handleSortButtonPressed"
                             />
                             <Button
-                                tooltip="Filter"
+                                tooltip="{i18n>escalationlevels_filter}"
                                 icon="sap-icon://filter"
                                 press="handleFilterButtonPressed"
                             />
                             <Button
-                                tooltip="Group"
+                                tooltip="{i18n>escalationlevels_group}"
                                 icon="sap-icon://group-2"
                                 press="handleGroupButtonPressed"
                             />
 
                             <SearchField
                                 width="20%"
-                                placeholder="search"
+                                placeholder="{i18n>escalationlevels_search}"
                                 search=".onSearch"
                             />
                         </OverflowToolbar>
                     </table:extension>
                     <table:columns>
                         <table:Column width="16.6%">
-                            <Label text="Id" />
+                            <Label text="{i18n>escalationlevels_id}" />
                             <table:template>
                                 <Text
                                     text="{ path: 'mainTableModel>Id', formatter: '.formatIdToCustomPattern' }"
@@ -226,7 +226,7 @@
                             </table:template>
                         </table:Column>
                         <table:Column width="16.6%">
-                            <Label text="Main Services" />
+                            <Label text="{i18n>escalationlevels_main_services}" />
                             <table:template>
                                 <Text
                                     text="{mainTableModel>MainServiceName}"
@@ -235,7 +235,7 @@
                             </table:template>
                         </table:Column>
                         <table:Column width="16.6%">
-                            <Label text="Escalation Levels" />
+                            <Label text="{i18n>escalationlevels_escalation_levels}" />
                             <table:template>
                                 <Text
                                     text="{= 'Level ' + ${mainTableModel>EscalationLevels}  }"
@@ -244,7 +244,7 @@
                             </table:template>
                         </table:Column>
                         <table:Column width="16.6%">
-                            <Label text="Employee Id" />
+                            <Label text="{i18n>escalationlevels_employee_id}" />
                             <table:template>
                                 <Text
                                     text="{mainTableModel>EmployeeId}"
@@ -254,7 +254,7 @@
                         </table:Column>
 
                         <table:Column width="30%">
-                            <Label text="Employee Name" />
+                            <Label text="{i18n>escalationlevels_employee_name}" />
                             <table:template>
                                 <Text
                                     text="{mainTableModel>EmployeeName}"
@@ -267,12 +267,12 @@
                             width="8.3%"
                             hAlign="Center"
                         >
-                            <Label text="" />
+                            <Label text="{i18n>escalationlevels_}" />
                             <table:template>
                                 <Button
                                     visible="true"
                                     icon="sap-icon://edit"
-                                    tooltip="Edit"
+                                    tooltip="{i18n>escalationlevels_edit}"
                                     press="onEdit"
                                 />
                             </table:template>
@@ -282,12 +282,12 @@
                             width="8.3%"
                             hAlign="Center"
                         >
-                            <Label text="" />
+                            <Label text="{i18n>escalationlevels_}" />
                             <table:template>
                                 <Button
                                     visible="true"
                                     icon="sap-icon://delete"
-                                    tooltip="Edit"
+                                    tooltip="{i18n>escalationlevels_edit}"
                                     press="onDelete"
                                 />
                             </table:template>

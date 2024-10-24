@@ -235,7 +235,26 @@ sap.ui.define(
 
         // Optional: Log the value to confirm it was saved
         console.log("User Role saved:", sValue);
-      }
+      },
+
+
+      // Languse ... 
+      onChangeLanguage: function () {
+        let sNewLanguage = this.getOwnerComponent().changeLanguage();
+
+        // Update button text and tooltip dynamically
+        this.updateButtonText(sNewLanguage);
+      },
+
+      updateButtonText: function (sLanguage) {
+        var sButtonText = sLanguage === "ar" ? "Change to English" : "Change to Arabic";
+        var oButton = this.getView().byId("languageChangeButton"); // Assuming you give an ID to your button
+        oButton.setText(sButtonText);
+
+        // Optionally update tooltip if needed
+        var sTooltipText = sLanguage === "ar" ? "تغيير إلى الإنجليزية" : "Change to Arabic";
+        oButton.setTooltip(sTooltipText);
+      },
 
     });
   }

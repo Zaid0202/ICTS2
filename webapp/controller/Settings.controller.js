@@ -12,14 +12,14 @@ sap.ui.define(
       onInit:async function () {
         await BaseController.prototype.onInit.apply(this, []);
 
-        const navList = this.getOwnerComponent().getModel("navList").getData().navigation
+        // const navList = this.getOwnerComponent().getModel("navList").getData().navigation
 
-        let data = navList
-          .filter(el => el.title === "Settings")[0].items.map(el => {return { title: el.title, subtitle: "Focus Area Tracking", footer: "Focus Area Tracking", unit: "EUR", kpivalue: 12, scale: "k", color: "Good", trend: "Up", route: el.key, icon: el.icon};}); // Filter out elements with title "Home"
+        // let data = navList
+        //   .filter(el => el.title2 === "navSettings")[0].items.map(el => {return { title: el.title, subtitle: "Focus Area Tracking", footer: "Focus Area Tracking", unit: "EUR", kpivalue: 12, scale: "k", color: "Good", trend: "Up", route: el.key, icon: el.icon};}); // Filter out elements with title "Home"
          
 
-        this.getView().setModel(new sap.ui.model.json.JSONModel(data), 'tiles')
-        console.log(data)
+        // this.getView().setModel(new sap.ui.model.json.JSONModel(data), 'tiles')
+
       },
 
       press: function (evt) {

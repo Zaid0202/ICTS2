@@ -8,7 +8,7 @@
 >
     <Page
         id="page_id_MyRequestStatus"
-        title="My Request Status"
+        title="{i18n>myrequeststatus_my_request_status}"
     >
         <headerContent>
         </headerContent>

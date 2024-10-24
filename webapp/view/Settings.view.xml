@@ -7,24 +7,24 @@
 >
     <Page
         id="page_id_Settings"
-        title="Settings"
+        title="{i18n>settings_settings}"
     >
         <content>
             <VBox class="sapUiTinyMargin">
                 <l:HorizontalLayout
                     id="TileContainerExpanded"
                     allowWrapping="true"
-                    content="{tiles>/}"
+                    content="{tilesSettings>/}"
                     class="sapUiTinyMarginTopBottom"
                 >
                     <GenericTile
-                        header="{tiles>title}"
+                        header="{tilesSettings>title}"
                         press="press"
                         class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout"
-                        sizeBehavior="{tiles>sizeBehavior}"
+                        sizeBehavior="{tilesSettings>sizeBehavior}"
                     >
                         <TileContent footer="Nav to">
-                            <ImageContent src="{tiles>icon}" />
+                            <ImageContent src="{tilesSettings>icon}" />
                         </TileContent>
                     </GenericTile>
                 </l:HorizontalLayout>

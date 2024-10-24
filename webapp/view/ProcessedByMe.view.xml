@@ -9,7 +9,7 @@
     xmlns:u="sap.ui.unified"
     xmlns:table="sap.ui.table"
 >
-    <Page title="Processed By Me">
+    <Page title="{i18n>processedbyme_processed_by_me}">
         <headerContent />
 
         <content>
@@ -22,26 +22,26 @@
             >
                 <table:extension>
                     <OverflowToolbar style="Clear">
-                        <Title text="History" />
+                        <Title text="{i18n>processedbyme_history}" />
                         <ToolbarSpacer />
                         <Button
                             icon="sap-icon://synchronize"
                             press="onRefresh"
-                            tooltip="Refresh"
+                            tooltip="{i18n>processedbyme_refresh}"
                         />
 
                         <Button
-                            tooltip="Sort"
+                            tooltip="{i18n>processedbyme_sort}"
                             icon="sap-icon://sort"
                             press="handleSortButtonPressed"
                         />
                         <Button
-                            tooltip="Filter"
+                            tooltip="{i18n>processedbyme_filter}"
                             icon="sap-icon://filter"
                             press="handleFilterButtonPressed"
                         />
                         <Button
-                            tooltip="Group"
+                            tooltip="{i18n>processedbyme_group}"
                             icon="sap-icon://group-2"
                             press="handleGroupButtonPressed"
                         />
@@ -49,7 +49,7 @@
                         <SearchField
                             id="searchField"
                             width="20%"
-                            placeholder="search"
+                            placeholder="{i18n>processedbyme_search}"
                             search="onSearch"
                         />
                     </OverflowToolbar>
@@ -57,7 +57,7 @@
 
                 <table:columns>
                     <table:Column width="15%">
-                        <Label text="Request Id" />
+                        <Label text="{i18n>processedbyme_request_id}" />
                         <table:template>
                             <Text
                                 text="{path: 'mainTableModel>RequestId', formatter: '.removeLeadingZeros'}"
@@ -67,7 +67,7 @@
                     </table:Column>
 
                     <table:Column width="15%">
-                        <Label text="Created Date" />
+                        <Label text="{i18n>processedbyme_created_date}" />
                         <table:template>
                             <Text
                                 text="{ path: 'mainTableModel>CreatedDate', formatter: '.formatDateToCustomPattern' }"
@@ -77,7 +77,7 @@
                     </table:Column>
 
                     <!-- <table:Column width="15%">
-                        <Label text="Processed By" />
+                        <Label text="{i18n>processedbyme_processed_by}" />
                         <table:template>
                             <Text
                                 text="{mainTableModel>ProcessedBy}"
@@ -87,7 +87,7 @@
                     </table:Column> -->
 
                     <table:Column width="15%">
-                        <Label text="Sendto" />
+                        <Label text="{i18n>processedbyme_sendto}" />
                         <table:template>
                             <Text
                                 text="{mainTableModel>SendtoName}"
@@ -97,7 +97,7 @@
                     </table:Column>
 
                     <table:Column width="15%">
-                        <Label text="CommentZ" />
+                        <Label text="{i18n>processedbyme_commentz}" />
                         <table:template>
                             <Text
                                 text="{mainTableModel>CommentZ}"
@@ -107,7 +107,7 @@
                     </table:Column>
 
                     <table:Column width="15%">
-                        <Label text="Status" />
+                        <Label text="{i18n>processedbyme_status}" />
                         <table:template>
                             <ObjectStatus
                                 text="{mainTableModel>Status}"

@@ -34,7 +34,7 @@ sap.ui.define(
         this.mainOModel = this.crud_z.oModel;
 
         //-----------User Part---------
-        var userData = await this.getOwnerComponent().getUserData();
+        var userData = this.getOwnerComponent.getModel("userDataModel").getData();
         if (!userData) {
           console.log("NO Uset Data!")
         }

@@ -72,7 +72,7 @@
                         <!-- Use an empty label to create spacing -->
                         <form:FormElement>
                             <form:fields>
-                                <Label text="" />
+                                <Label text="{i18n>sharingrequest_}" />
                             </form:fields>
                         </form:FormElement>
 
@@ -444,7 +444,7 @@
                         <!-- Use an empty label to create spacing -->
                         <form:FormElement>
                             <form:fields>
-                                <Label text="" />
+                                <Label text="{i18n>sharingrequest_}" />
                             </form:fields>
                         </form:FormElement>
 
@@ -464,7 +464,7 @@
                         >
                             <form:fields>
                                 <Button
-                                    text="Retrun"
+                                    text="{i18n>sharingrequest_retrun}"
                                     type="Ghost"
                                     press="onRetrun"
                                 >
@@ -474,7 +474,7 @@
                                 </Button>
 
                                 <Button
-                                    text="Reject"
+                                    text="{i18n>sharingrequest_reject}"
                                     type="Reject"
                                     press="onRejected"
                                 >
@@ -484,7 +484,7 @@
                                 </Button>
 
                                 <Button
-                                    text="Approval"
+                                    text="{i18n>sharingrequest_approval}"
                                     type="Emphasized"
                                     press="onApproval"
                                 >
@@ -501,7 +501,7 @@
                         >
                             <form:fields>
                                 <Button
-                                    text="Submit"
+                                    text="{i18n>sharingrequest_submit}"
                                     type="Emphasized"
                                     press="onMainSubmit"
                                 >
@@ -519,7 +519,7 @@
                         >
                             <form:fields>
                                 <Button
-                                    text="Sumbit"
+                                    text="{i18n>sharingrequest_sumbit}"
                                     type="Emphasized"
                                     press="onReSumbit"
                                 />
@@ -533,7 +533,7 @@
                         >
                             <form:fields>
                                 <Button
-                                    text="Assignees"
+                                    text="{i18n>sharingrequest_assignees}"
                                     type="Accept"
                                     press="onAssignees"
                                 />
@@ -547,7 +547,7 @@
                         >
                             <form:fields>
                                 <Button
-                                    text="Work In Progress"
+                                    text="{i18n>sharingrequest_work_in_progress}"
                                     type="Accept"
                                     press="onWorkInProgress"
                                 />
@@ -561,7 +561,7 @@
                         >
                             <form:fields>
                                 <Button
-                                    text="Completed"
+                                    text="{i18n>sharingrequest_completed}"
                                     type="Accept"
                                     press="onCompleted"
                                 />
@@ -575,7 +575,7 @@
                         >
                             <form:fields>
                                 <Button
-                                    text="Closed"
+                                    text="{i18n>sharingrequest_closed}"
                                     type="Accept"
                                     press="onClosedStatus"
                                 />

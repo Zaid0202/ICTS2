@@ -11,14 +11,14 @@
 >
     <Page
         id="page_id_RequestStatusForm"
-        title="Request History Status"
+        title="{i18n>requeststatusform_request_history_stat}"
     >
         <content>
             <IconTabBar class="sapUiResponsiveContentPadding">
                 <items>
                     <IconTabFilter
                         key="tab1"
-                        text="Request"
+                        text="{i18n>requeststatusform_request}"
                         icon="sap-icon://form"
                     >
                         <core:Fragment
@@ -29,7 +29,7 @@
 
                     <IconTabFilter
                         key="tab2"
-                        text="History"
+                        text="{i18n>requeststatusform_history}"
                         icon="sap-icon://customer-history"
                     >
                         <table:Table
@@ -41,20 +41,20 @@
                         >
                             <table:extension>
                                 <OverflowToolbar style="Clear">
-                                    <Title text="History" />
+                                    <Title text="{i18n>requeststatusform_history}" />
                                     <ToolbarSpacer />
                                     <Button
-                                        tooltip="Sort"
+                                        tooltip="{i18n>requeststatusform_sort}"
                                         icon="sap-icon://sort"
                                         press="handleSortButtonPressed"
                                     />
                                     <Button
-                                        tooltip="Filter"
+                                        tooltip="{i18n>requeststatusform_filter}"
                                         icon="sap-icon://filter"
                                         press="handleFilterButtonPressed"
                                     />
                                     <Button
-                                        tooltip="Group"
+                                        tooltip="{i18n>requeststatusform_group}"
                                         icon="sap-icon://group-2"
                                         press="handleGroupButtonPressed"
                                     />
@@ -62,14 +62,14 @@
                                     <SearchField
                                         id="searchField"
                                         width="20%"
-                                        placeholder="search"
+                                        placeholder="{i18n>requeststatusform_search}"
                                         search="onSearch"
                                     />
                                 </OverflowToolbar>
                             </table:extension>
                             <table:columns>
                                 <table:Column width="20%">
-                                    <Label text="Created Date" />
+                                    <Label text="{i18n>requeststatusform_created_date}" />
                                     <table:template>
                                         <Text
                                             text="{ path: 'mainTableModel>CreatedDate', formatter: '.formatDateToCustomPattern' }"
@@ -79,7 +79,7 @@
                                 </table:Column>
 
                                 <table:Column width="20%">
-                                    <Label text="Processed By" />
+                                    <Label text="{i18n>requeststatusform_processed_by}" />
                                     <table:template>
                                         <Text
                                             text="{mainTableModel>ProcessedBy}"
@@ -89,7 +89,7 @@
                                 </table:Column>
 
                                 <table:Column width="20%">
-                                    <Label text="Send to" />
+                                    <Label text="{i18n>requeststatusform_send_to}" />
                                     <table:template>
                                         <Text
                                             text="{mainTableModel>SendtoName}"
@@ -99,7 +99,7 @@
                                 </table:Column>
                                 
                                 <table:Column width="10rem">
-                                    <Label text="Status" />
+                                    <Label text="{i18n>requeststatusform_status}" />
                                     <table:template>
                                         <ObjectStatus
                                             text="{mainTableModel>Status}"
@@ -113,7 +113,7 @@
 
 
                                 <table:Column width="20%">
-                                    <Label text="Comment" />
+                                    <Label text="{i18n>requeststatusform_comment}" />
                                     <table:template>
                                         <Text
                                             text="{mainTableModel>CommentZ}"

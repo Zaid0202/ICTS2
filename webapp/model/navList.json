@@ -2,6 +2,7 @@
   "navigation": [
     {
       "title": "Home",
+      "title2": "navHome",
       "icon": "sap-icon://home",
       "key": "RouteHome",
       "roles": [
@@ -10,6 +11,7 @@
     },
     {
       "title": "New Request",
+      "title2": "navNewRequest",
       "icon": "sap-icon://add",
       "key": "RouteNewRequest",
       "roles": [
@@ -18,6 +20,7 @@
     },
     {
       "title": "My Tasks",
+      "title2": "navMyTasks",
       "icon": "sap-icon://activity-assigned-to-goal",
       "key": "RouteMyTasks",
       "roles": [
@@ -26,6 +29,7 @@
     },
     {
       "title": "My Request Status",
+      "title2": "navMyRequestStatus",
       "icon": "sap-icon://history",
       "key": "RouteMyRequestStatus",
       "roles": [
@@ -34,6 +38,7 @@
     },
     {
       "title": "Processed By Me",
+      "title2": "navProcessedByMe",
       "icon": "sap-icon://employee",
       "key": "RouteProcessedByMe",
       "roles": [
@@ -42,6 +47,7 @@
     },
     {
       "title": "Dashboard",
+      "title2": "navDashboard",
       "icon": "sap-icon://bbyd-dashboard",
       "key": "RouteDashboard",
       "roles": [
@@ -50,6 +56,7 @@
     },
     {
       "title": "Settings",
+      "title2": "navSettings",
       "icon": "sap-icon://settings",
       "key": "RouteSettings",
       "roles": [
@@ -58,6 +65,7 @@
       "items": [
         {
           "title": "Approvals Levels",
+          "title2": "navApprovalsLevels",
           "icon": "sap-icon://e-care",
           "key": "RouteSettingsApprovals",
           "roles": [
@@ -66,6 +74,7 @@
         },
         {
           "title": "Escalation Levels",
+          "title2": "navEscalationLevels",
           "icon": "sap-icon://e-care",
           "key": "RouteEscalationLevels",
           "roles": [
@@ -74,6 +83,7 @@
         },
         {
           "title": "Assignees",
+          "title2": "navAssignees",
           "icon": "sap-icon://e-care",
           "key": "RouteSettingsAssignees",
           "roles": [
@@ -82,6 +92,7 @@
         },
         {
           "title": "Re Assignee",
+          "title2": "navReAssignee",
           "icon": "sap-icon://e-care",
           "key": "RouteReAssignee",
           "roles": [
@@ -89,11 +100,6 @@
           ]
         }
       ]
-    },
-    {
-      "title": "ReAssignee",
-      "icon": "sap-icon://e-care",
-      "key": "RouteReAssignee"
     }
   ],
   "navigationAddtion": [

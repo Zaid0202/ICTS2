@@ -12,7 +12,7 @@
         <tnt:ToolPage id="toolPage">
             <tnt:header>
                 <ff:ShellBar
-                    title="Internal Communication Ticketing System"
+                    title="{i18n>app_internal_communicati}"
                     secondTitle=""
                     showMenuButton="true"
                     homeIcon="./image/main_logo.png"
@@ -23,14 +23,20 @@
                     notificationsNumber="4"
                     id="idImage"
                 >
-                    <!-- <ff:additionalContent>
-                        <OverflowToolbarButton
+                    <ff:additionalContent>
+                        <!-- <OverflowToolbarButton
                             press="onToggleTheme"
-                            tooltip="Switch Theme"
+                            tooltip="{i18n>app_switch_theme}"
                             icon="sap-icon://light-mode"
                             id="themeToggleButton"
+                        /> -->
+                        <OverflowToolbarButton
+                            press="onChangeLanguage"
+                            tooltip="{i18n>app_change_to_arabic}"
+                            icon="sap-icon://world"
+                            id="languageChangeButton"
                         />
-                    </ff:additionalContent> -->
+                    </ff:additionalContent>
 
                     <ff:profile>
                         <Avatar

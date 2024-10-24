@@ -35,13 +35,13 @@
                 showFullScreen="true"
                 showPersonalization="false"
                 autoAdjustHeight="false"
-                title="Report"
+                title="{i18n>dashboard_report}"
                 class="sapUiShadow  sapUiRoundedBorder sapUiPageBackground"
             >
                 <commons:content>
                     <commons:ChartContainerContent
                         icon="sap-icon://line-chart"
-                        title="Line Chart"
+                        title="{i18n>dashboard_line_chart}"
                     >
                         <commons:content>
                             <viz:VizFrame
@@ -113,7 +113,7 @@
 
                     <commons:ChartContainerContent
                         icon="sap-icon://table-view"
-                        title="Table"
+                        title="{i18n>dashboard_table}"
                     >
                         <commons:content>
                             <Table id="idTable" />
@@ -122,7 +122,7 @@
                 </commons:content>
 
                 <commons:dimensionSelectors>
-                    <Label text="Year" />
+                    <Label text="{i18n>dashboard_year}" />
 
                     <Select
                         items="{yearsListModel>/}"
@@ -146,12 +146,12 @@
                 showFullScreen="true"
                 showPersonalization="false"
                 autoAdjustHeight="false"
-                title="Report"
+                title="{i18n>dashboard_report}"
             >
                 <commons:content>
                     <commons:ChartContainerContent
                         icon="sap-icon://line-chart"
-                        title="Line Chart"
+                        title="{i18n>dashboard_line_chart}"
                         id="idColumnChart2"
                     >
                         <commons:content>
@@ -219,7 +219,7 @@
 
                     <commons:ChartContainerContent
                         icon="sap-icon://table-view"
-                        title="Table"
+                        title="{i18n>dashboard_table}"
                     >
                         <commons:content>
                             <Table />
@@ -228,7 +228,7 @@
                 </commons:content>
 
                 <commons:dimensionSelectors>
-                    <Label text="Year" />
+                    <Label text="{i18n>dashboard_year}" />
 
                     <Select
                         items="{yearsListModel>/}"

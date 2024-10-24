@@ -10,7 +10,7 @@
 >
     <Page
         id="page_id_NewRequest"
-        title="New Request"
+        title="{i18n>newrequest_new_request}"
     >
         <content>
             <core:Fragment
@@ -24,7 +24,7 @@
                     class="sapUiSmallMargin"
                 >
                     <Button
-                        text="Save"
+                        text="{i18n>newrequest_save}"
                         press="onSavePress"
                     />
                 </VBox> -->

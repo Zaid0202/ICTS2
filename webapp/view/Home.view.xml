@@ -9,21 +9,19 @@
                 <l:HorizontalLayout
                     id="TileContainerExpanded"
                     allowWrapping="true"
-                    content="{tiles>/}"
+                    content="{tilesHome>/}"
                     class="sapUiTinyMarginTopBottom"
                 >
                     <GenericTile
-                        header="{tiles>title}"
+                        header="{tilesHome>title}"
                         press="press"
                         class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout"
-                        sizeBehavior="{tiles>sizeBehavior}"
+                        sizeBehavior="{tilesHome>sizeBehavior}"
                     >
                         <TileContent  footer="Nav to">
-                            <ImageContent src="{tiles>icon}" />
+                            <ImageContent src="{tilesHome>icon}" />
                         </TileContent>
                     </GenericTile>
-
-                    
                 </l:HorizontalLayout>
             </VBox>
         </content>

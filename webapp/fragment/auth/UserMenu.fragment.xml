@@ -7,56 +7,56 @@
         <items>
             <!-- <StandardListItem
                 icon="sap-icon://customer-history"
-                title="Recent Activities"
+                title="{i18n>usermenu_recent_activities}"
                 type="Active"
                 press="onListItemPress"
             />
             <StandardListItem
                 icon="sap-icon://activity-individual"
-                title="Frequently Used"
+                title="{i18n>usermenu_frequently_used}"
                 type="Active"
                 press="onListItemPress"
             />
             <StandardListItem
                 icon="sap-icon://sys-find"
-                title="App Finder"
+                title="{i18n>usermenu_app_finder}"
                 type="Active"
                 press="onListItemPress"
             />
             <StandardListItem
                 icon="sap-icon://action-settings"
-                title="Settings"
+                title="{i18n>usermenu_settings}"
                 type="Active"
                 press="onListItemPress"
             />
             <StandardListItem
                 icon="sap-icon://edit"
-                title="Edit Home Page"
+                title="{i18n>usermenu_edit_home_page}"
                 type="Active"
                 press="onListItemPress"
             />
             <StandardListItem
                 icon="sap-icon://email"
-                title="Contact Support"
+                title="{i18n>usermenu_contact_support}"
                 type="Active"
                 press="onListItemPress"
             />
             <StandardListItem
                 icon="sap-icon://hint"
-                title="About"
+                title="{i18n>usermenu_about}"
                 type="Active"
                 press="onListItemPress"
             />
             <StandardListItem
                 icon="sap-icon://log"
-                title="Sign Out"
+                title="{i18n>usermenu_sign_out}"
                 type="Active"
                 press="logout"
             /> -->
             <!-- New item added here -->
             <!-- <StandardListItem
                 icon="sap-icon://edit"
-                title="Changing User Id"
+                title="{i18n>usermenu_changing_user_id}"
                 type="Active"
                 press="onNewItemPressChangingUserId"
             /> -->
@@ -65,7 +65,7 @@
 
             <StandardListItem
                 id="NewItemId"
-                title="New Item"
+                title="{i18n>usermenu_new_item}"
                 type="Active"
                 press="NewItempress"
             />
@@ -86,7 +86,7 @@
 
                         <Button
                             press="onToggleTheme"
-                            tooltip="Switch Theme"
+                            tooltip="{i18n>usermenu_switch_theme}"
                             icon="sap-icon://light-mode"
                             id="themeToggleButton"
                         />

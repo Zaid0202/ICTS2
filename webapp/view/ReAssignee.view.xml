@@ -10,7 +10,7 @@
 >
     <Page
         id="page_id_ReAssignee"
-        title="ReAssignee"
+        title="{i18n>reassignee_reassignee}"
     >
         <content>
             <VBox class="sapUiSmallMargin">
@@ -20,7 +20,7 @@
                 >
                     <form:toolbar>
                         <Toolbar>
-                            <Title text="Settings Assignees" />
+                            <Title text="{i18n>reassignee_settings_assignees}" />
                             <ToolbarSpacer />
                         </Toolbar>
                     </form:toolbar>
@@ -44,7 +44,7 @@
                     <form:formContainers>
                         <form:FormContainer>
                             <form:formElements>
-                                <form:FormElement label="Employee Id">
+                                <form:FormElement label="{i18n>reassignee_employee_id}">
                                     <form:fields>
                                         <VBox>
                                             <Input
@@ -54,9 +54,9 @@
                                                 maxLength="5"
                                                 valueState="{mainFormErrModel>/EmployeeId/valueState}"
                                                 valueStateText="{mainFormErrModel>/EmployeeId/valueStateText}"
-                                                placeholder="Employee Id"
+                                                placeholder="{i18n>reassignee_employee_id}"
                                                 type="Text"
-                                                tooltip="Press Enter after input"
+                                                tooltip="{i18n>reassignee_press_enter_after_in}"
                                             >
                                                 <layoutData>
                                                     <l:GridData
@@ -70,7 +70,7 @@
                                             value="{mainFormModel>/EmployeeName}"
                                             valueState="{mainFormErrModel>/EmployeeName/valueState}"
                                             valueStateText="{mainFormErrModel>/EmployeeName/valueStateText}"
-                                            placeholder="Employee Name"
+                                            placeholder="{i18n>reassignee_employee_name}"
                                             editable="false"
                                         >
                                             <layoutData>
@@ -85,12 +85,12 @@
                                 <!-- Add a VBox for spacing -->
                                 <!-- Use an empty label to create spacing -->
 
-                                <form:FormElement label="" />
+                                <form:FormElement label="{i18n>reassignee_}" />
 
-                                <form:FormElement label="">
+                                <form:FormElement label="{i18n>reassignee_}">
                                     <form:fields>
                                         <Button
-                                            text="Submit"
+                                            text="{i18n>reassignee_submit}"
                                             type="Emphasized"
                                             press="onMainSubmit"
                                         />

@@ -7,7 +7,7 @@
 >
     <VBox id="mainFormVboxId2">
         <!-- <MessageStrip
-            text="Click on the request in the table to see the more details of your request!"
+            text="{i18n>sharingmyrequeststatus_click_on_the_request}"
             showIcon="true"
             class="sapUiTinyMargin"
             showCloseButton="true"
@@ -38,26 +38,26 @@
                     style="Clear"
                     visible="true"
                 >
-                    <Title text="Report" />
+                    <Title text="{i18n>sharingmyrequeststatus_report}" />
                     <ToolbarSpacer />
                     <Button
                         icon="sap-icon://synchronize"
                         press="onRefresh"
-                        tooltip="Refresh"
+                        tooltip="{i18n>sharingmyrequeststatus_refresh}"
                     />
 
                     <Button
-                        tooltip="Sort"
+                        tooltip="{i18n>sharingmyrequeststatus_sort}"
                         icon="sap-icon://sort"
                         press="handleSortButtonPressed"
                     />
                     <Button
-                        tooltip="Filter"
+                        tooltip="{i18n>sharingmyrequeststatus_filter}"
                         icon="sap-icon://filter"
                         press="handleFilterButtonPressed"
                     />
                     <Button
-                        tooltip="Group"
+                        tooltip="{i18n>sharingmyrequeststatus_group}"
                         icon="sap-icon://group-2"
                         press="handleGroupButtonPressed"
                     />
@@ -73,7 +73,7 @@
 
             <table:columns>
                 <table:Column width="20%">
-                    <Label text="Request id" />
+                    <Label text="{i18n>sharingmyrequeststatus_request_id}" />
                     <table:template>
                         <Text
                             text="{ path: 'mainTableModel_MyRequestStatus_XX>Id', formatter: '.formatIdToCustomPattern' }"
@@ -83,7 +83,7 @@
                 </table:Column>
 
                 <table:Column width="20%">
-                    <Label text="Requester Name &amp; Id" />
+                    <Label text="{i18n>sharingmyrequeststatus_requester_name_amp_i}" />
                     <table:template>
                         <Text
                             text="{parts: [{path: 'mainTableModel_MyRequestStatus_XX>RequesterName'}, {path: 'mainTableModel_MyRequestStatus_XX>RequesterId'}], formatter: '.formatRequester'}"
@@ -93,7 +93,7 @@
                 </table:Column>
 
                 <table:Column width="20%">
-                    <Label text="Send to" />
+                    <Label text="{i18n>sharingmyrequeststatus_send_to}" />
                     <table:template>
                         <Text
                             text="{mainTableModel_MyRequestStatus_XX>SendtoName}"
@@ -103,7 +103,7 @@
                 </table:Column>
 
                 <table:Column width="20%">
-                    <Label text="Request Date" />
+                    <Label text="{i18n>sharingmyrequeststatus_request_date}" />
                     <table:template>
                         <Text
                             text="{ path: 'mainTableModel_MyRequestStatus_XX>CreatedDate', formatter: '.formatDateToCustomPattern' }"
@@ -113,7 +113,7 @@
                 </table:Column>
 
                 <table:Column width="20%">
-                    <Label text="Service" />
+                    <Label text="{i18n>sharingmyrequeststatus_service}" />
                     <table:template>
                         <Text
                             text="{mainTableModel_MyRequestStatus_XX>MainService}"
@@ -123,7 +123,7 @@
                 </table:Column>
 
                 <table:Column width="20%">
-                    <Label text="Priority" />
+                    <Label text="{i18n>sharingmyrequeststatus_priority}" />
                     <table:template>
                         <Text
                             text="{mainTableModel_MyRequestStatus_XX>Urgency}"
@@ -133,7 +133,7 @@
                 </table:Column>
 
                 <table:Column width="20%">
-                    <Label text="Status" />
+                    <Label text="{i18n>sharingmyrequeststatus_status}" />
                     <table:template>
                         <ObjectStatus
                             text="{mainTableModel_MyRequestStatus_XX>Status}"

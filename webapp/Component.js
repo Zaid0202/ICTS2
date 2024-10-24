@@ -38,6 +38,8 @@ sap.ui.define([
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
 
+
+
                 // Id:5 
                 // admin:true 
                 // analytics:true 
@@ -47,6 +49,10 @@ sap.ui.define([
                 // report:true 
                 // status : true 
                 // userId : "22225"
+                var userData = await this.getUserData();
+                this.setModel(new sap.ui.model.json.JSONModel(userData), 'userDataModel')
+
+                this.changeLange()
 
             },
 
@@ -115,40 +121,6 @@ sap.ui.define([
                 };
             },
 
-            // getUserData: async function () {
-            //     let [userId, userRule2] = this.getUserIdAndRule()
-            //     let userRule = 'Normal User'
-
-            //     this.userService = new UserService(this, userId);
-
-            //     if (!this.userInfo) {
-            //         this.userInfo = await this.userService.getUserInfo()
-            //         let crud_z = new CRUD_z(this, "ZACCOMODATION_APPS_SRV", true)
-            //         let access_UserSet = await crud_z.get_record('Access_UserSet', '', {})
-            //         let access_UserSet_Filterd = access_UserSet?.results.filter(el => String(el.appId) === String(3) && String(el.userId) === String(userId));
-            //         if (access_UserSet_Filterd.length > 0) {
-            //             access_UserSet_Filterd = access_UserSet_Filterd[0];
-            //         } else {
-            //             access_UserSet_Filterd = null; // or handle the case when the array is empty as needed
-            //         }
-            //         if (access_UserSet_Filterd) {
-            //             if (access_UserSet_Filterd.admin && access_UserSet_Filterd.report) {
-            //                 userRule = 'Super User'
-            //             } else if (access_UserSet_Filterd.report) {
-            //                 userRule = 'Mid User'
-            //             }
-            //             else {
-            //                 userRule = 'Normal User'
-            //             }
-            //         }
-            //         localStorage.setItem("UserRole", userRule)
-            //     }
-            //     return {
-            //         userInfo: this.userInfo,
-            //         role: userRule
-            //     }
-            // },
-
             filterNavigationByRole: function (navigationItems, userRoles) {
                 return navigationItems.filter(item => {
                     // Check if the current item has roles
@@ -166,20 +138,6 @@ sap.ui.define([
                     return false;
                 });
             },
-            
-            // filterNavigationByRole: function (navigationItems, userRole) {
-            //     return navigationItems.filter(item => {
-            //         // Check if the current role is allowed for this item
-            //         if (item.roles && item.roles.includes(userRole)) {
-            //             // If there are subitems (e.g., for Settings), filter them too
-            //             if (item.items) {
-            //                 item.items = this.filterNavigationByRole(item.items, userRole);
-            //             }
-            //             return true;
-            //         }
-            //         return false;
-            //     });
-            // },
 
             inSureUserInfo: async function () {
                 let attempts = 0;
@@ -205,6 +163,111 @@ sap.ui.define([
                 // If the loop ends without finding the user info, handle accordingly
                 return 'User info does not exist after maximum attempts';
             },
+
+            // Langeuge ........ 
+            changeLanguage: function () {
+                var oModel = this.getModel("i18n");
+                var sCurrentLanguage = oModel.getResourceBundle().sLocale; // Get current language
+                console.log({ sCurrentLanguage });
+
+                // Toggle language
+                var sNewLanguage = sCurrentLanguage === "ar" ? "en" : "ar";
+
+                // Set new language
+                sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
+
+                // Reload i18n model
+                var i18nModel = new sap.ui.model.resource.ResourceModel({
+                    bundleName: "internal.i18n.i18n",  // Adjust the bundle path
+                    bundleLocale: sNewLanguage
+                });
+                this.setModel(i18nModel, "i18n");
+
+                // Ensure new language is active
+                // console.log(sap.ui.getCore().getConfiguration().getLanguage());
+
+                this.changeLange();
+                return sNewLanguage;
+            },
+
+            changeLange: function () {
+                // Get the i18n model
+                var i18nModel = this.getModel("i18n");
+                var oResourceBundle = i18nModel.getResourceBundle();
+                // console.log("Component -> oResourceBundle", oResourceBundle)
+
+                // Load the navigation JSON model
+                var navModel = this.getModel("navList");
+                var navData = navModel.getData(); // Directly get the data
+                // console.log("Component -> navData", navData);
+
+                if (navData && navData.navigation) {
+                    // Replace i18n placeholders with actual values for main navigation items
+                    navData.navigation.forEach(function (navItem) {
+                        // console.log("Component -> navItem", navItem);
+                        navItem.title = oResourceBundle.getText(navItem.title2.replace("{i18n>", "").replace("}", ""));
+
+                        // Check if there are nested items and update their titles as well
+                        if (navItem.items && Array.isArray(navItem.items)) {
+                            navItem.items.forEach(function (subItem) {
+                                // console.log("Component -> subItem", subItem);
+                                subItem.title = oResourceBundle.getText(subItem.title2.replace("{i18n>", "").replace("}", ""));
+                            });
+                        }
+                    });
+
+                    // console.log("Component -> navModel updated", navData);
+                    // Set the updated model
+                    navModel.setData(navData);
+                    this.setModel(navModel, "navList");
+                } else {
+                    console.error("No navigation data found in the navList model");
+                }
+                this.setTails()
+            },
+
+            setTails: function () {
+                var userData = this.getModel("userDataModel").getData();
+                var userRules = userData.role
+
+                //  For Home Page 
+                const navList = this.getModel("navList").getData().navigation
+                console.log("Component -> navList", navList)
+                console.log("Component -> userRules", userRules)
+
+                let filteredNavData = this.filterNavigationByRole(navList, userRules);
+                let dataHome = filteredNavData
+                    .filter(el => el.title !== "Home") // Filter out elements with title "Home"
+                    .map(el => {
+                        return {
+                            title: el.title,
+                            route: el.key,
+                            icon: el.icon,
+                            subtitle: "Focus Area Tracking",
+                            footer: "Focus Area Tracking",
+                            unit: "EUR",
+                            kpivalue: 12,
+                            scale: "k",
+                            color: "Good",
+                            trend: "Up"
+                        };
+                    });
+
+                this.setModel(new sap.ui.model.json.JSONModel(dataHome), 'tilesHome')
+
+                //  For Settings Page
+                let dataSettings = navList
+                    .filter(el => el.title2 === "navSettings")[0].items.map(el => {
+                        return {
+                            title: el.title, subtitle: "Focus Area Tracking", footer: "Focus Area Tracking",
+                            unit: "EUR", kpivalue: 12, scale: "k", color: "Good", trend: "Up", route: el.key, icon: el.icon
+                        };
+                    }); 
+
+                this.setModel(new sap.ui.model.json.JSONModel(dataSettings), 'tilesSettings')
+
+            }
+
         });
     }
 );
