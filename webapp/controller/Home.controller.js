@@ -14,8 +14,9 @@ sap.ui.define([
             },
 
             press: function (evt) {
+                
                 var oTile = evt.getSource();
-                var oBindingContext = oTile.getBindingContext("tiles");
+                var oBindingContext = oTile.getBindingContext("tilesHome");
                 var sRoute = oBindingContext.getProperty("route");
 
                 var oRouter = UIComponent.getRouterFor(this);

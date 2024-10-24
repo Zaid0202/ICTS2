@@ -12,6 +12,7 @@ sap.ui.define(
 
     return BaseController.extend("internal.controller.Helper.BaseController", {
       onInit: async function () {
+        console.log('BaseController --- First')
 
         // endsPoints  CRUD_z     User Info Here The Isusues..
 
@@ -32,9 +33,10 @@ sap.ui.define(
         this.UiTableFSG2 = new UiTableFSG2(this)
         this.crud_z = new CRUD_z(this)
         this.mainOModel = this.crud_z.oModel;
+        console.log('BaseController --- Seconde')
 
         //-----------User Part---------
-        var userData = this.getOwnerComponent.getModel("userDataModel").getData();
+        var userData = this.getOwnerComponent().getModel("userDataModel")?.getData();
         if (!userData) {
           console.log("NO Uset Data!")
         }
@@ -51,6 +53,7 @@ sap.ui.define(
         this.setMode('Create')
         console.log("Finsh THe Base Controller: ");
         this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({ isShowAllRequest: false }), "isShowAllRequest");
+        console.log('BaseController --- Third')
 
       },
 

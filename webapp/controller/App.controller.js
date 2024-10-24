@@ -17,13 +17,22 @@ sap.ui.define(
 
     return Controller.extend("internal.controller.App", {
       onInit: async function () {
+        console.log('App --- First')
 
-        this.getView()?.byId('App_id').setBusy(true)
 
+        this.oView = this.getView();
+        this.oView?.byId('App_id').setBusy(true)
+
+        // Get the Component instance
+        var oComponent = this.getOwnerComponent();
+
+        // Wait for the Component's initialization promise to resolve
+        await oComponent.getInitializationPromise();
+
+        //-----------Toggle Theme Part---------
         this.isDarkMode = false;
         this.onToggleTheme();
 
-        this.oView = this.getView();
         this.oMyAvatar = this.oView.byId("Avatar_id");
         this._oPopover = Fragment.load({
           id: this.oView.getId(),
@@ -36,118 +45,15 @@ sap.ui.define(
 
 
         //-----------User Part---------
-        var userData = await this.getOwnerComponent().getUserData();
+        var userData = this.getOwnerComponent().getModel("userDataModel")?.getData();
         if (!userData) {
           console.log("NO Uset Data!")
         }
-        this.userInfo = userData.userInfo
-        this.sUserRole = userData.role
-        console.log("App -> this.userInfo", this.userInfo)
-        console.log("App -> this.sUserRole", this.sUserRole)
 
-        //-----------Nav Part---------
-        var oModelNavList = this.getOwnerComponent().getModel("navList");
-        var oModelNavListData = oModelNavList.getData();
-
-        // If the data is already loaded in the model
-        if (oModelNavListData) {
-          let filteredNavData = this.getOwnerComponent().filterNavigationByRole(oModelNavListData.navigation, this.sUserRole);
-          let filteredNavDataAddtion = this.getOwnerComponent().filterNavigationByRole(oModelNavListData.navigationAddtion, this.sUserRole);
-
-          oModelNavListData.navigation = filteredNavData
-          oModelNavListData.navigationAddtion = filteredNavDataAddtion
-
-          oModelNavList.setData(oModelNavListData);
-          this.getView().setModel(oModelNavList, "navList");
-          this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({ isShowAllRequest: false }), "isShowAllRequest");
-
-        }
-
-
-        //-----------Route Part---------
-        // var oRouter2 = sap.ui.core.UIComponent.getRouterFor(this);
-        // oRouter2.attachRouteMatched(this._onRouteMatched, this);
-
-        var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-
-        // Attach routeMatched event for dynamic navigation
-        oRouter.attachRouteMatched(this._onRouteMatched, this);
-
-        // Get the current URL hash (e.g., 'RouteNewRequest')
-        var oHash = oRouter.getHashChanger().getHash();
-        // console.log("App -> _onRouteMatched -> oHash:", oHash);
-
-        // If a hash exists, attempt to find a route based on the hash
-        if (oHash) {
-          // The route might be correctly identified using the hash (which should match the route pattern)
-          var oRoute = oRouter.getRoute(oHash);
-
-          // Check if the route exists
-          if (oRoute) {
-            // console.log("App -> _onRouteMatched -> oRoute:", oRoute);
-
-            // Since getName() doesn't exist, we manually pass the hash as the route name
-            this._onRouteMatched({
-              getParameter: function () {
-                return oHash; // Return the hash as the route name
-              }
-            });
-          } else {
-            console.error("No route found for the current hash:", oHash);
-          }
-        }
-        this.getView()?.byId('App_id').setBusy(false)
-
-        //--------------------
-
+        this.oView?.byId('App_id').setBusy(false)
       },
 
-      _onRouteMatched: async function (oEvent) { // Implamints the Rules For Routes.
-        var oRouteName = oEvent.getParameter("name");
 
-        // console.log("App -> _onRouteMatched -> oRouteName:", oRouteName)
-
-        var oModelNavList = await this.getOwnerComponent().getModel("navList");
-        let oModelNavListData = oModelNavList.getData();
-
-        var allRouteNew = [...oModelNavListData.navigation, ...oModelNavListData.navigationAddtion]
-
-
-        // Find the object with the matching key
-        let foundItem = this.findItem(allRouteNew, oRouteName)
-        // console.log("foundItem", foundItem);
-
-        // Check if the roles array contains the role to check
-        if (foundItem) {
-          if (this.sUserRole.some(role => foundItem.roles.includes(role))) {
-          } else {
-            this.getOwnerComponent().getRouter().navTo("RouteHome"); // Redirect to the home view or another default view
-            sap.m.MessageToast.show("Access Denied! You don't have permission to access this view.");
-          }
-        } else {
-          sap.m.MessageToast.show("Access Denied! You don't have permission to access this view.");
-          this.getOwnerComponent().getRouter().navTo("RouteHome"); // Redirect to the home view or another default view
-        }
-      },
-
-      findItem: function (navD, oRouteName) {
-        // First, check if the key exists in the top-level array
-        let foundItem = navD.find(item => item.key === oRouteName);
-
-        // If not found at the top level, check inside the "items" array of each object, if it exists
-        if (!foundItem) {
-          navD.forEach(item => {
-            if (item.items && Array.isArray(item.items)) {
-              const subItem = item.items.find(sub => sub.key === oRouteName);
-              if (subItem) {
-                foundItem = subItem;
-              }
-            }
-          });
-        }
-
-        return foundItem;
-      },
 
       onAfterRendering: function () {
         this.onMenuButtonPress();
@@ -165,7 +71,6 @@ sap.ui.define(
         }
         this.isDarkMode = !this.isDarkMode;
       },
-
 
       onMenuButtonPress: function () {
         var toolPage = this.byId('toolPage');
@@ -237,10 +142,9 @@ sap.ui.define(
         console.log("User Role saved:", sValue);
       },
 
-
       // Languse ... 
       onChangeLanguage: function () {
-        let sNewLanguage = this.getOwnerComponent().changeLanguage();
+        let sNewLanguage = this.getOwnerComponent().onChangeLanguage();
 
         // Update button text and tooltip dynamically
         this.updateButtonText(sNewLanguage);
@@ -248,7 +152,7 @@ sap.ui.define(
 
       updateButtonText: function (sLanguage) {
         var sButtonText = sLanguage === "ar" ? "Change to English" : "Change to Arabic";
-        var oButton = this.getView().byId("languageChangeButton"); // Assuming you give an ID to your button
+        var oButton = this.oView.byId("languageChangeButton"); // Assuming you give an ID to your button
         oButton.setText(sButtonText);
 
         // Optionally update tooltip if needed
